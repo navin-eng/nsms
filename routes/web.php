@@ -2,28 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Carbon;
-use App\Http\Controllers\CourseController;
 use App\Http\Controllers\CampusCalendarController;
-use App\Http\Controllers\TeacherController;
-use App\Http\Controllers\TestimonialController;
-use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\EventController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\CounterController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\PrivacypolicyController;
 use App\Http\Controllers\EditorController;
-use App\Http\Controllers\BannerController;
 use App\Http\Controllers\Frontend;
 use App\Http\Controllers\HomeSectionController;
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\NavbarItemController;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\Frontend\ResultController;
-use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\SiteSettingController;
 use App\Http\Controllers\Admin;
-use App\Http\Controllers\PageController;
-use App\Http\Controllers\CollegeMessageController;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -56,7 +47,6 @@ Route::get('/course/{slug}', [Frontend::class, 'courseDetail']);
 Route::get('/event/{slug}', [Frontend::class, 'eventDetail']);
 Route::get('/notice/detail/{id}', [Frontend::class, 'noticeDetail']);
 
-Route::post('/send/form/data', [MessageController::class, 'store'])->name('message.send');
 Route::get('/close', function () {
     session()->put('popupClosed', 1);
     return back();
@@ -68,10 +58,10 @@ Route::post('/results/search', [ResultController::class, 'search'])->name('resul
 
 Route::middleware('webGuard')->group(function () {
 
-    Route::get('/admin/dashboard/message', [MessageController::class, 'index'])->name('message.index');
-    Route::get('/admin/dashboard/message/read-toggle/{id}', [MessageController::class, 'toggleRead'])->name('message.toggle-read');
-    Route::get('/admin/dashboard/message/delete/{id}', [MessageController::class, 'destroy'])->name('message.destroy');
-    Route::post('/admin/dashboard/message/bulk-delete', [MessageController::class, 'bulkDestroy'])->name('message.bulk-destroy');
+    Route::prefix('admin/sms')->group(base_path('routes/sms.php'));
+    Route::group([], base_path('routes/cms.php'));
+
+
 
     // Backend Routes
     Route::get('/admin/portal', [Admin::class, 'portal'])->name('admin.portal');
@@ -82,47 +72,14 @@ Route::middleware('webGuard')->group(function () {
     })->name('admin.dashboard');
 
     // Course Routes
-    Route::get('/admin/dashboard/course/add', [CourseController::class, 'create'])->name('course.add');
-    Route::get('/admin/dashboard/course/table', [CourseController::class, 'index'])->name('course.table');
-    Route::post('/admin/dashboard/course/store', [CourseController::class, 'store'])->name('course.store');
-    Route::get('/admin/dashboard/course/delete/{id}', [CourseController::class, 'destroy'])->name('course.destroy');
-    Route::get('/admin/dashboard/course/status/{id}', [CourseController::class, 'status'])->name('course.status');
-    Route::get('/admin/dashboard/course/edit/{id}', [CourseController::class, 'edit'])->name('course.edit');
-    Route::post('/admin/dashboard/course/edit/update/{id}', [CourseController::class, 'update'])->name('course.update');
-    Route::get('/admin/dashboard/course/delete/gallery/{id}/{index}', [CourseController::class, 'galleryDelete'])->name('course.gallery.delete');
 
     // Teacher Routes
-    Route::get('/admin/dashboard/teacher/add', [TeacherController::class, 'create'])->name('teacher.add');
-    Route::get('/admin/dashboard/teacher/table', [TeacherController::class, 'index'])->name('teacher.table');
-    Route::post('/admin/dashboard/teacher/store', [TeacherController::class, 'store'])->name('teacher.store');
-    Route::get('/admin/dashboard/teacher/delete/{id}', [TeacherController::class, 'destroy'])->name('teacher.destroy');
-    Route::get('/admin/dashboard/teacher/status/{id}', [TeacherController::class, 'status'])->name('teacher.status');
-    Route::get('/admin/dashboard/teacher/edit/{id}', [TeacherController::class, 'edit'])->name('teacher.edit');
-    Route::post('/admin/dashboard/teacher/edit/update/{id}', [TeacherController::class, 'update'])->name('teacher.update');
 
     // Testimonial Routes
-    Route::get('/admin/dashboard/testimonial/add', [TestimonialController::class, 'create'])->name('testimonial.add');
-    Route::get('/admin/dashboard/testimonial/table', [TestimonialController::class, 'index'])->name('testimonial.table');
-    Route::post('/admin/dashboard/testimonial/store', [TestimonialController::class, 'store'])->name('testimonial.store');
-    Route::get('/admin/dashboard/testimonial/delete/{id}', [TestimonialController::class, 'destroy'])->name('testimonial.destroy');
-    Route::get('/admin/dashboard/testimonial/status/{id}', [TestimonialController::class, 'status'])->name('testimonial.status');
-    Route::get('/admin/dashboard/testimonial/edit/{id}', [TestimonialController::class, 'edit'])->name('testimonial.edit');
-    Route::post('/admin/dashboard/testimonial/edit/update/{id}', [TestimonialController::class, 'update'])->name('testimonial.update');
 
     // Gallery Routes
-    Route::get('/admin/dashboard/gallery/table', [GalleryController::class, 'index'])->name('gallery.table');
-    Route::post('/admin/dashboard/gallery/store', [GalleryController::class, 'store'])->name('gallery.store');
-    Route::get('/admin/dashboard/gallery/delete/gallery/{id}/{index}', [GalleryController::class, 'galleryDelete'])->name('gallery.delete');
 
     // Event Routes
-    Route::get('/admin/dashboard/event/add', [EventController::class, 'create'])->name('event.add');
-    Route::get('/admin/dashboard/event/table', [EventController::class, 'index'])->name('event.table');
-    Route::post('/admin/dashboard/event/store', [EventController::class, 'store'])->name('event.store');
-    Route::get('/admin/dashboard/event/delete/{id}', [EventController::class, 'destroy'])->name('event.destroy');
-    Route::get('/admin/dashboard/event/status/{id}', [EventController::class, 'status'])->name('event.status');
-    Route::get('/admin/dashboard/event/edit/{id}', [EventController::class, 'edit'])->name('event.edit');
-    Route::post('/admin/dashboard/event/edit/update/{id}', [EventController::class, 'update'])->name('event.update');
-    Route::get('/admin/dashboard/event/delete/gallery/{id}/{index}', [EventController::class, 'galleryDelete'])->name('event.gallery.delete');
 
     // Campus Calendar Routes
     Route::get('/admin/dashboard/calendar', [CampusCalendarController::class, 'index'])->name('campus.calendar.index');
@@ -138,8 +95,16 @@ Route::middleware('webGuard')->group(function () {
     Route::post('/admin/dashboard/counter/edit/update/{id}', [CounterController::class, 'update'])->name('counter.update');
     Route::get('/admin/dashboard/home-sections', [HomeSectionController::class, 'index'])->name('home.sections.index');
     Route::post('/admin/dashboard/home-sections/update', [HomeSectionController::class, 'update'])->name('home.sections.update');
-    Route::get('/admin/dashboard/site-settings', [SiteSettingController::class, 'edit'])->name('site.settings.edit');
-    Route::post('/admin/dashboard/site-settings/update', [SiteSettingController::class, 'update'])->name('site.settings.update');
+    
+    // CMS Site Settings
+    Route::get('/admin/dashboard/website-settings', [SiteSettingController::class, 'editCms'])->name('site.settings.cms.edit');
+    Route::post('/admin/dashboard/website-settings/update', [SiteSettingController::class, 'updateCms'])->name('site.settings.cms.update');
+    
+    // SMS Site Settings
+    Route::get('/admin/sms/site-settings', [SiteSettingController::class, 'editSms'])->name('site.settings.sms.edit');
+    Route::post('/admin/sms/site-settings/update', [SiteSettingController::class, 'updateSms'])->name('site.settings.sms.update');
+    
+    // The SMS site-settings routes will be placed further down with the other SMS routes
 
     // Navbar Builder Routes
     Route::get('/admin/dashboard/navbar', [NavbarItemController::class, 'index'])->name('navbar.index');
@@ -148,19 +113,18 @@ Route::middleware('webGuard')->group(function () {
     Route::get('/admin/dashboard/navbar/delete/{id}', [NavbarItemController::class, 'destroy'])->name('navbar.destroy');
 
     // Exam Results System
-    Route::get('/admin/dashboard/exams', [ExamController::class, 'index'])->name('exam.index');
-    Route::post('/admin/dashboard/exams/store', [ExamController::class, 'store'])->name('exam.store');
-    Route::post('/admin/dashboard/exams/update/{id}', [ExamController::class, 'update'])->name('exam.update');
-    Route::get('/admin/dashboard/exams/delete/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
+    Route::get('/admin/sms/exams', [ExamController::class, 'index'])->name('exam.index');
+    Route::post('/admin/sms/exams/store', [ExamController::class, 'store'])->name('exam.store');
+    Route::post('/admin/sms/exams/update/{id}', [ExamController::class, 'update'])->name('exam.update');
+    Route::get('/admin/sms/exams/delete/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
     
-    Route::get('/admin/dashboard/exams/{id}', [ExamController::class, 'show'])->name('exam.show');
-    Route::post('/admin/dashboard/exams/{id}/import', [ExamController::class, 'importCsv'])->name('exam.import');
-    Route::get('/admin/dashboard/exams/sample/download', [ExamController::class, 'downloadSample'])->name('exam.sample');
+    Route::get('/admin/sms/exams/{id}', [ExamController::class, 'show'])->name('exam.show');
+    Route::post('/admin/sms/exams/{id}/import', [ExamController::class, 'importCsv'])->name('exam.import');
+    Route::get('/admin/sms/exams/sample/download', [ExamController::class, 'downloadSample'])->name('exam.sample');
     
-    Route::post('/admin/dashboard/exam-results/{exam_id}/store', [ExamController::class, 'storeResult'])->name('exam.result.store');
-    Route::post('/admin/dashboard/exam-results/update/{id}', [ExamController::class, 'updateResult'])->name('exam.result.update');
-    Route::get('/admin/dashboard/exam-results/delete/{id}', [ExamController::class, 'destroyResult'])->name('exam.result.destroy');
-
+    Route::post('/admin/sms/exam-results/{exam_id}/store', [ExamController::class, 'storeResult'])->name('exam.result.store');
+    Route::post('/admin/sms/exam-results/update/{id}', [ExamController::class, 'updateResult'])->name('exam.result.update');
+    Route::get('/admin/sms/exam-results/delete/{id}', [ExamController::class, 'destroyResult'])->name('exam.result.destroy');
 
     // About US  Routes
     Route::get('/admin/dashboard/aboutus/add', [AboutUsController::class, 'create'])->name('aboutus.add');
@@ -186,40 +150,12 @@ Route::middleware('webGuard')->group(function () {
     Route::get('/admin/dashboard/profile', [Admin::class, 'profile'])->name('admin.profile');
 
     // Notice Routes
-    Route::get('/admin/dashboard/notice/add', [NoticeController::class, 'create'])->name('notice.add');
-    Route::get('/admin/dashboard/notice/table', [NoticeController::class, 'index'])->name('notice.table');
-    Route::post('/admin/dashboard/notice/store', [NoticeController::class, 'store'])->name('notice.store');
-    Route::get('/admin/dashboard/notice/delete/{id}', [NoticeController::class, 'destroy'])->name('notice.destroy');
-    Route::get('/admin/dashboard/notice/status/{id}', [NoticeController::class, 'status'])->name('notice.status');
-    Route::get('/admin/dashboard/notice/edit/{id}', [NoticeController::class, 'edit'])->name('notice.edit');
-    Route::post('/admin/dashboard/notice/edit/update/{id}', [NoticeController::class, 'update'])->name('notice.update');
 
     // Banner Routes
-    Route::get('/admin/dashboard/banner/add', [BannerController::class, 'create'])->name('banner.add');
-    Route::get('/admin/dashboard/banner/table', [BannerController::class, 'index'])->name('banner.table');
-    Route::post('/admin/dashboard/banner/store', [BannerController::class, 'store'])->name('banner.store');
-    Route::get('/admin/dashboard/banner/delete/{id}', [BannerController::class, 'destroy'])->name('banner.destroy');
-    Route::get('/admin/dashboard/banner/status/{id}', [BannerController::class, 'status'])->name('banner.status');
-    Route::get('/admin/dashboard/banner/edit/{id}', [BannerController::class, 'edit'])->name('banner.edit');
-    Route::post('/admin/dashboard/banner/edit/update/{id}', [BannerController::class, 'update'])->name('banner.update');
 
     // Custom Pages (HTML content) Routes
-    Route::get('/admin/dashboard/page/add', [PageController::class, 'create'])->name('page.add');
-    Route::get('/admin/dashboard/page/table', [PageController::class, 'index'])->name('page.table');
-    Route::post('/admin/dashboard/page/store', [PageController::class, 'store'])->name('page.store');
-    Route::get('/admin/dashboard/page/delete/{id}', [PageController::class, 'destroy'])->name('page.destroy');
-    Route::get('/admin/dashboard/page/status/{id}', [PageController::class, 'status'])->name('page.status');
-    Route::get('/admin/dashboard/page/edit/{id}', [PageController::class, 'edit'])->name('page.edit');
-    Route::post('/admin/dashboard/page/edit/update/{id}', [PageController::class, 'update'])->name('page.update');
 
     // College Messages Routes (Principal, Chairman, Coordinator)
-    Route::get('/admin/dashboard/college-message/add', [CollegeMessageController::class, 'create'])->name('college_message.add');
-    Route::get('/admin/dashboard/college-message/table', [CollegeMessageController::class, 'index'])->name('college_message.table');
-    Route::post('/admin/dashboard/college-message/store', [CollegeMessageController::class, 'store'])->name('college_message.store');
-    Route::get('/admin/dashboard/college-message/delete/{id}', [CollegeMessageController::class, 'destroy'])->name('college_message.destroy');
-    Route::get('/admin/dashboard/college-message/status/{id}', [CollegeMessageController::class, 'status'])->name('college_message.status');
-    Route::get('/admin/dashboard/college-message/edit/{id}', [CollegeMessageController::class, 'edit'])->name('college_message.edit');
-    Route::post('/admin/dashboard/college-message/edit/update/{id}', [CollegeMessageController::class, 'update'])->name('college_message.update');
 });
 // Backend Routes login and register
 Route::get('/admin/dashboard/login', [Admin::class, 'login'])->name('admin.login');

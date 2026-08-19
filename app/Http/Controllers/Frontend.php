@@ -101,7 +101,7 @@ class Frontend extends Controller
 
     public function member()
     {
-        $teachers = \App\Models\Teacher::where('status', 1)->get();
+        $teachers = \App\Models\Staff::where('show_on_website', 1)->get();
         return view('frontend.pages.member', compact('teachers'));
     }
 

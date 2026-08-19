@@ -1,7 +1,7 @@
 <aside class="admin-sidebar" id="adminSidebar">
 
   {{-- Logo --}}
-  <a href="{{ url('admin/dashboard') }}" class="sb-logo">
+  <a href="{{ request()->is('admin/sms*') ? route('sms.dashboard') : url('admin/dashboard') }}" class="sb-logo">
     <img src="{{ \App\Models\SiteSetting::current()->site_logo ? asset('storage/' . \App\Models\SiteSetting::current()->site_logo) : asset('backend/images/logo.png') }}" alt="GPLC">
     <div class="sb-logo-text">
       <span class="sb-name">GPLC Admin</span>
@@ -13,6 +13,11 @@
   <nav class="sb-nav">
     <ul class="sb-menu">
 
+      @if(request()->is('admin/dashboard*'))
+      {{-- ========================================= --}}
+      {{-- WEBSITE MANAGEMENT SYSTEM (CMS) SIDEBAR   --}}
+      {{-- ========================================= --}}
+
       {{-- Overview --}}
       <li class="sb-group-label"><span class="sb-text">Overview</span></li>
       <li class="sb-item">
@@ -23,7 +28,6 @@
 
       {{-- Academic --}}
       <li class="sb-group-label"><span class="sb-text">Academic</span></li>
-
       <li class="sb-item">
         <a class="sb-link {{ request()->is('admin/dashboard/course*') ? 'active' : '' }}"
            data-bs-toggle="collapse" href="#sbCourse"
@@ -40,25 +44,10 @@
         </div>
       </li>
 
-      <li class="sb-item">
-        <a class="sb-link {{ request()->is('admin/dashboard/teacher*') ? 'active' : '' }}"
-           data-bs-toggle="collapse" href="#sbTeacher"
-           aria-expanded="{{ request()->is('admin/dashboard/teacher*') ? 'true' : 'false' }}" title="Team">
-          <i class="bi bi-people-fill"></i>
-          <span class="sb-text">Team</span>
-          <i class="bi bi-chevron-right sb-arrow"></i>
-        </a>
-        <div class="collapse {{ request()->is('admin/dashboard/teacher*') ? 'show' : '' }}" id="sbTeacher">
-          <ul class="sb-submenu">
-            <li class="sb-item"><a href="{{ route('teacher.add') }}"   class="sb-link {{ request()->routeIs('teacher.add')   ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Add Member</span></a></li>
-            <li class="sb-item"><a href="{{ route('teacher.table') }}" class="sb-link {{ request()->routeIs('teacher.table') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">All Members</span></a></li>
-          </ul>
-        </div>
-      </li>
+
 
       {{-- Website Content --}}
       <li class="sb-group-label"><span class="sb-text">Website Content</span></li>
-
       <li class="sb-item">
         <a class="sb-link {{ request()->is('admin/dashboard/banner*') ? 'active' : '' }}"
            data-bs-toggle="collapse" href="#sbBanner"
@@ -137,24 +126,12 @@
 
       {{-- Pages & Messages --}}
       <li class="sb-group-label"><span class="sb-text">Pages &amp; Messages</span></li>
-
       <li class="sb-item">
         <a href="{{ route('aboutus.add') }}" class="sb-link {{ request()->routeIs('aboutus.add') ? 'active' : '' }}" title="About Us">
           <i class="bi bi-building"></i><span class="sb-text">About Us</span>
         </a>
       </li>
 
-      <li class="sb-item">
-        <a href="{{ route('site.settings.edit') }}" class="sb-link {{ request()->routeIs('site.settings.*') ? 'active' : '' }}">
-          <i class="bi bi-sliders2"></i><span class="sb-text">Site Settings</span>
-        </a>
-      </li>
-
-      <li class="sb-item">
-        <a href="{{ route('exam.index') }}" class="sb-link {{ request()->routeIs('exam.*') ? 'active' : '' }}">
-          <i class="bi bi-journal-check"></i><span class="sb-text">Exam Results</span>
-        </a>
-      </li>
 
       <li class="sb-item">
         <a href="{{ route('navbar.index') }}" class="sb-link {{ request()->routeIs('navbar.*') ? 'active' : '' }}">
@@ -207,12 +184,104 @@
 
       {{-- System --}}
       <li class="sb-group-label"><span class="sb-text">System</span></li>
-
       <li class="sb-item">
         <a href="{{ route('counter.table') }}" class="sb-link {{ request()->routeIs('counter.table') ? 'active' : '' }}" title="Stats Counter">
           <i class="bi bi-bar-chart-fill"></i><span class="sb-text">Stats Counter</span>
         </a>
       </li>
+      <li class="sb-item">
+        <a href="{{ route('site.settings.cms.edit') }}" class="sb-link {{ request()->routeIs('site.settings.cms.*') ? 'active' : '' }}">
+          <i class="bi bi-sliders2"></i><span class="sb-text">Website Settings</span>
+        </a>
+      </li>
+
+      @elseif(request()->is('admin/sms*'))
+      {{-- ========================================= --}}
+      {{-- SCHOOL MANAGEMENT SYSTEM (SMS) SIDEBAR    --}}
+      {{-- ========================================= --}}
+
+      {{-- Overview --}}
+      <li class="sb-group-label"><span class="sb-text">Overview</span></li>
+      <li class="sb-item">
+        <a href="{{ route('sms.dashboard') }}" class="sb-link {{ request()->routeIs('sms.dashboard') ? 'active' : '' }}" title="Dashboard">
+          <i class="bi bi-grid-1x2-fill"></i><span class="sb-text">Dashboard</span>
+        </a>
+      </li>
+
+      {{-- Academic Structure --}}
+      <li class="sb-item">
+        <a class="sb-link {{ request()->is('admin/sms/academic-years*') || request()->is('admin/sms/streams*') || request()->is('admin/sms/academic-classes*') || request()->is('admin/sms/sections*') || request()->is('admin/sms/subjects*') ? 'active' : '' }}"
+           data-bs-toggle="collapse" href="#sbAcademic"
+           aria-expanded="{{ request()->is('admin/sms/academic-years*') || request()->is('admin/sms/streams*') || request()->is('admin/sms/academic-classes*') || request()->is('admin/sms/sections*') || request()->is('admin/sms/subjects*') ? 'true' : 'false' }}">
+          <i class="bi bi-book"></i>
+          <span class="sb-text">Academic Structure</span>
+          <i class="bi bi-chevron-right sb-arrow"></i>
+        </a>
+        <div class="collapse {{ request()->is('admin/sms/academic-years*') || request()->is('admin/sms/streams*') || request()->is('admin/sms/academic-classes*') || request()->is('admin/sms/sections*') || request()->is('admin/sms/subjects*') ? 'show' : '' }}" id="sbAcademic">
+          <ul class="sb-submenu">
+            <li class="sb-item"><a href="{{ route('sms.academic-years.index') }}" class="sb-link {{ request()->routeIs('sms.academic-years.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Academic Years</span></a></li>
+            <li class="sb-item"><a href="{{ route('sms.streams.index') }}" class="sb-link {{ request()->routeIs('sms.streams.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Streams</span></a></li>
+            <li class="sb-item"><a href="{{ route('sms.academic-classes.index') }}" class="sb-link {{ request()->routeIs('sms.academic-classes.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Classes</span></a></li>
+            <li class="sb-item"><a href="{{ route('sms.sections.index') }}" class="sb-link {{ request()->routeIs('sms.sections.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Sections</span></a></li>
+            <li class="sb-item"><a href="{{ route('sms.subjects.index') }}" class="sb-link {{ request()->routeIs('sms.subjects.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Subjects</span></a></li>
+          </ul>
+        </div>
+      </li>
+
+      {{-- HR / Staff Management --}}
+      <li class="sb-item">
+        <a class="sb-link {{ request()->is('admin/sms/staff*') || request()->is('admin/sms/departments*') || request()->is('admin/sms/designations*') ? 'active' : '' }}"
+           data-bs-toggle="collapse" href="#sbStaff"
+           aria-expanded="{{ request()->is('admin/sms/staff*') || request()->is('admin/sms/departments*') || request()->is('admin/sms/designations*') ? 'true' : 'false' }}">
+          <i class="bi bi-person-badge"></i>
+          <span class="sb-text">Staff Management</span>
+          <i class="bi bi-chevron-right sb-arrow"></i>
+        </a>
+        <div class="collapse {{ request()->is('admin/sms/staff*') || request()->is('admin/sms/departments*') || request()->is('admin/sms/designations*') ? 'show' : '' }}" id="sbStaff">
+          <ul class="sb-submenu">
+            <li class="sb-item"><a href="{{ route('sms.staff.index') }}" class="sb-link {{ request()->routeIs('sms.staff.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Staff Directory</span></a></li>
+            <li class="sb-item"><a href="{{ route('sms.departments.index') }}" class="sb-link {{ request()->routeIs('sms.departments.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Departments</span></a></li>
+            <li class="sb-item"><a href="{{ route('sms.designations.index') }}" class="sb-link {{ request()->routeIs('sms.designations.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Designations</span></a></li>
+          </ul>
+        </div>
+      </li>
+
+      {{-- Student Management --}}
+      <li class="sb-item">
+        <a class="sb-link {{ request()->is('admin/sms/students*') ? 'active' : '' }}"
+           data-bs-toggle="collapse" href="#sbStudents"
+           aria-expanded="{{ request()->is('admin/sms/students*') ? 'true' : 'false' }}">
+          <i class="bi bi-people"></i>
+          <span class="sb-text">Student Management</span>
+          <i class="bi bi-chevron-right sb-arrow"></i>
+        </a>
+        <div class="collapse {{ request()->is('admin/sms/students*') ? 'show' : '' }}" id="sbStudents">
+          <ul class="sb-submenu">
+            <li class="sb-item"><a href="{{ route('sms.students.create') }}" class="sb-link {{ request()->routeIs('sms.students.create') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Admit Student</span></a></li>
+            <li class="sb-item"><a href="{{ route('sms.students.index') }}" class="sb-link {{ request()->routeIs('sms.students.index') && !request()->routeIs('sms.students.create') ? 'active' : '' }}"><i class="bi bi-dot"></i><span class="sb-text">Student Directory</span></a></li>
+          </ul>
+        </div>
+      </li>
+
+      {{-- Examination --}}
+      <li class="sb-group-label"><span class="sb-text">Examination</span></li>
+      <li class="sb-item">
+        <a href="{{ route('exam.index') }}" class="sb-link {{ request()->routeIs('exam.*') ? 'active' : '' }}">
+          <i class="bi bi-journal-check"></i><span class="sb-text">Exam Results</span>
+        </a>
+      </li>
+
+      {{-- System --}}
+      <li class="sb-group-label"><span class="sb-text">System</span></li>
+      <li class="sb-item">
+        <a href="{{ route('site.settings.sms.edit') }}" class="sb-link {{ request()->routeIs('site.settings.sms.*') ? 'active' : '' }}">
+          <i class="bi bi-building-gear"></i><span class="sb-text">School Info</span>
+        </a>
+      </li>
+
+      @endif
+
+      {{-- Common Links --}}
       <li class="sb-item">
         <a href="{{ route('editor.table') }}" class="sb-link {{ request()->routeIs('editor.table') ? 'active' : '' }}" title="Editors / Users">
           <i class="bi bi-people-fill"></i><span class="sb-text">Editors / Users</span>
@@ -229,6 +298,9 @@
 
   {{-- Sidebar footer --}}
   <div class="sb-footer">
+    <a href="{{ route('admin.portal') }}" class="sb-link" title="Change Portal" style="margin-bottom: 5px;">
+      <i class="bi bi-arrow-left-right"></i><span class="sb-text">Change Portal</span>
+    </a>
     <a href="{{ url('admin/dashboard/logout') }}" class="sb-link" title="Sign Out">
       <i class="bi bi-box-arrow-left"></i><span class="sb-text">Sign Out</span>
     </a>

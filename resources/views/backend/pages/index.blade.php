@@ -154,8 +154,8 @@
         <a href="{{ route('campus.calendar.index') }}" class="quick-link">
           <i class="bi bi-calendar3"></i> Manage Campus Calendar
         </a>
-        <a href="{{ route('site.settings.edit') }}" class="quick-link">
-          <i class="bi bi-sliders2"></i> Manage Site Settings
+        <a href="{{ route('site.settings.cms.edit') }}" class="quick-link">
+          <i class="bi bi-sliders2"></i> Website Settings
         </a>
 
         </div>
@@ -227,11 +227,7 @@
               <td><span class="badge-admin badge-green">{{ App\Models\CampusCalendarEntry::count() }}</span></td>
               <td><a href="{{ route('campus.calendar.index') }}" class="btn-admin btn-admin-sm btn-admin-light">Manage</a></td>
             </tr>
-            <tr>
-              <td><i class="bi bi-sliders2 text-green me-2"></i>Site Settings</td>
-              <td><span class="badge-admin badge-green">1</span></td>
-              <td><a href="{{ route('site.settings.edit') }}" class="btn-admin btn-admin-sm btn-admin-light">Manage</a></td>
-            </tr>
+
             <tr>
               <td><i class="bi bi-file-earmark-code text-green me-2"></i>HTML Pages</td>
               <td><span class="badge-admin badge-green">{{ App\Models\Page::count() }}</span></td>

@@ -17,10 +17,10 @@
 
 {{-- ===== TEAM SECTION ===== --}}
 @php
-    $administrativeStaff = $teachers->where('staff_type', 'administrative');
-    $teachingStaff       = $teachers->where('staff_type', 'teaching');
-    $nonTeachingStaff    = $teachers->where('staff_type', 'non_teaching');
-    $hasAny = $administrativeStaff->count() || $teachingStaff->count() || $nonTeachingStaff->count();
+    // $teachers here is a collection of App\Models\Staff
+    $groupedStaff = $teachers->groupBy(function($staff) {
+        return $staff->department ? $staff->department->name : 'Other Staff';
+    });
 @endphp
 
 <section class="section-block">
@@ -31,110 +31,38 @@
             <div class="section-divider center"></div>
         </div>
 
-        @if($hasAny)
-
-            @if($administrativeStaff->count() > 0)
+        @if($groupedStaff->count() > 0)
+            @foreach($groupedStaff as $departmentName => $staffMembers)
             <div class="mb-5" data-aos="fade-up">
                 <h3 class="mb-4" style="font-family: var(--font-heading); color: var(--dark);">
-                    <i class="fa-solid fa-building-columns" style="color: var(--green-dark); margin-right: 8px;"></i>Administrative Staff
+                    <i class="fa-solid fa-users" style="color: var(--green-dark); margin-right: 8px;"></i>{{ $departmentName }}
                 </h3>
                 <div class="row">
-                    @foreach($administrativeStaff as $data)
+                    @foreach($staffMembers as $data)
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 60 }}">
                         <div class="faculty-card">
                             <div class="fc-img">
-                                @if($data->image)
-                                    <img src="{{ asset($data->image) }}" alt="{{ $data->name }}" loading="lazy">
+                                @if($data->photo)
+                                    <img src="{{ asset('storage/' . $data->photo) }}" alt="{{ $data->full_name }}" loading="lazy" style="height: 250px; object-fit: cover;">
                                 @else
-                                    <div style="width:100%;height:100%;background:var(--green-pale);display:flex;align-items:center;justify-content:center;">
+                                    <div style="width:100%;height:250px;background:var(--green-pale);display:flex;align-items:center;justify-content:center;">
                                         <i class="fa-solid fa-user fa-4x" style="color:var(--green-dark);opacity:.4;"></i>
                                     </div>
                                 @endif
                                 <div class="fc-overlay">
-                                    @if($data->facebook_link)
-                                        <a href="{{ $data->facebook_link }}" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
-                                    @endif
+                                    {{-- If you add social links to staff later, output them here --}}
                                 </div>
                             </div>
                             <div class="fc-body">
-                                <h5>{{ $data->name }}</h5>
-                                <span>{{ $data->role }}</span>
+                                <h5>{{ $data->full_name }}</h5>
+                                <span>{{ $data->designation->name ?? 'Staff' }}</span>
                             </div>
                         </div>
                     </div>
                     @endforeach
                 </div>
             </div>
-            @endif
-
-            @if($teachingStaff->count() > 0)
-            <div class="mb-5" data-aos="fade-up">
-                <h3 class="mb-4" style="font-family: var(--font-heading); color: var(--dark);">
-                    <i class="fa-solid fa-chalkboard-user" style="color: var(--green-dark); margin-right: 8px;"></i>Teaching Staff
-                </h3>
-                <div class="row">
-                    @foreach($teachingStaff as $data)
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 60 }}">
-                        <div class="faculty-card">
-                            <div class="fc-img">
-                                @if($data->image)
-                                    <img src="{{ asset($data->image) }}" alt="{{ $data->name }}" loading="lazy">
-                                @else
-                                    <div style="width:100%;height:100%;background:var(--green-pale);display:flex;align-items:center;justify-content:center;">
-                                        <i class="fa-solid fa-user fa-4x" style="color:var(--green-dark);opacity:.4;"></i>
-                                    </div>
-                                @endif
-                                <div class="fc-overlay">
-                                    @if($data->facebook_link)
-                                        <a href="{{ $data->facebook_link }}" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="fc-body">
-                                <h5>{{ $data->name }}</h5>
-                                <span>{{ $data->role }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
-            @if($nonTeachingStaff->count() > 0)
-            <div data-aos="fade-up">
-                <h3 class="mb-4" style="font-family: var(--font-heading); color: var(--dark);">
-                    <i class="fa-solid fa-users" style="color: var(--green-dark); margin-right: 8px;"></i>Non-Teaching Staff
-                </h3>
-                <div class="row">
-                    @foreach($nonTeachingStaff as $data)
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 60 }}">
-                        <div class="faculty-card">
-                            <div class="fc-img">
-                                @if($data->image)
-                                    <img src="{{ asset($data->image) }}" alt="{{ $data->name }}" loading="lazy">
-                                @else
-                                    <div style="width:100%;height:100%;background:var(--green-pale);display:flex;align-items:center;justify-content:center;">
-                                        <i class="fa-solid fa-user fa-4x" style="color:var(--green-dark);opacity:.4;"></i>
-                                    </div>
-                                @endif
-                                <div class="fc-overlay">
-                                    @if($data->facebook_link)
-                                        <a href="{{ $data->facebook_link }}" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
-                                    @endif
-                                </div>
-                            </div>
-                            <div class="fc-body">
-                                <h5>{{ $data->name }}</h5>
-                                <span>{{ $data->role }}</span>
-                            </div>
-                        </div>
-                    </div>
-                    @endforeach
-                </div>
-            </div>
-            @endif
-
+            @endforeach
         @else
         <div class="text-center py-5" data-aos="fade-up">
             <i class="fa-solid fa-users fa-3x mb-3" style="color: var(--green-light);"></i>

@@ -11,6 +11,7 @@ class SiteSetting extends Model
     use HasFactory;
 
     protected $fillable = [
+        'calendar_system',
         'site_favicon',
         'site_logo',
         'site_name',
