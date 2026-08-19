@@ -1,0 +1,5 @@
+@extends('backend.pages.layout.master')
+@push('b-title', 'Add Course')
+@section('backend-content')
+@include('backend.pages.course.form')
+@endsection
