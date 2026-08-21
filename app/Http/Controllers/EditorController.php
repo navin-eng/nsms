@@ -27,7 +27,9 @@ class EditorController extends Controller
         $editor = User::find($id);
         $editor->name = $request->name;
         $editor->email = $request->email;
-        $editor->password = Hash::make($request->password);
+        if ($request->filled('password')) {
+            $editor->password = Hash::make($request->password);
+        }
         if ($editor->a_type = 'A') {
             $editor->a_type = 'A';
         } else {

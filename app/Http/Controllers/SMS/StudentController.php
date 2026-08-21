@@ -48,7 +48,7 @@ class StudentController extends Controller
     public function create()
     {
         $classes = AcademicClass::all();
-        $sections = Section::all();
+        $sections = Section::with('academicClasses')->orderBy('name')->get();
         $streams = Stream::all();
         $academicYears = AcademicYear::all();
         $activeYear = AcademicYear::where('is_active', true)->first();
@@ -145,7 +145,7 @@ class StudentController extends Controller
     public function edit(Student $student)
     {
         $classes = AcademicClass::all();
-        $sections = Section::all();
+        $sections = Section::with('academicClasses')->orderBy('name')->get();
         $streams = Stream::all();
         $academicYears = AcademicYear::all();
         
@@ -246,5 +246,160 @@ class StudentController extends Controller
         $student->load(['guardian', 'enrollments.academicYear', 'enrollments.academicClass', 'enrollments.section']);
         $siteSetting = \App\Models\SiteSetting::first();
         return view('backend.pages.sms.students.print', compact('student', 'siteSetting'));
+    }
+
+    public function generateParentAccount(\Illuminate\Http\Request $request, $id)
+    {
+        $guardian = \App\Models\Guardian::findOrFail($id);
+        
+        $request->validate([
+            'email' => 'nullable|email|unique:users,email',
+        ]);
+
+        if ($guardian->user_id) {
+            return redirect()->back()->with('error', 'This guardian already has a User ID.');
+        }
+
+        $email = $request->email;
+        if (empty($email)) {
+            // Generate a unique pseudo-email for login purposes
+            $email = 'parent' . $guardian->id . '_' . \Illuminate\Support\Str::random(4) . '@school.local';
+        }
+
+        if (empty($guardian->guardian_email)) {
+            $guardian->guardian_email = $email;
+            $guardian->save();
+        }
+
+        $plainPassword = \Illuminate\Support\Str::random(10);
+        
+        $user = \App\Models\User::create([
+            'name' => $guardian->guardian_name ?? ($guardian->father_name ?? 'Parent'),
+            'email' => $email,
+            'password' => \Illuminate\Support\Facades\Hash::make($plainPassword),
+            'a_type' => 'P',
+            'image' => 'default.png',
+        ]);
+
+        $user->assignRole('Parent');
+
+        $guardian->user_id = $user->id;
+        $guardian->save();
+
+        try {
+            if (!str_contains($email, '@school.local')) {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\StaffAccountCreated($user->name, $user->email, $plainPassword));
+            }
+        } catch (\Exception $e) {
+            // Ignore email errors
+        }
+
+        return redirect()->back()
+            ->with('success', 'Parent portal account generated successfully.')
+            ->with('credentials', [
+                'email' => $email,
+                'password' => $plainPassword
+            ]);
+    }
+
+    public function resetParentPassword($id)
+    {
+        $guardian = \App\Models\Guardian::findOrFail($id);
+        
+        if (!$guardian->user_id) {
+            return redirect()->back()->with('error', 'No parent account exists to reset.');
+        }
+
+        $user = \App\Models\User::find($guardian->user_id);
+        
+        if (!$user) {
+            return redirect()->back()->with('error', 'User record not found.');
+        }
+
+        $plainPassword = \Illuminate\Support\Str::random(10);
+        $user->password = \Illuminate\Support\Facades\Hash::make($plainPassword);
+        $user->save();
+
+        try {
+            if (!str_contains($user->email, '@school.local')) {
+                \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\StaffAccountCreated($user->name, $user->email, $plainPassword));
+            }
+        } catch (\Exception $e) {
+            // Ignore email errors
+        }
+
+        return redirect()->back()
+            ->with('success', 'Parent password reset successfully.')
+            ->with('credentials', [
+                'email' => $user->email,
+                'password' => $plainPassword
+            ]);
+    }
+
+    public function generateStudentAccount(\Illuminate\Http\Request $request, $id)
+    {
+        $student = \App\Models\Student::findOrFail($id);
+        
+        $request->validate([
+            'email' => 'nullable|email|unique:users,email',
+        ]);
+
+        if ($student->user_id) {
+            return redirect()->back()->with('error', 'This student already has a User ID.');
+        }
+
+        $email = $request->email;
+        if (empty($email)) {
+            $email = 'student' . $student->id . '_' . \Illuminate\Support\Str::random(4) . '@school.local';
+        }
+
+        $plainPassword = \Illuminate\Support\Str::random(10);
+        
+        $user = \App\Models\User::create([
+            'name' => $student->first_name . ' ' . $student->last_name,
+            'email' => $email,
+            'password' => \Illuminate\Support\Facades\Hash::make($plainPassword),
+            'a_type' => 'ST',
+            'image' => 'default.png',
+        ]);
+
+        $role = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Student']);
+        $user->assignRole($role);
+
+        $student->user_id = $user->id;
+        $student->save();
+
+        return redirect()->back()
+            ->with('success', 'Student portal account generated successfully.')
+            ->with('student_credentials', [
+                'email' => $email,
+                'password' => $plainPassword
+            ]);
+    }
+
+    public function resetStudentPassword($id)
+    {
+        $student = \App\Models\Student::findOrFail($id);
+        
+        if (!$student->user_id) {
+            return redirect()->back()->with('error', 'No student account exists to reset.');
+        }
+
+        $user = \App\Models\User::find($student->user_id);
+        
+        if (!$user) {
+            return redirect()->back()->with('error', 'User record not found.');
+        }
+
+        $plainPassword = \Illuminate\Support\Str::random(10);
+        $user->password = \Illuminate\Support\Facades\Hash::make($plainPassword);
+        $user->save();
+
+        return redirect()->back()
+            ->with('success', 'Student password reset successfully.')
+            ->with('student_credentials', [
+                'email' => $user->email,
+                'password' => $plainPassword
+            ]);
     }
 }

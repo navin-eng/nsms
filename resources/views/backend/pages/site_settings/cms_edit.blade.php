@@ -152,10 +152,18 @@
                             <input class="form-check-input" type="checkbox" role="switch" id="stickyMobileCollapsed" name="sticky_notice_mobile_collapsed" value="1" {{ old('sticky_notice_mobile_collapsed', $settings->sticky_notice_mobile_collapsed ?? true) ? 'checked' : '' }}>
                             <label class="form-check-label" for="stickyMobileCollapsed">Start collapsed on mobile</label>
                         </div>
+                        <hr>
+                        <h6 class="mb-3 text-success fw-bold">🎓 Online Admission</h6>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="enableOnlineAdmission" name="enable_online_admission" value="1" {{ old('enable_online_admission', $settings->enable_online_admission ?? false) ? 'checked' : '' }}>
+                            <label class="form-check-label fw-semibold" for="enableOnlineAdmission">Enable Online Admission on Website</label>
+                        </div>
+                        <small class="text-muted">When disabled, the admission page will show a "Closed" message. Turn this on only during admission season.</small>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <div class="card border-0 shadow-sm mt-4">
             <div class="card-body">

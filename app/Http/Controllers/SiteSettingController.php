@@ -114,6 +114,7 @@ class SiteSettingController extends Controller
             'show_back_to_top' => 'nullable|boolean',
             'sticky_notice_desktop_collapsed' => 'nullable|boolean',
             'sticky_notice_mobile_collapsed' => 'nullable|boolean',
+            'enable_online_admission' => 'nullable|boolean',
         ]);
 
         $data['show_sticky_notice'] = $request->boolean('show_sticky_notice');
@@ -122,6 +123,7 @@ class SiteSettingController extends Controller
         $data['show_back_to_top'] = $request->boolean('show_back_to_top');
         $data['sticky_notice_desktop_collapsed'] = $request->boolean('sticky_notice_desktop_collapsed');
         $data['sticky_notice_mobile_collapsed'] = $request->boolean('sticky_notice_mobile_collapsed');
+        $data['enable_online_admission'] = $request->boolean('enable_online_admission');
 
         $settings = SiteSetting::first();
         if ($settings) {

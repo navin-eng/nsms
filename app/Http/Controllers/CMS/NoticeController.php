@@ -3,25 +3,24 @@
 namespace App\Http\Controllers\CMS;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Notice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use RealRashid\SweetAlert\Facades\Alert;
 
-
-
 class NoticeController extends Controller
 {
     public function index()
     {
-        $notice = Notice::all();
+        $notice = Notice::where('is_school', false)->get();
         return view('backend.pages.notice.table', compact('notice'));
     }
+
     public function create()
     {
         return view('backend.pages.notice.add');
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -41,31 +40,32 @@ class NoticeController extends Controller
         }
         $notice->description = $request->description;
         $notice->show_in = 'm';
+        $notice->is_school = false;
+        $notice->status = 'published'; // Website notices are active immediately
         $save = $notice->save();
         if ($save == true) {
-
             Alert::success('Saved', 'notice saved successfully');
+            return redirect()->route('notice.table');
+        } else {
+            Alert::error('oops', 'notice could not be saved');
+            return back();
+        }
+    }
+
+    public function edit($id)
+    {
+        $notice = Notice::where('is_school', false)->find($id);
+        if (is_null($notice)) {
+            Alert::error('oops', 'Something went wrong');
             return back();
         } else {
-            Alert::error('oops', 'notice couldnot saved');
-            return back();
+            return view('backend.pages.notice.edit', compact('notice'));
         }
     }
-    public function edit(notice $notice,$id)
-    {
-        $notice = Notice::find($id);
-        if(is_null($notice))
-        {
-            Alert::error('oops','Something went wrong');
-        }
-        else
-        {
-            return view('backend.pages.notice.edit',compact('notice'));
-        }
-    }
+
     public function status($id)
     {
-        $notice = Notice::find($id);
+        $notice = Notice::where('is_school', false)->find($id);
         if (is_null($notice)) {
             Alert::error('oops', 'We Couldnot find notice');
         } else {
@@ -82,14 +82,14 @@ class NoticeController extends Controller
             }
         }
     }
-    public function update(Request $request, notice $notice,$id)
-    {
 
+    public function update(Request $request, $id)
+    {
         $request->validate([
             'title' => 'required|min:2',
             'description' => 'required',
         ]);
-        $notice = Notice::find($id);
+        $notice = Notice::where('is_school', false)->find($id);
         $notice->title = ucwords($request->title);
         $notice->slug = Str::slug($request->title);
         if ($request->hasFile('image')) {
@@ -103,19 +103,21 @@ class NoticeController extends Controller
         $notice->show_in = 'm';
         $save = $notice->update();
         if ($save == true) {
-
-            Alert::success('Saved', 'notice update successfully');
+            Alert::success('Saved', 'notice updated successfully');
             return redirect()->route('notice.table');
         } else {
-            Alert::error('oops', 'notice couldnot update');
+            Alert::error('oops', 'notice could not be updated');
             return redirect()->route('notice.table');
         }
     }
+
     public function destroy($id)
     {
-        $notice = Notice::find($id);
-        $notice->delete();
-        Alert::success('Deleted', 'notice deleted');
+        $notice = Notice::where('is_school', false)->find($id);
+        if ($notice) {
+            $notice->delete();
+            Alert::success('Deleted', 'notice deleted');
+        }
         return redirect()->route('notice.table');
     }
 }

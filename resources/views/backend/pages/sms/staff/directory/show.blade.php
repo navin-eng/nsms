@@ -158,6 +158,62 @@
                             @endif
                         </div>
                     </div>
+                        </div>
+                    </div>
+
+                    {{-- Teaching Assignments --}}
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="card-title m-0 fw-bold">Teaching Assignments</h6>
+                        </div>
+                        <div class="card-body p-0">
+                            @if(isset($assignments) && $assignments->count() > 0)
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Subject</th>
+                                                <th>Class / Section</th>
+                                                <th>Year</th>
+                                                <th class="text-center">Periods/wk</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($assignments as $assignment)
+                                                <tr>
+                                                    <td>
+                                                        <div class="fw-semibold">{{ $assignment->subject->name }}</div>
+                                                        <div class="small text-muted">{{ strtoupper($assignment->subject->code) }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <div>{{ $assignment->academicClass->name }}</div>
+                                                        <div class="small text-muted">{{ $assignment->section ? $assignment->section->name : 'All Sections' }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <span class="badge {{ $assignment->academicYear->is_active ? 'bg-success' : 'bg-secondary' }} bg-opacity-10 {{ $assignment->academicYear->is_active ? 'text-success' : 'text-secondary' }}">
+                                                            {{ $assignment->academicYear->name }}
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <span class="badge bg-light text-dark border">{{ $assignment->weekly_periods ?? '—' }}</span>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="text-center py-4 text-muted">
+                                    <i class="bi bi-journal-x fs-2 text-secondary mb-2 opacity-50"></i>
+                                    <p class="mb-0">No subjects currently assigned to this staff member.</p>
+                                    @if(auth()->user()->hasRole('Super Admin') || auth()->user()->hasRole('Admin'))
+                                        <a href="{{ route('sms.assignments.index') }}" class="btn btn-sm btn-outline-primary mt-3">Manage Assignments</a>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Documents Tab -->

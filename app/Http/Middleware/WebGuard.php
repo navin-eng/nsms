@@ -19,6 +19,18 @@ class WebGuard
     {
         if(Auth::check())
         {
+            $user = Auth::user();
+            
+            // If it's a parent trying to access an admin route, redirect them to the parent portal
+            if ($user->a_type === 'P' && $request->is('admin/*')) {
+                return redirect()->route('parent.dashboard');
+            }
+            
+            // If it's a student trying to access an admin route, redirect them to the student portal
+            if ($user->a_type === 'ST' && $request->is('admin/*')) {
+                return redirect()->route('student.dashboard');
+            }
+
             return $next($request);
         }
         else

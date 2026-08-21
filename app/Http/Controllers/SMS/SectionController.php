@@ -13,21 +13,35 @@ class SectionController extends Controller
 {
     public function index()
     {
-        $sections = Section::with('academicClass')->orderBy('academic_class_id')->get();
+        $sections = Section::with('academicClasses')->orderBy('name')->get();
         $classes = AcademicClass::orderBy('numeric_value')->get();
         return view('backend.pages.sms.sections.index', compact('sections', 'classes'));
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'academic_class_id' => 'required|exists:academic_classes,id',
+        $request->validate([
+            'name' => 'required|string|max:1000',
+            'academic_class_id' => 'nullable|exists:academic_classes,id',
             'capacity' => 'nullable|integer|min:1',
         ]);
 
-        Section::create($data);
-        Alert::success('Success', 'Section added successfully');
+        // Split by comma — allow bulk creation like "A, B, C" or "Neptune, Pluto"
+        $names = array_filter(array_map('trim', explode(',', $request->name)));
+
+        $created = 0;
+        foreach ($names as $name) {
+            if ($name === '') continue;
+            Section::create([
+                'name'              => $name,
+                'academic_class_id' => $request->academic_class_id ?: null,
+                'capacity'          => $request->capacity ?: null,
+            ]);
+            $created++;
+        }
+
+        $label = $created === 1 ? 'Section' : 'Sections';
+        Alert::success('Success', "{$created} {$label} added successfully");
         return back();
     }
 

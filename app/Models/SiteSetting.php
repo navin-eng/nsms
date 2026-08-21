@@ -41,6 +41,7 @@ class SiteSetting extends Model
         'show_back_to_top',
         'sticky_notice_desktop_collapsed',
         'sticky_notice_mobile_collapsed',
+        'enable_online_admission',
     ];
 
     public static function current()

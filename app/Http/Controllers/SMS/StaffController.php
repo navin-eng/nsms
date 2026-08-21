@@ -68,7 +68,13 @@ class StaffController extends Controller
     public function show(Staff $staff)
     {
         $staff->load(['department', 'designation', 'documents']);
-        return view('backend.pages.sms.staff.directory.show', compact('staff'));
+        
+        $assignments = \App\Models\ClassSubjectAssignment::with(['academicYear', 'academicClass', 'section', 'subject'])
+                            ->where('staff_id', $staff->id)
+                            ->orderByDesc('academic_year_id')
+                            ->get();
+
+        return view('backend.pages.sms.staff.directory.show', compact('staff', 'assignments'));
     }
 
     public function edit(Staff $staff)

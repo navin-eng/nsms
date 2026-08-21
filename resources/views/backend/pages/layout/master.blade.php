@@ -189,7 +189,7 @@
     function closeSidebar() { adminSidebar.classList.remove('open'); sbOverlay.classList.remove('show'); }
 
     document.getElementById('sidebarToggle')?.addEventListener('click', function () {
-      if (window.innerWidth <= 991) {
+      if (window.innerWidth <= 767) {
         /* Mobile: slide in/out over content */
         adminSidebar.classList.contains('open') ? closeSidebar() : openSidebar();
       } else {
@@ -202,7 +202,7 @@
     sbOverlay.addEventListener('click', closeSidebar);
 
     /* Restore collapse state on page load */
-    if (window.innerWidth > 991 && localStorage.getItem('sbCollapsed') === '1') {
+    if (window.innerWidth > 767 && localStorage.getItem('sbCollapsed') === '1') {
       adminSidebar.classList.add('collapsed');
       document.getElementById('adminMain').classList.add('sb-collapsed');
     }

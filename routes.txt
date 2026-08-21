@@ -1,0 +1,23 @@
+
+   ReflectionException 
+
+  Class "App\Http\Controllers\SMS\CertificateController" does not exist
+
+  at vendor/laravel/framework/src/Illuminate/Foundation/Console/RouteListCommand.php:234
+    230▕             if ($this->isFrameworkController($route)) {
+    231▕                 return false;
+    232▕             }
+    233▕ 
+  ➜ 234▕             $path = (new ReflectionClass($route->getControllerClass()))
+    235▕                                 ->getFileName();
+    236▕         } else {
+    237▕             return false;
+    238▕         }
+
+      [2m+3 vendor frames [22m
+  4   [internal]:0
+      Illuminate\Foundation\Console\RouteListCommand::{closure:Illuminate\Foundation\Console\RouteListCommand::getRoutes():124}(Object(Illuminate\Routing\Route))
+
+      [2m+17 vendor frames [22m
+  22  artisan:35
+      Illuminate\Foundation\Console\Kernel::handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))

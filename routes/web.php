@@ -32,6 +32,8 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [Frontend::class, 'home'])->name('home');
 Route::get('/gallery', [Frontend::class, 'gallery'])->name('gallery');
 Route::get('/contact', [Frontend::class, 'contact'])->name('contact');
+Route::get('/admission', [Frontend::class, 'admission'])->name('admission.form');
+Route::post('/admission', [Frontend::class, 'submitAdmission'])->name('admission.submit');
 Route::get('/member', [Frontend::class, 'member'])->name('member');
 Route::get('/about/us', [Frontend::class, 'about'])->name('about.us');
 Route::get('/secure-login', [Admin::class, 'login'])->name('secure.login');
@@ -56,10 +58,16 @@ Route::get('/close', function () {
 Route::get('/results', [ResultController::class, 'index'])->name('results.index');
 Route::post('/results/search', [ResultController::class, 'search'])->name('results.search');
 
-Route::middleware('webGuard')->group(function () {
+// Public Document QR Verification
+Route::get('/verify/doc/{token}', [\App\Http\Controllers\Frontend\VerificationController::class, 'show'])->name('verification.show');
 
+Route::middleware('webGuard')->group(function () {
     Route::prefix('admin/sms')->group(base_path('routes/sms.php'));
     Route::group([], base_path('routes/cms.php'));
+    
+    // Parent Portal Routes
+    Route::prefix('parent')->middleware('role:Parent')->group(base_path('routes/parent.php'));
+    Route::prefix('student')->middleware('role:Student')->group(base_path('routes/student.php'));
 
 
 
@@ -95,15 +103,15 @@ Route::middleware('webGuard')->group(function () {
     Route::post('/admin/dashboard/counter/edit/update/{id}', [CounterController::class, 'update'])->name('counter.update');
     Route::get('/admin/dashboard/home-sections', [HomeSectionController::class, 'index'])->name('home.sections.index');
     Route::post('/admin/dashboard/home-sections/update', [HomeSectionController::class, 'update'])->name('home.sections.update');
-    
+
     // CMS Site Settings
     Route::get('/admin/dashboard/website-settings', [SiteSettingController::class, 'editCms'])->name('site.settings.cms.edit');
     Route::post('/admin/dashboard/website-settings/update', [SiteSettingController::class, 'updateCms'])->name('site.settings.cms.update');
-    
+
     // SMS Site Settings
     Route::get('/admin/sms/site-settings', [SiteSettingController::class, 'editSms'])->name('site.settings.sms.edit');
     Route::post('/admin/sms/site-settings/update', [SiteSettingController::class, 'updateSms'])->name('site.settings.sms.update');
-    
+
     // The SMS site-settings routes will be placed further down with the other SMS routes
 
     // Navbar Builder Routes
@@ -117,11 +125,11 @@ Route::middleware('webGuard')->group(function () {
     Route::post('/admin/sms/exams/store', [ExamController::class, 'store'])->name('exam.store');
     Route::post('/admin/sms/exams/update/{id}', [ExamController::class, 'update'])->name('exam.update');
     Route::get('/admin/sms/exams/delete/{id}', [ExamController::class, 'destroy'])->name('exam.destroy');
-    
+
     Route::get('/admin/sms/exams/{id}', [ExamController::class, 'show'])->name('exam.show');
     Route::post('/admin/sms/exams/{id}/import', [ExamController::class, 'importCsv'])->name('exam.import');
     Route::get('/admin/sms/exams/sample/download', [ExamController::class, 'downloadSample'])->name('exam.sample');
-    
+
     Route::post('/admin/sms/exam-results/{exam_id}/store', [ExamController::class, 'storeResult'])->name('exam.result.store');
     Route::post('/admin/sms/exam-results/update/{id}', [ExamController::class, 'updateResult'])->name('exam.result.update');
     Route::get('/admin/sms/exam-results/delete/{id}', [ExamController::class, 'destroyResult'])->name('exam.result.destroy');
@@ -145,6 +153,9 @@ Route::middleware('webGuard')->group(function () {
     Route::get('/admin/dashboard/editor/edit/{id}', [EditorController::class, 'edit'])->name('editor.edit');
     Route::get('/admin/dashboard/editor/delete/{id}', [EditorController::class, 'delete'])->name('editor.delete');
     Route::post('/admin/dashboard/editor/edit/update/{id}', [EditorController::class, 'update'])->name('editor.update');
+
+
+
 
     // Profile
     Route::get('/admin/dashboard/profile', [Admin::class, 'profile'])->name('admin.profile');

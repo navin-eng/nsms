@@ -86,7 +86,7 @@
                                 <select name="section_id" class="form-select">
                                     <option value="">Select Section</option>
                                     @foreach($sections as $s)
-                                        <option value="{{ $s->id }}" {{ (old('section_id') == $s->id || ($currentEnrollment && $currentEnrollment->section_id == $s->id)) ? 'selected' : '' }}>{{ $s->name }}</option>
+                                        <option value="{{ $s->id }}" data-class-ids="{{ $s->academicClasses->pluck('id')->join(',') }}" {{ (old('section_id') == $s->id || ($currentEnrollment && $currentEnrollment->section_id == $s->id)) ? 'selected' : '' }}>{{ $s->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

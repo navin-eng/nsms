@@ -155,6 +155,148 @@
                         </div>
                     </div>
 
+                    <!-- Student Portal Account Management -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-header bg-white py-3">
+                            <h6 class="card-title m-0 fw-bold"><i class="bi bi-person-badge me-2"></i>Student Portal Account</h6>
+                        </div>
+                        <div class="card-body">
+                            @if(session('student_credentials'))
+                                <div class="alert alert-info border-info shadow-sm mb-4" id="student-credentials-alert">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-info-circle-fill fs-4 text-info me-3"></i>
+                                        <div>
+                                            <h6 class="alert-heading fw-bold mb-1">Account Credentials Generated!</h6>
+                                            <p class="mb-0 small">Please copy and provide these credentials to the student securely.</p>
+                                        </div>
+                                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    <hr class="border-info opacity-25">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-muted mb-1">Login ID / Email</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control font-monospace bg-white" id="student-cred-email" value="{{ session('student_credentials')['email'] }}" readonly>
+                                                <button class="btn btn-outline-info" type="button" onclick="navigator.clipboard.writeText(document.getElementById('student-cred-email').value); this.innerHTML='<i class=\'bi bi-check\'></i> Copied!'; setTimeout(() => this.innerHTML='<i class=\'bi bi-clipboard\'></i> Copy', 2000);"><i class="bi bi-clipboard"></i> Copy</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold text-muted mb-1">Password</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control font-monospace bg-white" id="student-cred-password" value="{{ session('student_credentials')['password'] }}" readonly>
+                                                <button class="btn btn-outline-info" type="button" onclick="navigator.clipboard.writeText(document.getElementById('student-cred-password').value); this.innerHTML='<i class=\'bi bi-check\'></i> Copied!'; setTimeout(() => this.innerHTML='<i class=\'bi bi-clipboard\'></i> Copy', 2000);"><i class="bi bi-clipboard"></i> Copy</button>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 mt-3 text-end">
+                                            <button type="button" class="btn btn-sm btn-info text-white fw-semibold" onclick="printStudentCredentials()">
+                                                <i class="bi bi-printer"></i> Print Credentials
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                    function printStudentCredentials() {
+                                        const email = document.getElementById('student-cred-email').value;
+                                        const password = document.getElementById('student-cred-password').value;
+                                        const studentName = '{{ addslashes($student->first_name) }} {{ addslashes($student->last_name) }}';
+                                        
+                                        const printWindow = window.open('', '_blank', 'width=600,height=400');
+                                        if (!printWindow) {
+                                            alert("Popup blocker might be enabled. Please allow popups for this site to print.");
+                                            return;
+                                        }
+                                        
+                                        printWindow.document.write(`
+                                            <html>
+                                            <head>
+                                                <title>Student Portal Credentials</title>
+                                                <style>
+                                                    body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
+                                                    .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                                                    .header { text-align: center; border-bottom: 2px solid #0056b3; padding-bottom: 10px; margin-bottom: 20px; }
+                                                    h2 { margin: 0; color: #0056b3; font-size: 20px; }
+                                                    .field { margin-bottom: 15px; }
+                                                    .label { font-size: 12px; color: #666; text-transform: uppercase; font-weight: bold; }
+                                                    .value { font-size: 16px; font-family: monospace; background: #f8f9fa; padding: 8px; border-radius: 4px; border: 1px solid #eee; margin-top: 5px; }
+                                                    .footer { margin-top: 20px; font-size: 12px; text-align: center; color: #888; }
+                                                </style>
+                                            </head>
+                                            <body>
+                                                <div class="card">
+                                                    <div class="header">
+                                                        <h2>Student Portal Login</h2>
+                                                    </div>
+                                                    <p style="text-align: center; font-size: 14px;"><strong>Student:</strong> ${studentName}</p>
+                                                    <div class="field">
+                                                        <div class="label">Login ID / Email</div>
+                                                        <div class="value">${email}</div>
+                                                    </div>
+                                                    <div class="field">
+                                                        <div class="label">Password</div>
+                                                        <div class="value">${password}</div>
+                                                    </div>
+                                                    <div class="footer">
+                                                        Please keep these credentials safe and secure.<br>
+                                                        Visit <strong>${window.location.origin}/secure-login</strong> to log in.
+                                                    </div>
+                                                </div>
+                                            </body>
+                                            </html>
+                                        `);
+                                        
+                                        printWindow.document.close();
+                                        printWindow.focus();
+                                        
+                                        setTimeout(() => {
+                                            printWindow.print();
+                                            printWindow.close();
+                                        }, 250);
+                                    }
+                                </script>
+                            @endif
+
+                            @if($student->user_id)
+                                <div class="alert alert-success bg-success bg-opacity-10 border-success border-opacity-25 d-flex align-items-center mb-0">
+                                    <i class="bi bi-check-circle-fill fs-4 text-success me-3"></i>
+                                    <div>
+                                        <strong>Account is Active</strong><br>
+                                        <span class="small">The student portal account has been generated for this student.</span>
+                                    </div>
+                                    <div class="ms-auto">
+                                        <form action="{{ route('sms.students.reset-student-password', $student->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to reset the student password? A new password will be generated and shown on screen.');">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-warning">
+                                                <i class="bi bi-key"></i> Reset Password
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="alert alert-secondary bg-light border d-flex flex-column mb-0">
+                                    <div class="mb-3 d-flex align-items-center">
+                                        <i class="bi bi-exclamation-circle fs-4 text-muted me-3"></i>
+                                        <div>
+                                            <strong>No Account Generated</strong><br>
+                                            <span class="small">Generate an account so the student can log in to their portal. If email is left blank, an ID will be generated automatically.</span>
+                                        </div>
+                                    </div>
+                                    <form action="{{ route('sms.students.generate-student-account', $student->id) }}" method="POST" class="row g-2 align-items-center">
+                                        @csrf
+                                        <div class="col-auto">
+                                            <label class="visually-hidden">Email</label>
+                                            <input type="email" name="email" class="form-control form-control-sm" placeholder="Student Email Address (Optional)" value="">
+                                        </div>
+                                        <div class="col-auto">
+                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                <i class="bi bi-person-plus"></i> Generate Account
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
                     <!-- Guardian Info -->
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-white py-3">
@@ -186,6 +328,146 @@
                                     </div>
                                 </div>
                                 @endif
+
+                                <!-- Parent Portal Account Management -->
+                                <div class="col-12 mt-4 pt-4 border-top">
+                                    <h6 class="text-primary mb-3"><i class="bi bi-shield-lock me-2"></i>Parent Portal Account</h6>
+                                    
+                                    @if(session('credentials'))
+                                        <div class="alert alert-info border-info shadow-sm mb-4" id="credentials-alert">
+                                            <div class="d-flex align-items-center mb-3">
+                                                <i class="bi bi-info-circle-fill fs-4 text-info me-3"></i>
+                                                <div>
+                                                    <h6 class="alert-heading fw-bold mb-1">Account Credentials Generated!</h6>
+                                                    <p class="mb-0 small">Please copy and provide these credentials to the parent securely.</p>
+                                                </div>
+                                                <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                            <hr class="border-info opacity-25">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label class="form-label small fw-bold text-muted mb-1">Login ID / Email</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control font-monospace bg-white" id="cred-email" value="{{ session('credentials')['email'] }}" readonly>
+                                                        <button class="btn btn-outline-info" type="button" onclick="navigator.clipboard.writeText(document.getElementById('cred-email').value); this.innerHTML='<i class=\'bi bi-check\'></i> Copied!'; setTimeout(() => this.innerHTML='<i class=\'bi bi-clipboard\'></i> Copy', 2000);"><i class="bi bi-clipboard"></i> Copy</button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label small fw-bold text-muted mb-1">Password</label>
+                                                    <div class="input-group input-group-sm">
+                                                        <input type="text" class="form-control font-monospace bg-white" id="cred-password" value="{{ session('credentials')['password'] }}" readonly>
+                                                        <button class="btn btn-outline-info" type="button" onclick="navigator.clipboard.writeText(document.getElementById('cred-password').value); this.innerHTML='<i class=\'bi bi-check\'></i> Copied!'; setTimeout(() => this.innerHTML='<i class=\'bi bi-clipboard\'></i> Copy', 2000);"><i class="bi bi-clipboard"></i> Copy</button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 mt-3 text-end">
+                                                    <button type="button" class="btn btn-sm btn-info text-white fw-semibold" onclick="printCredentials()">
+                                                        <i class="bi bi-printer"></i> Print Credentials
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <script>
+                                            function printCredentials() {
+                                                const email = document.getElementById('cred-email').value;
+                                                const password = document.getElementById('cred-password').value;
+                                                const parentName = '{{ addslashes($student->guardian->guardian_name ?? $student->guardian->father_name ?? 'Parent') }}';
+                                                const studentName = '{{ addslashes($student->first_name) }} {{ addslashes($student->last_name) }}';
+                                                
+                                                const printWindow = window.open('', '_blank', 'width=600,height=400');
+                                                if (!printWindow) {
+                                                    alert("Popup blocker might be enabled. Please allow popups for this site to print.");
+                                                    return;
+                                                }
+                                                
+                                                printWindow.document.write(`
+                                                    <html>
+                                                    <head>
+                                                        <title>Parent Portal Credentials</title>
+                                                        <style>
+                                                            body { font-family: Arial, sans-serif; padding: 40px; color: #333; }
+                                                            .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+                                                            .header { text-align: center; border-bottom: 2px solid #0056b3; padding-bottom: 10px; margin-bottom: 20px; }
+                                                            h2 { margin: 0; color: #0056b3; font-size: 20px; }
+                                                            .field { margin-bottom: 15px; }
+                                                            .label { font-size: 12px; color: #666; text-transform: uppercase; font-weight: bold; }
+                                                            .value { font-size: 16px; font-family: monospace; background: #f8f9fa; padding: 8px; border-radius: 4px; border: 1px solid #eee; margin-top: 5px; }
+                                                            .footer { margin-top: 20px; font-size: 12px; text-align: center; color: #888; }
+                                                        </style>
+                                                    </head>
+                                                    <body>
+                                                        <div class="card">
+                                                            <div class="header">
+                                                                <h2>Parent Portal Login</h2>
+                                                            </div>
+                                                            <p style="text-align: center; font-size: 14px;"><strong>Parent:</strong> ${parentName}<br><strong>Student:</strong> ${studentName}</p>
+                                                            <div class="field">
+                                                                <div class="label">Login ID / Email</div>
+                                                                <div class="value">${email}</div>
+                                                            </div>
+                                                            <div class="field">
+                                                                <div class="label">Password</div>
+                                                                <div class="value">${password}</div>
+                                                            </div>
+                                                            <div class="footer">
+                                                                Please keep these credentials safe and secure.<br>
+                                                                Visit <strong>${window.location.origin}/secure-login</strong> to log in.
+                                                            </div>
+                                                        </div>
+                                                    </body>
+                                                    </html>
+                                                `);
+                                                
+                                                printWindow.document.close();
+                                                printWindow.focus();
+                                                
+                                                setTimeout(() => {
+                                                    printWindow.print();
+                                                    printWindow.close();
+                                                }, 250);
+                                            }
+                                        </script>
+                                    @endif
+
+                                    @if($student->guardian->user_id)
+                                        <div class="alert alert-success bg-success bg-opacity-10 border-success border-opacity-25 d-flex align-items-center">
+                                            <i class="bi bi-check-circle-fill fs-4 text-success me-3"></i>
+                                            <div>
+                                                <strong>Account is Active</strong><br>
+                                                <span class="small">The parent portal account has been generated for this guardian.</span>
+                                            </div>
+                                            <div class="ms-auto">
+                                                <form action="{{ route('sms.students.reset-parent-password', $student->guardian->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to reset the parent password? A new password will be generated and shown on screen.');">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-warning">
+                                                        <i class="bi bi-key"></i> Reset Password
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="alert alert-secondary bg-light border d-flex flex-column">
+                                            <div class="mb-3 d-flex align-items-center">
+                                                <i class="bi bi-exclamation-circle fs-4 text-muted me-3"></i>
+                                                <div>
+                                                    <strong>No Account Generated</strong><br>
+                                                    <span class="small">Generate an account so the parent can log in to the portal. If email is left blank, an ID will be generated automatically.</span>
+                                                </div>
+                                            </div>
+                                            <form action="{{ route('sms.students.generate-parent-account', $student->guardian->id) }}" method="POST" class="row g-2 align-items-center">
+                                                @csrf
+                                                <div class="col-auto">
+                                                    <label class="visually-hidden">Email</label>
+                                                    <input type="email" name="email" class="form-control form-control-sm" placeholder="Parent Email Address (Optional)" value="{{ $student->guardian->guardian_email ?? $student->guardian->father_email ?? '' }}">
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button type="submit" class="btn btn-sm btn-primary">
+                                                        <i class="bi bi-person-plus"></i> Generate Account
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>

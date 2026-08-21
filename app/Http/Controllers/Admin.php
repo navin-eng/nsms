@@ -81,6 +81,13 @@ class Admin extends Controller
         $credentail = $request->only('email','password');
         $remeber = true;
         if (Auth::attempt($credentail,$remeber)) {
+            $user = Auth::user();
+            if ($user->a_type === 'P') {
+                return redirect()->route('parent.dashboard')->with('success','Login Successfully');
+            }
+            if ($user->a_type === 'ST') {
+                return redirect()->route('student.dashboard')->with('success','Login Successfully');
+            }
             return redirect('/admin/portal')->with('success','Login Successfully');
         } else {
             return back()->with('error','Email and password doesnot match');
@@ -184,6 +191,11 @@ class Admin extends Controller
 
     public function portal()
     {
+        // SMS staff users should go directly to SMS — they have no access to CMS
+        if (auth()->user()->a_type === 'S') {
+            return redirect()->route('sms.dashboard');
+        }
+
         return view('backend.pages.portal');
     }
 

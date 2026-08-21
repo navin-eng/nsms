@@ -7,11 +7,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class Exam extends Model
 {
-    protected $fillable = ['title', 'status'];
+    protected $fillable = ['academic_year_id', 'title', 'start_date', 'end_date', 'description', 'status', 'is_published'];
 
-    public function results()
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'is_published' => 'boolean',
+    ];
+
+    public function academicYear()
     {
-        return $this->hasMany(ExamResult::class, 'exam_id');
+        return $this->belongsTo(AcademicYear::class);
     }
-    use HasFactory;
+
+    public function schedules()
+    {
+        return $this->hasMany(ExamSchedule::class);
+    }
+
+    public function marks()
+    {
+        return $this->hasMany(ExamMark::class);
+    }
 }

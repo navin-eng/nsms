@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SMS;
 use App\Http\Controllers\Controller;
 
 use App\Models\AcademicClass;
+use App\Models\Section;
 use App\Models\Stream;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -13,9 +14,10 @@ class AcademicClassController extends Controller
 {
     public function index()
     {
-        $classes = AcademicClass::with('stream')->orderBy('numeric_value', 'asc')->get();
+        $classes = AcademicClass::with(['stream', 'sections'])->orderBy('numeric_value', 'asc')->get();
         $streams = Stream::all();
-        return view('backend.pages.sms.academic_classes.index', compact('classes', 'streams'));
+        $allSections = Section::orderBy('name')->get();
+        return view('backend.pages.sms.academic_classes.index', compact('classes', 'streams', 'allSections'));
     }
 
     public function store(Request $request)
@@ -24,9 +26,21 @@ class AcademicClassController extends Controller
             'name' => 'required|string|max:255',
             'numeric_value' => 'required|integer|min:1',
             'stream_id' => 'nullable|exists:streams,id',
+            'section_ids' => 'nullable|array',
+            'section_ids.*' => 'exists:sections,id',
         ]);
 
-        AcademicClass::create($data);
+        $class = AcademicClass::create([
+            'name' => $data['name'],
+            'numeric_value' => $data['numeric_value'],
+            'stream_id' => $data['stream_id'] ?? null,
+        ]);
+
+        // Attach selected sections via pivot (many-to-many)
+        if (!empty($data['section_ids'])) {
+            $class->sections()->sync($data['section_ids']);
+        }
+
         Alert::success('Success', 'Class added successfully');
         return back();
     }
@@ -37,9 +51,20 @@ class AcademicClassController extends Controller
             'name' => 'required|string|max:255',
             'numeric_value' => 'required|integer|min:1',
             'stream_id' => 'nullable|exists:streams,id',
+            'section_ids' => 'nullable|array',
+            'section_ids.*' => 'exists:sections,id',
         ]);
 
-        AcademicClass::findOrFail($id)->update($data);
+        $class = AcademicClass::findOrFail($id);
+        $class->update([
+            'name' => $data['name'],
+            'numeric_value' => $data['numeric_value'],
+            'stream_id' => $data['stream_id'] ?? null,
+        ]);
+
+        // Sync sections via many-to-many pivot
+        $class->sections()->sync($data['section_ids'] ?? []);
+
         Alert::success('Success', 'Class updated successfully');
         return back();
     }

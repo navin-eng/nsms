@@ -15,4 +15,14 @@ class AcademicClass extends Model
     {
         return $this->belongsTo(Stream::class);
     }
+
+    public function sections()
+    {
+        return $this->belongsToMany(Section::class, 'academic_class_section');
+    }
+
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class, 'academic_class_subject');
+    }
 }

@@ -1169,7 +1169,7 @@ body {
 }
 
 /* Responsive */
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .admin-sidebar {
     transform: translateX(0) !important;
     display: flex !important;
@@ -1180,7 +1180,7 @@ body {
   }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 767px) {
   .admin-sidebar {
     transform: translateX(-100%);
   }
@@ -1374,7 +1374,7 @@ body {
   margin-left: 64px;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
   .admin-sidebar.collapsed {
     transform: translateX(0) !important;
   }

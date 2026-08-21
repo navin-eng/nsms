@@ -117,4 +117,40 @@ class Frontend extends Controller
         $privacyPolicy = \App\Models\Privacypolicy::first();
         return view('frontend.pages.privacypolicy', compact('privacyPolicy'));
     }
+
+    public function admission()
+    {
+        $settings = \App\Models\SiteSetting::current();
+        $classes = \App\Models\AcademicClass::orderBy('numeric_value')->get();
+        $years = \App\Models\AcademicYear::where('is_active', true)->get();
+        return view('frontend.pages.admission', compact('classes', 'years', 'settings'));
+    }
+
+    public function submitAdmission(\Illuminate\Http\Request $request)
+    {
+        $settings = \App\Models\SiteSetting::current();
+        if (!($settings->enable_online_admission ?? false)) {
+            return back()->with('error', 'Online admission is currently closed.');
+        }
+
+        $data = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'dob' => 'required|date',
+            'gender' => 'required|in:Male,Female,Other',
+            'academic_year_id' => 'required|exists:academic_years,id',
+            'academic_class_id' => 'required|exists:academic_classes,id',
+            'father_name' => 'nullable|string|max:255',
+            'mother_name' => 'nullable|string|max:255',
+            'contact_number' => 'required|string|max:20',
+            'previous_school' => 'nullable|string|max:255',
+        ]);
+        
+        $data['application_date'] = now();
+        $data['status'] = 'Pending';
+        
+        \App\Models\AdmissionApplication::create($data);
+
+        return back()->with('success', 'Your admission application has been submitted successfully! We will contact you soon.');
+    }
 }

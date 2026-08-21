@@ -20,7 +20,7 @@
               <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Password </label>
                 <input type="text" class="form-control" name="password" id="exampleInputEmail1" aria-describedby="emailHelp">
-            </div>
+              </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">Save changes</button>
             </div>

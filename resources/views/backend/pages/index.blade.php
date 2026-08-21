@@ -35,7 +35,7 @@
 
 @php
   $courses   = App\Models\Course::count();
-  $teachers  = App\Models\Teacher::count();
+  $teachers  = App\Models\Staff::count();
   $events    = App\Models\Event::count();
   $notices   = App\Models\Notice::count();
   $banners   = App\Models\Banner::count();
@@ -62,7 +62,7 @@
     </a>
   </div>
   <div class="col-6 col-md-4 col-xl-2">
-    <a href="{{ route('teacher.table') }}" class="stat-card">
+    <a href="{{ route('sms.staff.index') }}" class="stat-card">
       <div class="stat-icon blue"><i class="bi bi-person-badge-fill"></i></div>
       <div class="stat-body">
         <div class="stat-num">{{ $teachers }}</div>
@@ -127,7 +127,7 @@
         <a href="{{ route('course.add') }}" class="quick-link">
           <i class="bi bi-plus-circle-fill"></i> Add New Course
         </a>
-        <a href="{{ route('teacher.add') }}" class="quick-link">
+        <a href="{{ route('sms.staff.create') }}" class="quick-link">
           <i class="bi bi-person-plus-fill"></i> Add Faculty Member
         </a>
         <a href="{{ route('notice.add') }}" class="quick-link">
@@ -190,7 +190,7 @@
             <tr>
               <td><i class="bi bi-person-badge text-green me-2"></i>Faculty</td>
               <td><span class="badge-admin badge-green">{{ $teachers }}</span></td>
-              <td><a href="{{ route('teacher.table') }}" class="btn-admin btn-admin-sm btn-admin-light">Manage</a></td>
+              <td><a href="{{ route('sms.staff.index') }}" class="btn-admin btn-admin-sm btn-admin-light">Manage</a></td>
             </tr>
             <tr>
               <td><i class="bi bi-bell text-green me-2"></i>Notices</td>

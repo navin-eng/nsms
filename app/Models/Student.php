@@ -36,4 +36,9 @@ class Student extends Model
         // For simplicity, we can just get the latest enrollment based on academic year ID
         return $this->hasOne(Enrollment::class)->latestOfMany('academic_year_id');
     }
+
+    public function homeworkSubmissions()
+    {
+        return $this->hasMany(HomeworkSubmission::class);
+    }
 }
