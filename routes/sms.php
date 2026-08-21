@@ -118,6 +118,7 @@ Route::prefix('id-cards')->name('sms.id-cards.')->group(function () {
     Route::get('students', [\App\Http\Controllers\SMS\IdCardController::class, 'students'])->name('students');
     Route::get('api/students', [\App\Http\Controllers\SMS\IdCardController::class, 'apiStudents'])->name('api.students');
     Route::get('staff', [\App\Http\Controllers\SMS\IdCardController::class, 'staff'])->name('staff');
+    Route::get('api/staff', [\App\Http\Controllers\SMS\IdCardController::class, 'apiStaff'])->name('api.staff');
     Route::resource('templates', \App\Http\Controllers\SMS\IdCardTemplateController::class)->except(['show']);
 });
 

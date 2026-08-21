@@ -85,22 +85,64 @@ class IdCardController extends Controller
         return response()->json($students);
     }
 
+    public function apiStaff(Request $request)
+    {
+        $departmentId = $request->input('department_id');
+        $query = Staff::with(['department', 'designation'])->where('status', 'Active');
+        if ($departmentId) {
+            $query->where('department_id', $departmentId);
+        }
+        $staff = $query->orderBy('first_name')->get()->map(function ($st) {
+            return [
+                'id' => $st->id,
+                'name' => $st->full_name,
+                'staff_id' => $st->employee_id ?? $st->id,
+                'designation' => $st->designation?->name ?? 'N/A'
+            ];
+        });
+        return response()->json($staff);
+    }
+
     public function staff(Request $request)
     {
         $departments = Department::orderBy('name')->get();
         $setting = SiteSetting::first();
+        
+        $selectedDepartmentId = $request->input('department_id');
         $layout = $request->input('layout', 'portrait');
+        $template = $request->input('template', 'modern');
 
-        $query = Staff::with(['department', 'designation'])->where('status', 'active');
-        if ($request->filled('department_id')) {
-            $query->where('department_id', $request->department_id);
+        $staffMembers = collect();
+        
+        $query = Staff::with(['department', 'designation'])->where('status', 'Active');
+        if ($selectedDepartmentId) {
+            $query->where('department_id', $selectedDepartmentId);
         }
-        $staffMembers = $query->orderBy('first_name')->get();
+        
+        if ($request->filled('staff_id')) {
+            $query->where('id', $request->staff_id);
+        }
+
+        if ($request->filled('staff_ids') && is_array($request->staff_ids)) {
+            $query->whereIn('id', $request->staff_ids);
+        }
+
+        if ($selectedDepartmentId || $request->filled('staff_ids') || $request->filled('staff_id')) {
+            $staffMembers = $query->orderBy('first_name')->get();
+        }
+
+        $customTemplates = \App\Models\IdCardTemplate::where('type', 'staff')->get();
+        $selectedTemplateId = $request->input('template_id');
+        $printFormat = $request->input('print_format', 'a4'); // a4 or id_printer
 
         if ($request->has('print') && $staffMembers->isNotEmpty()) {
-            return view('backend.pages.sms.id_cards.print_staff', compact('staffMembers', 'setting', 'layout'));
+            $customTemplate = null;
+            if (is_numeric($selectedTemplateId)) {
+                $customTemplate = \App\Models\IdCardTemplate::find($selectedTemplateId);
+            }
+            return view('backend.pages.sms.id_cards.print_staff', compact('staffMembers', 'setting', 'layout', 'template', 'customTemplate', 'printFormat'));
         }
 
-        return view('backend.pages.sms.id_cards.staff', compact('departments', 'staffMembers', 'setting', 'layout'));
+        return view('backend.pages.sms.id_cards.staff', compact('departments', 'staffMembers', 'setting', 'selectedDepartmentId', 'layout', 'template', 'customTemplates', 'selectedTemplateId', 'printFormat'));
     }
 }

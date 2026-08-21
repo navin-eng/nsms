@@ -64,7 +64,7 @@ Route::get('/verify/doc/{token}', [\App\Http\Controllers\Frontend\VerificationCo
 Route::middleware('webGuard')->group(function () {
     Route::prefix('admin/sms')->group(base_path('routes/sms.php'));
     Route::group([], base_path('routes/cms.php'));
-    
+
     // Parent Portal Routes
     Route::prefix('parent')->middleware('role:Parent')->group(base_path('routes/parent.php'));
     Route::prefix('student')->middleware('role:Student')->group(base_path('routes/student.php'));
@@ -185,3 +185,4 @@ Route::get('/admin/dashboard/logout', function () {
     Auth::logoutOtherDevices($user);
     return redirect()->route('home')->with('success', 'Logout');
 })->name('admin.logout');
+require __DIR__ . '/inventory.php';
