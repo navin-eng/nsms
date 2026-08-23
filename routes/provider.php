@@ -31,5 +31,6 @@ Route::prefix('provider')->name('provider.')->group(function () {
         Route::get('/schools/{id}', [SchoolManagementController::class, 'show'])->name('schools.show');
         Route::post('/schools/{id}/status', [SchoolManagementController::class, 'updateStatus'])->name('schools.status');
         Route::post('/schools/{id}/modules', [SchoolManagementController::class, 'updateModules'])->name('schools.modules');
+        Route::post('/schools/{id}/reset-password', [SchoolManagementController::class, 'resetSchoolAdminPassword'])->name('schools.reset_password');
     });
 });

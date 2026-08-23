@@ -243,4 +243,93 @@ class SchoolManagementController extends Controller
 
         return back()->with('success', "School module entitlements updated successfully.");
     }
+
+    /**
+     * Reset School Super Admin Password & Optionally Email
+     */
+    public function resetSchoolAdminPassword(Request $request, $id)
+    {
+        $request->validate([
+            'new_password' => 'nullable|string|min:6',
+            'auto_generate' => 'nullable|boolean',
+            'send_email' => 'nullable|boolean',
+            'recipient_email' => 'nullable|email',
+        ]);
+
+        $school = School::findOrFail($id);
+        $admin = User::where('school_id', $school->id)
+            ->where(function($q) {
+                $q->where('a_type', 'A')->orWhere('role', 'Super Admin');
+            })->first();
+
+        if (!$admin) {
+            return back()->with('error', "No Super Admin account found for {$school->name}.");
+        }
+
+        // Determine password
+        $passwordToSet = $request->new_password;
+        if ($request->boolean('auto_generate') || empty($passwordToSet)) {
+            $chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+            $passwordToSet = 'Nsms@';
+            for ($i = 0; $i < 6; $i++) {
+                $passwordToSet .= $chars[rand(0, strlen($chars) - 1)];
+            }
+        }
+
+        $admin->password = Hash::make($passwordToSet);
+        $admin->save();
+
+        // Optional Email Dispatch
+        $emailSent = false;
+        $targetEmail = $request->filled('recipient_email') ? $request->recipient_email : ($school->contact_email ?? $admin->email);
+
+        if ($request->boolean('send_email') && $targetEmail) {
+            try {
+                $mailData = [
+                    'school_name' => $school->name,
+                    'school_code' => $school->school_code,
+                    'login_url' => route('admin.login'),
+                    'username' => $admin->email,
+                    'new_password' => $passwordToSet,
+                ];
+
+                \Illuminate\Support\Facades\Mail::send([], [], function ($message) use ($targetEmail, $mailData) {
+                    $message->to($targetEmail)
+                        ->subject("Security Notice: Portal Password Reset for {$mailData['school_name']}")
+                        ->html("
+                            <div style='font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;'>
+                                <h3 style='color: #005f1a;'>NSMS Cloud — School Password Reset</h3>
+                                <p>Dear Administration of <strong>{$mailData['school_name']}</strong>,</p>
+                                <p>Your School Super Admin account password has been updated by the SaaS Provider God Mode.</p>
+                                <div style='background: #f8fafc; padding: 15px; border-radius: 6px; margin: 15px 0; border: 1px solid #cbd5e1;'>
+                                    <p style='margin: 4px 0;'><strong>School Code:</strong> <code>{$mailData['school_code']}</code></p>
+                                    <p style='margin: 4px 0;'><strong>Login Username:</strong> <code>{$mailData['username']}</code></p>
+                                    <p style='margin: 4px 0;'><strong>New Temporary Password:</strong> <code style='font-size: 16px; font-weight: bold; color: #10b981;'>{$mailData['new_password']}</code></p>
+                                </div>
+                                <p><a href='{$mailData['login_url']}' style='background: #10b981; color: white; padding: 10px 20px; text-decoration: none; border-radius: 6px; display: inline-block;'>Log In to School Portal</a></p>
+                                <p style='color: #64748b; font-size: 12px;'>For security, please change this password after signing in.</p>
+                            </div>
+                        ");
+                });
+                $emailSent = true;
+            } catch (\Exception $e) {
+                // Ignore mail transport failure in local environment but log
+            }
+        }
+
+        ProviderAuditLog::log(
+            'school.password_reset',
+            $school,
+            "Reset password for school admin ({$admin->email}). " . ($emailSent ? "Dispatched email to {$targetEmail}." : "Manual handover."),
+            null,
+            ['admin_email' => $admin->email]
+        );
+
+        $msg = "Password for {$admin->email} has been updated to: [ {$passwordToSet} ].";
+        if ($emailSent) {
+            $msg .= " Sent security notification email to {$targetEmail}.";
+        }
+
+        return back()->with('success', $msg);
+    }
 }

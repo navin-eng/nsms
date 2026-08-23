@@ -125,8 +125,19 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label small text-muted fw-semibold">Admin Initial Password <span class="text-danger">*</span></label>
-                        <input type="password" name="admin_password" class="form-control" placeholder="Minimum 6 characters" value="password123" required>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="form-label small text-muted fw-semibold mb-0">Admin Initial Password <span class="text-danger">*</span></label>
+                            <button type="button" class="btn btn-link p-0 text-decoration-none small text-success fw-semibold" id="autoGenPassBtn" style="font-size: 0.75rem;">
+                                <i class="bi bi-magic"></i> Auto-Generate
+                            </button>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" name="admin_password" id="adminPasswordInput" class="form-control font-monospace" placeholder="Password" value="{{ old('admin_password', 'Nsms@' . rand(1000, 9999)) }}" required>
+                            <button class="btn btn-outline-secondary" type="button" id="togglePassVisibility" title="Copy to clipboard">
+                                <i class="bi bi-clipboard"></i>
+                            </button>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.72rem;">Share this initial credential securely with the school administration.</small>
                     </div>
                 </div>
             </div>
@@ -210,6 +221,34 @@
             });
         } else {
             municipalitySelect.disabled = true;
+        }
+    });
+
+    // Auto Generate Secure Password Function
+    function generateSecurePassword() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+        let pass = 'Nsms@';
+        for (let i = 0; i < 6; i++) {
+            pass += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return pass;
+    }
+
+    document.getElementById('autoGenPassBtn')?.addEventListener('click', function() {
+        const newPass = generateSecurePassword();
+        const passInput = document.getElementById('adminPasswordInput');
+        if (passInput) {
+            passInput.value = newPass;
+            passInput.focus();
+        }
+    });
+
+    document.getElementById('togglePassVisibility')?.addEventListener('click', function() {
+        const passInput = document.getElementById('adminPasswordInput');
+        if (passInput && passInput.value) {
+            navigator.clipboard.writeText(passInput.value).then(() => {
+                alert('Password copied to clipboard: ' + passInput.value);
+            });
         }
     });
 </script>

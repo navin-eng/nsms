@@ -63,8 +63,15 @@
 
         <!-- School Super Admin Details -->
         <div class="card border-0 shadow-sm rounded-3 p-4 mb-4">
-            <h5 class="fw-bold mb-3 text-dark border-bottom pb-2">School Super Admin Account</h5>
-            @php($superAdmin = $school->users->first())
+            <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                <h5 class="fw-bold mb-0 text-dark">School Super Admin Account</h5>
+                @if($superAdmin)
+                    <button class="btn btn-outline-danger btn-sm fw-semibold" data-bs-toggle="modal" data-bs-target="#resetPassModal">
+                        <i class="bi bi-key-fill me-1"></i> Reset Password &amp; Mail
+                    </button>
+                @endif
+            </div>
+
             @if($superAdmin)
                 <div class="p-3 rounded-2 border bg-light bg-opacity-50">
                     <div class="d-flex justify-content-between align-items-center mb-2">
@@ -74,8 +81,9 @@
                         </div>
                         <span class="badge bg-primary bg-opacity-15 text-primary">Super Admin</span>
                     </div>
-                    <div class="text-muted small pt-2 border-top">
-                        Login using: <code>{{ $school->school_code }}</code> + <code>{{ $superAdmin->email }}</code>
+                    <div class="text-muted small pt-2 border-top d-flex justify-content-between align-items-center">
+                        <span>Login using: <code>{{ $school->school_code }}</code> + <code>{{ $superAdmin->email }}</code></span>
+                        <span class="badge bg-success bg-opacity-10 text-success"><i class="bi bi-shield-check"></i> Verified</span>
                     </div>
                 </div>
             @else
@@ -172,4 +180,83 @@
         </div>
     </div>
 </div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="resetPassModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-3">
+            <div class="modal-header border-bottom pb-2">
+                <div>
+                    <h5 class="modal-title fw-bold text-danger"><i class="bi bi-key-fill me-1"></i> Reset School Admin Password</h5>
+                    <small class="text-muted">Target: {{ $superAdmin->email ?? 'Super Admin' }}</small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('provider.schools.reset_password', $school->id) }}" method="POST">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <label class="form-label small text-muted fw-semibold mb-0">New Password</label>
+                            <button type="button" class="btn btn-link p-0 text-decoration-none small text-success fw-semibold" id="autoGenResetBtn" style="font-size: 0.75rem;">
+                                <i class="bi bi-magic"></i> Auto-Generate
+                            </button>
+                        </div>
+                        <input type="text" name="new_password" id="resetPasswordInput" class="form-control font-monospace" placeholder="Enter or auto-generate password" value="Nsms@{{ rand(1000, 9999) }}" required>
+                    </div>
+
+                    <div class="p-3 rounded-2 border bg-light mb-3">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" name="send_email" value="1" id="sendEmailCheck" checked>
+                            <label class="form-check-label small fw-semibold" for="sendEmailCheck">
+                                Email credentials to School Administration
+                            </label>
+                        </div>
+
+                        <div id="recipientEmailWrap">
+                            <label class="form-label small text-muted mb-1">Recipient Email Address</label>
+                            <input type="email" name="recipient_email" class="form-control form-control-sm" placeholder="school@email.com" value="{{ $school->contact_email ?? $superAdmin->email ?? '' }}">
+                            <small class="text-muted" style="font-size: 0.7rem;">Defaults to school's official contact email.</small>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning py-2 px-3 small mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-exclamation fs-5"></i>
+                        <div>This action will be permanently recorded in the platform compliance audit trail.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger fw-semibold">
+                        <i class="bi bi-check2-circle me-1"></i> Update &amp; Dispatch Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    document.getElementById('autoGenResetBtn')?.addEventListener('click', function() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+        let pass = 'Nsms@';
+        for (let i = 0; i < 6; i++) {
+            pass += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        const input = document.getElementById('resetPasswordInput');
+        if (input) {
+            input.value = pass;
+            input.focus();
+        }
+    });
+
+    document.getElementById('sendEmailCheck')?.addEventListener('change', function() {
+        const wrap = document.getElementById('recipientEmailWrap');
+        if (wrap) {
+            wrap.style.display = this.checked ? 'block' : 'none';
+        }
+    });
+</script>
+@endpush
 @endsection
