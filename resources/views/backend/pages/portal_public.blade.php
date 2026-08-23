@@ -1,720 +1,572 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
-
+<html lang="en" data-bs-theme="dark">
 <head>
     @php($siteSettings = \App\Models\SiteSetting::current())
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NSMS — Next-Gen School Management & Finance System | {{ $siteSettings->site_name }}</title>
-
+    <title>NSMS Cloud — Next-Gen School Management & Finance SaaS Platform</title>
+    
     <script>
-        (function () {
-            var theme = localStorage.getItem('theme');
-            if (!theme) {
-                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            }
+        (function() {
+            var theme = localStorage.getItem('nsms_theme') || 'dark';
             document.documentElement.setAttribute('data-bs-theme', theme);
         })();
     </script>
 
-    <link rel="icon"
-        href="{{ $siteSettings->site_favicon ? asset('storage/' . $siteSettings->site_favicon) : asset('backend/images/favicon.ico') }}">
-
-    <!-- Google Fonts -->
+    <link rel="icon" href="{{ $siteSettings->site_favicon ? asset('storage/' . $siteSettings->site_favicon) : asset('backend/images/favicon.ico') }}">
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
-
-    <!-- Bootstrap 5 & Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
     <style>
         :root {
-            --brand-primary:
-                {{ $siteSettings->primary_color ?? '#005f1a' }}
-            ;
-            --brand-dark:
-                {{ $siteSettings->primary_dark ?? '#0f1923' }}
-            ;
-            --brand-accent:
-                {{ $siteSettings->accent_color ?? '#92cb6c' }}
-            ;
-            --brand-gradient: linear-gradient(135deg, #005f1a 0%, #008f28 50%, #92cb6c 100%);
-            --font-display: 'Plus Jakarta Sans', sans-serif;
-            --font-body: 'Inter', sans-serif;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            /* Dark Theme Tokens (Default) */
+            --bg-base: #06090e;
+            --bg-surface: #0d121c;
+            --bg-elevated: #131b29;
+            --bg-card: #0f1624;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(255, 255, 255, 0.16);
+            --border-focus: #10b981;
+            
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-tertiary: #64748b;
+            
+            --emerald-500: #10b981;
+            --emerald-400: #34d399;
+            --emerald-glow: rgba(16, 185, 129, 0.18);
+            
+            --header-bg: rgba(6, 9, 14, 0.85);
+        }
+
+        [data-bs-theme="light"] {
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-elevated: #f1f5f9;
+            --bg-card: #ffffff;
+            --border-subtle: rgba(0, 0, 0, 0.07);
+            --border-strong: rgba(0, 0, 0, 0.14);
+            --border-focus: #059669;
+            
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-tertiary: #94a3b8;
+            
+            --emerald-500: #059669;
+            --emerald-400: #10b981;
+            --emerald-glow: rgba(5, 150, 105, 0.12);
+            
+            --header-bg: rgba(248, 250, 252, 0.88);
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: var(--font-body);
-            background-color: #f8fafc;
-            color: #1e293b;
+            font-family: var(--font-sans);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            letter-spacing: -0.01em;
         }
 
-        [data-bs-theme="dark"] body {
-            background-color: #0b1120;
-            color: #f1f5f9;
-        }
-
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        .font-display {
-            font-family: var(--font-display);
-        }
-
-        /* Gradient Accents & Backgrounds */
-        .hero-mesh {
+        /* Subtle Geometric Grid Background */
+        .bg-grid {
             position: absolute;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100vw;
-            height: 650px;
-            background: radial-gradient(circle at 50% 20%, rgba(0, 95, 26, 0.12) 0%, rgba(146, 203, 108, 0.05) 50%, transparent 80%);
+            left: 0;
+            right: 0;
+            height: 900px;
+            background-image: 
+                linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--border-subtle) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 70%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 70%, transparent 100%);
             pointer-events: none;
             z-index: 0;
         }
 
-        [data-bs-theme="dark"] .hero-mesh {
-            background: radial-gradient(circle at 50% 20%, rgba(0, 95, 26, 0.25) 0%, rgba(146, 203, 108, 0.08) 50%, transparent 80%);
+        .ambient-glow {
+            position: absolute;
+            top: -150px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 850px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(59, 130, 246, 0.06) 40%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(50px);
         }
 
-        /* Glassmorphism Header */
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-            transition: all 0.3s ease;
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text-primary);
+            font-weight: 700;
+            letter-spacing: -0.03em;
         }
 
-        [data-bs-theme="dark"] .glass-nav {
-            background: rgba(11, 17, 32, 0.85);
-            border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+        .mono {
+            font-family: var(--font-mono);
         }
 
-        /* Portal Cards */
-        .portal-card {
-            border-radius: 20px;
-            border: 1px solid rgba(226, 232, 240, 0.9);
-            background: #ffffff;
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            text-decoration: none !important;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+        /* Top Navigation */
+        .nav-scrolled {
+            background: var(--header-bg);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--border-subtle);
+            transition: all 0.2s ease;
         }
 
-        [data-bs-theme="dark"] .portal-card {
-            background: #131d33;
-            border-color: rgba(51, 65, 85, 0.7);
+        .brand-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald-400);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
-        .portal-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px -15px rgba(0, 95, 26, 0.18);
-            border-color: var(--brand-accent);
+        .nav-link-custom {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: color 0.15s, background-color 0.15s;
         }
 
-        [data-bs-theme="dark"] .portal-card:hover {
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-            border-color: var(--brand-accent);
+        .nav-link-custom:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        .portal-icon-box {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.75rem;
-            transition: transform 0.3s ease;
+        [data-bs-theme="light"] .nav-link-custom:hover {
+            background: rgba(0, 0, 0, 0.04);
         }
 
-        .portal-card:hover .portal-icon-box {
-            transform: scale(1.1) rotate(4deg);
-        }
-
-        /* Pill Badges */
-        .badge-pill-soft {
-            padding: 6px 14px;
-            border-radius: 999px;
-            font-size: 0.8rem;
-            font-weight: 600;
+        /* Hero Badges */
+        .pill-tag {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            padding: 4px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-strong);
+            color: var(--text-primary);
+            font-size: 0.825rem;
+            font-weight: 500;
         }
 
-        /* Feature Cards */
-        .feature-card {
-            border-radius: 16px;
-            border: 1px solid rgba(226, 232, 240, 0.7);
-            background: #ffffff;
-            padding: 24px;
-            height: 100%;
-            transition: all 0.3s ease;
-        }
-
-        [data-bs-theme="dark"] .feature-card {
-            background: #131d33;
-            border-color: rgba(51, 65, 85, 0.6);
-        }
-
-        .feature-card:hover {
-            border-color: rgba(0, 95, 26, 0.4);
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px -10px rgba(0, 0, 0, 0.08);
-        }
-
-        /* Stat Counter Card */
-        .stat-counter-card {
-            border-radius: 16px;
-            background: #ffffff;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            padding: 24px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        [data-bs-theme="dark"] .stat-counter-card {
-            background: #131d33;
-            border-color: rgba(51, 65, 85, 0.7);
-        }
-
-        .stat-counter-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .stat-number {
-            font-size: 2.25rem;
-            font-weight: 800;
-            background: var(--brand-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-family: var(--font-display);
-        }
-
-        /* Tabbed Quick Login in Modal */
-        .nav-pills-custom .nav-link {
-            border-radius: 10px;
-            padding: 10px 18px;
-            color: #64748b;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .nav-pills-custom .nav-link.active {
-            background-color: var(--brand-primary);
-            color: #ffffff;
-        }
-
-        /* Custom Buttons */
-        .btn-brand-primary {
-            background: var(--brand-primary);
-            color: #ffffff;
-            border: none;
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-weight: 600;
-            transition: all 0.25s ease;
-        }
-
-        .btn-brand-primary:hover {
-            background: var(--brand-dark);
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px -6px rgba(0, 95, 26, 0.4);
-        }
-
-        .btn-brand-outline {
-            border: 1.5px solid rgba(0, 95, 26, 0.4);
-            color: var(--brand-primary);
-            background: transparent;
-            border-radius: 12px;
-            padding: 12px 24px;
-            font-weight: 600;
-            transition: all 0.25s ease;
-        }
-
-        [data-bs-theme="dark"] .btn-brand-outline {
-            border-color: var(--brand-accent);
-            color: var(--brand-accent);
-        }
-
-        .btn-brand-outline:hover {
-            background: var(--brand-primary);
-            border-color: var(--brand-primary);
-            color: #ffffff;
-            transform: translateY(-2px);
-        }
-
-        /* Glowing Pulse Dot */
-        .pulse-dot {
+        .pulse-indicator {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background-color: #22c55e;
-            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-            animation: pulse 1.8s infinite;
+            background: var(--emerald-400);
+            box-shadow: 0 0 10px var(--emerald-400);
+            display: inline-block;
         }
 
-        @keyframes pulse {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-            }
+        /* Buttons */
+        .btn-saas-primary {
+            background: var(--emerald-500);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.925rem;
+            padding: 11px 22px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+            transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
 
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
-            }
+        .btn-saas-primary:hover {
+            background: var(--emerald-400);
+            color: #06090e;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+        }
 
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
-            }
+        .btn-saas-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 0.925rem;
+            padding: 11px 20px;
+            border-radius: 10px;
+            border: 1px solid var(--border-strong);
+            transition: all 0.18s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-saas-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Portal Cards */
+        .portal-entry-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 24px;
+            text-decoration: none;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .portal-entry-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+            pointer-events: none;
+        }
+
+        .portal-entry-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-strong);
+            box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.4);
+            color: var(--text-primary);
+        }
+
+        .portal-entry-card:hover::after {
+            border-color: var(--emerald-400);
+        }
+
+        .icon-sq {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 18px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+        }
+
+        /* Interactive Terminal Mockup */
+        .preview-window {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-strong);
+            border-radius: 16px;
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 12px 18px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .window-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border-strong);
+        }
+
+        /* Feature Grid */
+        .feature-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 14px;
+            padding: 24px;
+            height: 100%;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .feature-box:hover {
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon-mini {
+            font-size: 1.35rem;
+            color: var(--emerald-400);
+            margin-bottom: 14px;
+            display: inline-block;
+        }
+
+        /* Step Timeline */
+        .timeline-step {
+            border-left: 2px solid var(--border-subtle);
+            padding-left: 24px;
+            position: relative;
+            padding-bottom: 32px;
+        }
+
+        .timeline-step:last-child {
+            padding-bottom: 0;
+            border-left-color: transparent;
+        }
+
+        .timeline-node {
+            position: absolute;
+            left: -11px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--bg-base);
+            border: 2px solid var(--emerald-400);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timeline-node::after {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--emerald-400);
+        }
+
+        /* Form Controls */
+        .saas-input {
+            background: var(--bg-surface) !important;
+            border: 1px solid var(--border-strong) !important;
+            color: var(--text-primary) !important;
+            border-radius: 8px !important;
+            padding: 10px 14px !important;
+            font-size: 0.9rem !important;
+        }
+
+        .saas-input:focus {
+            border-color: var(--emerald-400) !important;
+            box-shadow: 0 0 0 3px var(--emerald-glow) !important;
+        }
+
+        .saas-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* Modal Customization */
+        .modal-content-custom {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-strong);
+            border-radius: 18px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        .login-role-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            padding: 16px 18px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.15s;
+        }
+
+        .login-role-btn:hover {
+            border-color: var(--emerald-400);
+            background: rgba(16, 185, 129, 0.04);
+            color: var(--text-primary);
+            transform: translateX(3px);
         }
     </style>
 </head>
-
 <body class="position-relative">
 
-    <!-- Glowing Background Mesh -->
-    <div class="hero-mesh"></div>
+    <!-- Subtle Grid & Top Ambient Glow -->
+    <div class="bg-grid"></div>
+    <div class="ambient-glow"></div>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg sticky-top glass-nav py-3">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center gap-3 text-decoration-none"
-                href="{{ route('secure.login') }}">
-                @if($siteSettings->site_logo && file_exists(public_path('storage/' . $siteSettings->site_logo)))
-                    <img src="{{ asset('storage/' . $siteSettings->site_logo) }}" alt="{{ $siteSettings->site_name }}"
-                        height="42" class="rounded">
-                @else
-                    <div class="rounded-3 bg-success bg-opacity-10 p-2 text-success d-flex align-items-center justify-content-center"
-                        style="width: 42px; height: 42px;">
-                        <i class="bi bi-mortarboard-fill fs-4"></i>
-                    </div>
-                @endif
-                <div>
-                    <div class="fw-bold fs-5 lh-1 text-dark text-theme-light">{{ $siteSettings->site_name }}</div>
-                    <small class="text-muted" style="font-size: 0.75rem; letter-spacing: 0.5px;">NSMS &amp; FINANCE
-                        SUITE</small>
+    <!-- Header / Navigation -->
+    <nav class="navbar navbar-expand-lg sticky-top nav-scrolled py-3">
+        <div class="container position-relative z-2">
+            <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="{{ route('secure.login') }}">
+                <div class="rounded-2 bg-success bg-opacity-10 p-1 text-success d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; border: 1px solid rgba(16, 185, 129, 0.25);">
+                    <i class="bi bi-clouds-fill fs-5" style="color: var(--emerald-400);"></i>
                 </div>
+                <span class="fw-bold fs-5 tracking-tight">NSMS<span style="color:var(--emerald-400)">.cloud</span></span>
+                <span class="brand-badge ms-1">SaaS Platform</span>
             </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false">
+            <button class="navbar-toggler border-0 text-white shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false">
                 <i class="bi bi-list fs-3"></i>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2">
-                    <li class="nav-item"><a class="nav-link fw-medium" href="#portals">Portals</a></li>
-                    <li class="nav-item"><a class="nav-link fw-medium" href="#modules">System Modules</a></li>
-                    <li class="nav-item"><a class="nav-link fw-medium" href="#accounting">Financial Core</a></li>
-                    <li class="nav-item"><a class="nav-link fw-medium" href="#stats">Live Insights</a></li>
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1">
+                    <li class="nav-item"><a class="nav-link-custom" href="#portals">Workspaces</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="#mou-lifecycle">MoU Partnership</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="#modules">Architecture</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="#accounting">Financial Core</a></li>
+                    <li class="nav-item"><a class="nav-link-custom" href="#onboard">Onboard School</a></li>
                 </ul>
 
-                <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+                <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
                     {{-- Theme Switcher --}}
-                    <button type="button" class="btn btn-sm btn-light rounded-circle shadow-sm p-2 theme-toggle-btn"
-                        title="Toggle Dark/Light Mode">
-                        <i class="bi bi-moon fs-5 theme-toggle-icon"></i>
+                    <button type="button" class="btn btn-sm btn-link text-secondary text-decoration-none p-2" id="themeToggleBtn" title="Toggle Theme">
+                        <i class="bi bi-sun-fill fs-6" id="themeToggleIcon"></i>
                     </button>
 
-                    {{-- Back to School Site --}}
-                    <a href="{{ route('home') }}"
-                        class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-2 fw-semibold">
-                        <i class="bi bi-globe2 me-1"></i> School Website
+                    {{-- Partner School Web Link --}}
+                    <a href="{{ route('home') }}" class="btn-saas-secondary py-2 px-3 small" style="font-size:0.85rem">
+                        <i class="bi bi-buildings"></i> Demo School
                     </a>
 
-                    {{-- Quick Login Trigger --}}
-                    <button class="btn btn-brand-primary btn-sm rounded-pill px-4 py-2" data-bs-toggle="modal"
-                        data-bs-target="#quickLoginModal">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Instant Login
+                    {{-- School Login Modal Trigger --}}
+                    <button class="btn-saas-primary py-2 px-3 small" data-bs-toggle="modal" data-bs-target="#schoolLoginModal" style="font-size:0.85rem">
+                        <i class="bi bi-box-arrow-in-right"></i> School Login
                     </button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="py-5 py-lg-6 position-relative">
-        <div class="container text-center py-4">
-
-            {{-- Enterprise Badge --}}
-            <div
-                class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-success bg-opacity-10 border border-success border-opacity-25 text-success mb-4">
-                <span class="pulse-dot"></span>
-                <span class="small fw-bold">NSMS Enterprise Platform v2.5 Active</span>
-                <i class="bi bi-shield-check"></i>
-            </div>
-
-            {{-- Main Title --}}
-            <h1 class="display-4 fw-extrabold mb-3 mx-auto" style="max-width: 860px; letter-spacing: -0.5px;">
-                Unified School Intelligence &amp; Dedicated Financial Governance
-            </h1>
-
-            <p class="lead text-muted mx-auto mb-5" style="max-width: 720px; font-size: 1.15rem;">
-                A single digital ecosystem integrating student lifecycle, class enrollments, examination grading, Nepali
-                Bikram Sambat fee invoicing, and double-entry accounting.
-            </p>
-
-            {{-- Flash messages if any --}}
-            @if(session('error'))
-                <div class="alert alert-danger max-w-xl mx-auto mb-4">{{ session('error') }}</div>
-            @endif
-            @if(session('success'))
-                <div class="alert alert-success max-w-xl mx-auto mb-4">{{ session('success') }}</div>
-            @endif
-
-            {{-- 4 Primary Portal Cards --}}
-            <div class="row g-4 text-start justify-content-center" id="portals">
-
-                {{-- 1. Super Admin & Staff Portal --}}
-                <div class="col-12 col-md-6 col-lg-3">
-                    <a href="{{ route('admin.login') }}" class="portal-card p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div class="portal-icon-box bg-primary bg-opacity-10 text-primary">
-                                <i class="bi bi-shield-lock-fill"></i>
-                            </div>
-                            <span
-                                class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-1 small">Admin</span>
-                        </div>
-                        <h4 class="fw-bold mb-2">Admin &amp; Staff</h4>
-                        <p class="text-muted small mb-4 flex-grow-1">
-                            Complete campus governance, student admissions, attendance, exams, grading &amp; staff
-                            directory.
-                        </p>
-                        <div
-                            class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10">
-                            <span class="fw-semibold text-primary small">Access SMS</span>
-                            <i class="bi bi-arrow-right text-primary"></i>
-                        </div>
-                    </a>
-                </div>
-
-                {{-- 2. Finance & Accounting Portal --}}
-                <div class="col-12 col-md-6 col-lg-3">
-                    <a href="{{ route('accounting.login') }}" class="portal-card p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div class="portal-icon-box bg-success bg-opacity-10 text-success">
-                                <i class="bi bi-cash-stack"></i>
-                            </div>
-                            <span
-                                class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 small">Finance</span>
-                        </div>
-                        <h4 class="fw-bold mb-2">Accounting Portal</h4>
-                        <p class="text-muted small mb-4 flex-grow-1">
-                            Fee collection, Bikram Sambat month invoicing, expense tracking, bank accounts &amp; P&amp;L
-                            reports.
-                        </p>
-                        <div
-                            class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10">
-                            <span class="fw-semibold text-success small">Access Finance</span>
-                            <i class="bi bi-arrow-right text-success"></i>
-                        </div>
-                    </a>
-                </div>
-
-                {{-- 3. Parent & Guardian Portal --}}
-                <div class="col-12 col-md-6 col-lg-3">
-                    <a href="{{ route('admin.login') }}" class="portal-card p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div class="portal-icon-box bg-info bg-opacity-10 text-info">
-                                <i class="bi bi-people-fill"></i>
-                            </div>
-                            <span
-                                class="badge bg-info bg-opacity-10 text-info rounded-pill px-3 py-1 small">Family</span>
-                        </div>
-                        <h4 class="fw-bold mb-2">Parent Portal</h4>
-                        <p class="text-muted small mb-4 flex-grow-1">
-                            Monitor student attendance records, fee payment history, outstanding balances &amp; academic
-                            progress.
-                        </p>
-                        <div
-                            class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10">
-                            <span class="fw-semibold text-info small">Parent Login</span>
-                            <i class="bi bi-arrow-right text-info"></i>
-                        </div>
-                    </a>
-                </div>
-
-                {{-- 4. Student & Academic Portal --}}
-                <div class="col-12 col-md-6 col-lg-3">
-                    <a href="{{ route('admin.login') }}" class="portal-card p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-4">
-                            <div class="portal-icon-box bg-warning bg-opacity-10 text-warning">
-                                <i class="bi bi-mortarboard-fill"></i>
-                            </div>
-                            <span
-                                class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-1 small">Student</span>
-                        </div>
-                        <h4 class="fw-bold mb-2">Student Portal</h4>
-                        <p class="text-muted small mb-4 flex-grow-1">
-                            Access homework, class routines, course study material, download report cards &amp;
-                            announcements.
-                        </p>
-                        <div
-                            class="d-flex align-items-center justify-content-between pt-3 border-top border-secondary border-opacity-10">
-                            <span class="fw-semibold text-warning small">Student Login</span>
-                            <i class="bi bi-arrow-right text-warning"></i>
-                        </div>
-                    </a>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Live Metrics Counter Section -->
-    <section class="py-5 bg-white border-top border-bottom" id="stats">
+    <!-- Main Hero -->
+    <section class="pt-5 pb-4 position-relative z-1">
         <div class="container">
-            <div class="row g-4">
-                <div class="col-6 col-lg-3">
-                    <div class="stat-counter-card">
-                        <div class="stat-number">{{ number_format($totalStudents ?? 189) }}+</div>
-                        <div class="text-muted fw-semibold small text-uppercase mt-1">Enrolled Students</div>
+            <div class="row align-items-center pt-3 pb-5">
+                <div class="col-lg-7 text-start">
+                    
+                    {{-- Top Status Pill --}}
+                    <div class="mb-3">
+                        <span class="pill-tag">
+                            <span class="pulse-indicator"></span>
+                            <span>Multi-Tenant School ERP &amp; Finance Engine</span>
+                            <span class="text-secondary">|</span>
+                            <span class="mono small" style="color:var(--emerald-400)">v2.5 Release</span>
+                        </span>
                     </div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="stat-counter-card">
-                        <div class="stat-number">{{ number_format($totalStaff ?? 52) }}+</div>
-                        <div class="text-muted fw-semibold small text-uppercase mt-1">Faculty &amp; Staff</div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="stat-counter-card">
-                        <div class="stat-number">{{ number_format($totalClasses ?? 14) }}</div>
-                        <div class="text-muted fw-semibold small text-uppercase mt-1">Academic Programs</div>
-                    </div>
-                </div>
-                <div class="col-6 col-lg-3">
-                    <div class="stat-counter-card">
-                        <div class="stat-number">99.9%</div>
-                        <div class="text-muted fw-semibold small text-uppercase mt-1">System Reliability</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Core System Modules -->
-    <section class="py-5 py-lg-6" id="modules">
-        <div class="container">
-            <div class="text-center max-w-2xl mx-auto mb-5">
-                <span
-                    class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold text-uppercase small mb-2">Comprehensive
-                    Capabilities</span>
-                <h2 class="display-6 fw-bold">Engineered for Academic &amp; Operational Excellence</h2>
-                <p class="text-muted">Explore the specialized sub-systems powering daily academic and financial
-                    operations.</p>
-            </div>
+                    <h1 class="display-4 fw-extrabold mb-3 lh-11">
+                        Institutional Governance &amp; Double-Entry Accounting
+                    </h1>
 
-            <div class="row g-4">
-                {{-- Module 1 --}}
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-3 p-3 bg-primary bg-opacity-10 text-primary me-3">
-                                <i class="bi bi-person-badge fs-4"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-0">Student Lifecycle</h5>
-                                <small class="text-muted">Admissions &amp; Registrations</small>
-                            </div>
-                        </div>
-                        <p class="text-muted small mb-0">
-                            Digital enrollment forms, automated roll number generator, class-section distribution,
-                            document archives, and student ID cards.
-                        </p>
-                    </div>
-                </div>
-
-                {{-- Module 2 --}}
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-3 p-3 bg-success bg-opacity-10 text-success me-3">
-                                <i class="bi bi-cash-coin fs-4"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-0">Nepali Fee Billing</h5>
-                                <small class="text-muted">Bikram Sambat Support</small>
-                            </div>
-                        </div>
-                        <p class="text-muted small mb-0">
-                            Class-wise dynamic fee structures, 12 Nepali months bulk invoice generation, partial
-                            collections, and printable A4/A5 receipts.
-                        </p>
-                    </div>
-                </div>
-
-                {{-- Module 3 --}}
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-3 p-3 bg-info bg-opacity-10 text-info me-3">
-                                <i class="bi bi-journal-check fs-4"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-0">Examinations &amp; GPA</h5>
-                                <small class="text-muted">Grading &amp; Marksheets</small>
-                            </div>
-                        </div>
-                        <p class="text-muted small mb-0">
-                            Custom grading scales, terminal marks entry, tabulations, automated GPA conversion, and
-                            printable performance report cards.
-                        </p>
-                    </div>
-                </div>
-
-                {{-- Module 4 --}}
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-3 p-3 bg-warning bg-opacity-10 text-warning me-3">
-                                <i class="bi bi-calendar2-check fs-4"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-0">Attendance Tracking</h5>
-                                <small class="text-muted">Daily Log &amp; Analysis</small>
-                            </div>
-                        </div>
-                        <p class="text-muted small mb-0">
-                            Instant class-wise student &amp; staff attendance logs, absent tracking, rate analytics, and
-                            printable daily attendance registers.
-                        </p>
-                    </div>
-                </div>
-
-                {{-- Module 5 --}}
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-3 p-3 bg-danger bg-opacity-10 text-danger me-3">
-                                <i class="bi bi-building fs-4"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-0">Hostel &amp; Logistics</h5>
-                                <small class="text-muted">Rooms &amp; Allocations</small>
-                            </div>
-                        </div>
-                        <p class="text-muted small mb-0">
-                            Hostel room management, capacity tracking, bed allocations, automated hostel fee billing,
-                            and occupant registers.
-                        </p>
-                    </div>
-                </div>
-
-                {{-- Module 6 --}}
-                <div class="col-md-6 col-lg-4">
-                    <div class="feature-card">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="rounded-3 p-3 bg-secondary bg-opacity-10 text-secondary me-3">
-                                <i class="bi bi-qr-code fs-4"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold mb-0">Security &amp; QR Verify</h5>
-                                <small class="text-muted">Instant Document Check</small>
-                            </div>
-                        </div>
-                        <p class="text-muted small mb-0">
-                            Cryptographically generated QR codes on certificates and marksheets with a public instant
-                            authenticity verification portal.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Dedicated Finance & Accounting Highlight -->
-    <section class="py-5 py-lg-6 bg-light" id="accounting">
-        <div class="container">
-            <div class="row align-items-center g-5">
-                <div class="col-lg-6">
-                    <span
-                        class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold text-uppercase small mb-3">Dedicated
-                        Finance Portal</span>
-                    <h2 class="display-6 fw-bold mb-3">Auditable, Double-Entry Institutional Accounting</h2>
-                    <p class="text-muted mb-4">
-                        Built specifically for school bursars and accountants, providing full separation of duties, bank
-                        reconciliations, vendor expense ledgers, and live financial statements.
+                    <p class="text-secondary fs-5 mb-4" style="max-width: 600px; font-weight: 400;">
+                        NSMS is an enterprise SaaS platform provided to educational institutions via institutional MoUs. We provision dedicated school environments with complete Nepali Bikram Sambat fee invoicing, academic grading, and financial ledgers.
                     </p>
 
-                    <div class="d-flex flex-column gap-3 mb-4">
-                        <div class="d-flex align-items-start">
-                            <i class="bi bi-check2-circle text-success fs-5 me-3 mt-1"></i>
-                            <div>
-                                <h6 class="fw-bold mb-1">Trial Balance &amp; Balance Sheets</h6>
-                                <p class="text-muted small mb-0">Real-time debit-credit reconciliation with instant
-                                    balance sheet generation.</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-start">
-                            <i class="bi bi-check2-circle text-success fs-5 me-3 mt-1"></i>
-                            <div>
-                                <h6 class="fw-bold mb-1">Expense &amp; Vendor Management</h6>
-                                <p class="text-muted small mb-0">Categorized operational expenditure with vendor
-                                    tracking and receipt attachments.</p>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-start">
-                            <i class="bi bi-check2-circle text-success fs-5 me-3 mt-1"></i>
-                            <div>
-                                <h6 class="fw-bold mb-1">Outstanding Arrears &amp; Defaulter Reports</h6>
-                                <p class="text-muted small mb-0">Multi-parameter queries by Class, Month, and Academic
-                                    Session to monitor uncollected fees.</p>
-                            </div>
-                        </div>
+                    <div class="d-flex flex-wrap gap-3 mb-4">
+                        <button class="btn-saas-primary" data-bs-toggle="modal" data-bs-target="#schoolLoginModal">
+                            <i class="bi bi-shield-lock-fill"></i> Sign In to School Workspace
+                        </button>
+                        <a href="#onboard" class="btn-saas-secondary">
+                            <i class="bi bi-file-earmark-spreadsheet"></i> Request MoU Partnership
+                        </a>
                     </div>
 
-                    <a href="{{ route('accounting.login') }}" class="btn btn-brand-primary rounded-pill px-4">
-                        <i class="bi bi-lock-fill me-1"></i> Open Accounting Portal
-                    </a>
+                    {{-- Micro Trust Tags --}}
+                    <div class="d-flex flex-wrap align-items-center gap-4 pt-3 text-secondary small">
+                        <span class="d-flex align-items-center gap-2"><i class="bi bi-check2 text-success"></i> Bikram Sambat 2083 Ready</span>
+                        <span class="d-flex align-items-center gap-2"><i class="bi bi-check2 text-success"></i> Double-Entry Journal Core</span>
+                        <span class="d-flex align-items-center gap-2"><i class="bi bi-check2 text-success"></i> Multi-Guard Auth</span>
+                    </div>
                 </div>
 
-                <div class="col-lg-6">
-                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-                        <div
-                            class="card-header bg-dark text-white py-3 px-4 d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="badge bg-success rounded-circle p-1"></span>
-                                <span class="fw-semibold small">GPLC Accounting Ledger</span>
+                {{-- Hero Live Preview Window --}}
+                <div class="col-lg-5 mt-4 mt-lg-0">
+                    <div class="preview-window">
+                        <div class="preview-header">
+                            <div class="window-dots">
+                                <div class="window-dot"></div>
+                                <div class="window-dot"></div>
+                                <div class="window-dot"></div>
                             </div>
-                            <span class="badge bg-secondary font-monospace">Bikram Sambat 2083</span>
+                            <span class="mono small text-secondary" style="font-size: 0.75rem;">nsms://tenant.demo/finance/overview</span>
+                            <span class="badge bg-success bg-opacity-10 text-success mono" style="font-size: 0.7rem;">LIVE SYNC</span>
                         </div>
-                        <div class="card-body p-4">
-                            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                                <span class="text-muted small">Income (Monthly)</span>
-                                <span class="fw-bold text-success font-monospace">Rs. 428,000.00</span>
+                        <div class="p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <div class="text-secondary small">Monthly Revenue (Bhadra 2083)</div>
+                                    <div class="fs-4 fw-bold mono text-emerald-400" style="color:var(--emerald-400)">Rs. 428,000.00</div>
+                                </div>
+                                <span class="badge bg-success bg-opacity-20 text-success p-2"><i class="bi bi-graph-up-arrow"></i> +14.2%</span>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                                <span class="text-muted small">Operational Expenses</span>
-                                <span class="fw-bold text-danger font-monospace">Rs. 185,450.00</span>
+
+                            <div class="p-3 rounded-3 mb-3" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+                                <div class="d-flex justify-content-between text-secondary small mb-2">
+                                    <span>Fee Collection Efficiency</span>
+                                    <span class="mono text-white">88.4%</span>
+                                </div>
+                                <div class="progress" style="height: 6px; background: rgba(255,255,255,0.06);">
+                                    <div class="progress-bar bg-success" style="width: 88.4%"></div>
+                                </div>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-                                <span class="text-muted small">Total Bank Balance</span>
-                                <span class="fw-bold text-primary font-monospace">Rs. 1,420,500.00</span>
+
+                            <div class="row g-2 text-start">
+                                <div class="col-6">
+                                    <div class="p-2 rounded-2" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+                                        <div class="text-secondary" style="font-size: 0.75rem;">Active Enrolments</div>
+                                        <div class="fw-bold mono">{{ number_format($totalStudents ?? 189) }} Students</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-2 rounded-2" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+                                        <div class="text-secondary" style="font-size: 0.75rem;">Ledger Balance</div>
+                                        <div class="fw-bold mono">Rs. 1.42M</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <span class="text-muted small">Outstanding Dues</span>
-                                <span class="fw-bold text-warning font-monospace">Rs. 199,900.00</span>
+
+                            <div class="mt-3 pt-3 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="pulse-indicator"></span>
+                                    <span class="text-secondary small">Cloud Tenant Active</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem;" data-bs-toggle="modal" data-bs-target="#schoolLoginModal">
+                                    Enter Dashboard &rarr;
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -723,111 +575,400 @@
         </div>
     </section>
 
-    <!-- Quick Login Modal (Tabbed for All Roles) -->
-    <div class="modal fade" id="quickLoginModal" tabindex="-1" aria-labelledby="quickLoginModalLabel"
-        aria-hidden="true">
+    <!-- Role-Based Workspaces Section -->
+    <section class="py-5 position-relative z-1" id="portals">
+        <div class="container">
+            <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+                <div>
+                    <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">WORKSPACES</span>
+                    <h3 class="fw-bold mb-1">Select Your Institutional Portal</h3>
+                    <p class="text-secondary mb-0">Sign in to your provisioned school environment based on your operational role.</p>
+                </div>
+                <div class="text-secondary small mono mt-2 mt-md-0">
+                    <i class="bi bi-shield-check text-success"></i> 256-Bit Encrypted Sessions
+                </div>
+            </div>
+
+            <div class="row g-3">
+                {{-- Admin / Staff --}}
+                <div class="col-12 col-md-6 col-lg-3">
+                    <a href="{{ route('admin.login') }}" class="portal-entry-card">
+                        <div>
+                            <div class="icon-sq text-primary">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </div>
+                            <div class="fw-bold fs-6 mb-1">Administrative Staff</div>
+                            <p class="text-secondary small mb-3">
+                                Enrolments, academic sessions, teacher rosters, class schedules, and system configurations.
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
+                            <span class="small mono fw-semibold text-primary">admin.auth &rarr;</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 0.7rem;">SMS Core</span>
+                        </div>
+                    </a>
+                </div>
+
+                {{-- Accounting / Bursar --}}
+                <div class="col-12 col-md-6 col-lg-3">
+                    <a href="{{ route('accounting.login') }}" class="portal-entry-card">
+                        <div>
+                            <div class="icon-sq text-success">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+                            <div class="fw-bold fs-6 mb-1">Finance &amp; Bursar</div>
+                            <p class="text-secondary small mb-3">
+                                Bikram Sambat fee invoicing, payment receipts, expense ledgers, trial balance, and P&amp;L reports.
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
+                            <span class="small mono fw-semibold text-success">finance.auth &rarr;</span>
+                            <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 0.7rem;">Ledger Guard</span>
+                        </div>
+                    </a>
+                </div>
+
+                {{-- Parent Portal --}}
+                <div class="col-12 col-md-6 col-lg-3">
+                    <a href="{{ route('admin.login') }}" class="portal-entry-card">
+                        <div>
+                            <div class="icon-sq text-info">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div class="fw-bold fs-6 mb-1">Parents &amp; Guardians</div>
+                            <p class="text-secondary small mb-3">
+                                Attendance tracking, digital fee receipts, outstanding balance alerts, and student progress reports.
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
+                            <span class="small mono fw-semibold text-info">parent.auth &rarr;</span>
+                            <span class="badge bg-info bg-opacity-10 text-info" style="font-size: 0.7rem;">Family App</span>
+                        </div>
+                    </a>
+                </div>
+
+                {{-- Student Portal --}}
+                <div class="col-12 col-md-6 col-lg-3">
+                    <a href="{{ route('admin.login') }}" class="portal-entry-card">
+                        <div>
+                            <div class="icon-sq text-warning">
+                                <i class="bi bi-mortarboard-fill"></i>
+                            </div>
+                            <div class="fw-bold fs-6 mb-1">Student Workspace</div>
+                            <p class="text-secondary small mb-3">
+                                Download homework, review course materials, check examination schedules, and view grade cards.
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
+                            <span class="small mono fw-semibold text-warning">student.auth &rarr;</span>
+                            <span class="badge bg-warning bg-opacity-10 text-warning" style="font-size: 0.7rem;">Student App</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The MoU Lifecycle: How Institutions Partner with Us -->
+    <section class="py-5 bg-surface border-top border-bottom border-secondary border-opacity-10" id="mou-lifecycle">
+        <div class="container py-3">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-5">
+                    <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">SaaS PARTNERSHIP MODEL</span>
+                    <h2 class="display-6 fw-bold mb-3">How Schools Partner &amp; Deploy NSMS</h2>
+                    <p class="text-secondary mb-4">
+                        We don't just sell software; we enter into institutional partnerships (MoUs) to provide end-to-end digitisation, continuous cloud hosting, and compliance updates.
+                    </p>
+
+                    <div class="p-3 rounded-3 mb-4" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-shield-check text-success fs-3"></i>
+                            <div>
+                                <div class="fw-bold small">Enterprise SLA &amp; Support</div>
+                                <div class="text-secondary small">24/7 dedicated support line with 99.9% uptime guarantee.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="#onboard" class="btn-saas-primary">
+                        <i class="bi bi-pen-fill"></i> Partner With Us
+                    </a>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="ps-lg-4">
+                        <div class="timeline-step">
+                            <div class="timeline-node"></div>
+                            <h5 class="fw-bold mb-1">01. Institutional MoU &amp; Scope Alignment</h5>
+                            <p class="text-secondary small mb-0">
+                                We establish an MoU defining your academic grading schemes, class tiers, and fee structures (Bikram Sambat 12-month calendar).
+                            </p>
+                        </div>
+
+                        <div class="timeline-step">
+                            <div class="timeline-node"></div>
+                            <h5 class="fw-bold mb-1">02. Tenant Provisioning &amp; Data Migration</h5>
+                            <p class="text-secondary small mb-0">
+                                Our data engineers import your existing student records, faculty rosters, and opening chart of accounts into an isolated cloud database.
+                            </p>
+                        </div>
+
+                        <div class="timeline-step">
+                            <div class="timeline-node"></div>
+                            <h5 class="fw-bold mb-1">03. Staff Onboarding &amp; Role Handover</h5>
+                            <p class="text-secondary small mb-0">
+                                Principal, bursar, and administrative credentials are created. Hands-on training is provided for invoice generation and day books.
+                            </p>
+                        </div>
+
+                        <div class="timeline-step">
+                            <div class="timeline-node"></div>
+                            <h5 class="fw-bold mb-1">04. Live Operations &amp; Managed Cloud</h5>
+                            <p class="text-secondary small mb-0">
+                                Daily attendance, billing, exam marksheets, and ledger reconciliations run on zero-maintenance cloud infrastructure.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture & Modules Grid -->
+    <section class="py-5 position-relative z-1" id="modules">
+        <div class="container py-3">
+            <div class="text-center max-w-2xl mx-auto mb-5">
+                <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">SYSTEM ARCHITECTURE</span>
+                <h2 class="display-6 fw-bold mb-2">Designed for Total Operational Command</h2>
+                <p class="text-secondary">Every component is engineered for data integrity, speed, and audit compliance.</p>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-box">
+                        <i class="bi bi-mortarboard feature-icon-mini"></i>
+                        <h6 class="fw-bold mb-2">Student Lifecycle &amp; Enrolment</h6>
+                        <p class="text-secondary small mb-0">
+                            Digital admission forms, roll allocation algorithms, class promotion workflows, and automated ID badge printing.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-box">
+                        <i class="bi bi-calendar2-range feature-icon-mini"></i>
+                        <h6 class="fw-bold mb-2">Bikram Sambat Billing Engine</h6>
+                        <p class="text-secondary small mb-0">
+                            Class-wise dynamic fee structures with 12 Nepali months batch invoicing, arrears carryover, and A4/A5 receipt printing.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-box">
+                        <i class="bi bi-journal-bookmark feature-icon-mini"></i>
+                        <h6 class="fw-bold mb-2">Double-Entry Financial Suite</h6>
+                        <p class="text-secondary small mb-0">
+                            Real-time day books, general ledgers, trial balance calculation, automated profit &amp; loss, and bank reconciliations.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-box">
+                        <i class="bi bi-clipboard2-data feature-icon-mini"></i>
+                        <h6 class="fw-bold mb-2">Examination &amp; GPA Engine</h6>
+                        <p class="text-secondary small mb-0">
+                            Custom grading criteria, terminal marks entry, tabulations, automated GPA conversion, and printable marksheets.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-box">
+                        <i class="bi bi-fingerprint feature-icon-mini"></i>
+                        <h6 class="fw-bold mb-2">Attendance &amp; Log Analytics</h6>
+                        <p class="text-secondary small mb-0">
+                            Daily student &amp; staff attendance logs, absent SMS alerts, monthly percentage trends, and printable registers.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-box">
+                        <i class="bi bi-qr-code-scan feature-icon-mini"></i>
+                        <h6 class="fw-bold mb-2">QR Document Verification</h6>
+                        <p class="text-secondary small mb-0">
+                            Tamper-proof cryptographic QR tokens on student certificates and report cards with public instant authenticity check.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Onboard School MoU Consultation Form -->
+    <section class="py-5 bg-surface border-top border-secondary border-opacity-10" id="onboard">
+        <div class="container py-3">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">INSTITUTIONAL ONBOARDING</span>
+                    <h2 class="display-6 fw-bold mb-3">Deploy NSMS In Your Institution</h2>
+                    <p class="text-secondary mb-4">
+                        Schedule a live presentation with our educational technology specialists. We provide transparent MoU agreements and zero-downtime migration.
+                    </p>
+
+                    <div class="d-flex flex-column gap-3 text-secondary small">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle text-success"></i> Custom Nepali Calendar (BS) and Grading Scales configured
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle text-success"></i> On-site &amp; remote hands-on workshops for staff &amp; accountants
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle text-success"></i> Dedicated server provisioning with encrypted cloud backups
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="p-4 p-md-5 rounded-4" style="background: var(--bg-card); border: 1px solid var(--border-strong);">
+                        <h5 class="fw-bold mb-1">Request MoU Consultation</h5>
+                        <p class="text-secondary small mb-4">Fill out your school details to schedule a live demo.</p>
+
+                        <form action="{{ route('contact') }}" method="GET">
+                            <div class="mb-3">
+                                <label class="form-label small text-secondary">Institution / College Name</label>
+                                <input type="text" class="form-control saas-input" placeholder="e.g. Model Academy" required>
+                            </div>
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small text-secondary">Contact Person</label>
+                                    <input type="text" class="form-control saas-input" placeholder="Principal / Admin" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-secondary">Phone Number</label>
+                                    <input type="tel" class="form-control saas-input" placeholder="+977 98XXXXXXXX" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small text-secondary">Official Email</label>
+                                <input type="email" class="form-control saas-input" placeholder="principal@school.edu.np" required>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small text-secondary">Student Body Capacity</label>
+                                <select class="form-select saas-input">
+                                    <option value="100-500">100 – 500 Students</option>
+                                    <option value="500-1500" selected>500 – 1,500 Students</option>
+                                    <option value="1500+">1,500+ Students (Campus / Multi-Branch)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn-saas-primary w-100 py-3">
+                                <i class="bi bi-send-fill"></i> Submit Partnership Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- School Login Modal -->
+    <div class="modal fade" id="schoolLoginModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-content modal-content-custom">
                 <div class="modal-header border-0 pb-0 px-4 pt-4">
                     <div>
-                        <h5 class="modal-title fw-bold" id="quickLoginModalLabel">Select Your Portal</h5>
-                        <p class="text-muted small mb-0">Choose your role to sign into the system</p>
+                        <h5 class="modal-title fw-bold">Sign In to Your School Portal</h5>
+                        <p class="text-secondary small mb-0">Select your institutional role to continue</p>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
-                    <div class="d-grid gap-3">
-                        <a href="{{ route('admin.login') }}"
-                            class="btn btn-outline-primary d-flex align-items-center p-3 rounded-3 text-start">
-                            <div class="rounded-3 p-2 bg-primary bg-opacity-10 text-primary me-3">
-                                <i class="bi bi-shield-lock-fill fs-4"></i>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="{{ route('admin.login') }}" class="login-role-btn">
+                            <div class="icon-sq text-primary mb-0">
+                                <i class="bi bi-shield-lock-fill"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <div class="fw-bold">Super Admin &amp; Staff</div>
-                                <small class="text-muted">SMS Administrative System</small>
+                                <div class="fw-bold small">Administrator &amp; Staff</div>
+                                <div class="text-secondary" style="font-size: 0.78rem;">Student management, exams &amp; routines</div>
                             </div>
-                            <i class="bi bi-chevron-right text-muted"></i>
+                            <i class="bi bi-chevron-right text-secondary"></i>
                         </a>
 
-                        <a href="{{ route('accounting.login') }}"
-                            class="btn btn-outline-success d-flex align-items-center p-3 rounded-3 text-start">
-                            <div class="rounded-3 p-2 bg-success bg-opacity-10 text-success me-3">
-                                <i class="bi bi-cash-coin fs-4"></i>
+                        <a href="{{ route('accounting.login') }}" class="login-role-btn">
+                            <div class="icon-sq text-success mb-0">
+                                <i class="bi bi-cash-coin"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <div class="fw-bold">Finance &amp; Accounting</div>
-                                <small class="text-muted">accountant@school.com</small>
+                                <div class="fw-bold small">Bursar &amp; Finance Accountant</div>
+                                <div class="text-secondary" style="font-size: 0.78rem;">Fee invoicing, ledgers &amp; balance sheet</div>
                             </div>
-                            <i class="bi bi-chevron-right text-muted"></i>
+                            <i class="bi bi-chevron-right text-secondary"></i>
                         </a>
 
-                        <a href="{{ route('admin.login') }}"
-                            class="btn btn-outline-info d-flex align-items-center p-3 rounded-3 text-start">
-                            <div class="rounded-3 p-2 bg-info bg-opacity-10 text-info me-3">
-                                <i class="bi bi-people-fill fs-4"></i>
+                        <a href="{{ route('admin.login') }}" class="login-role-btn">
+                            <div class="icon-sq text-info mb-0">
+                                <i class="bi bi-people-fill"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <div class="fw-bold">Parent / Student Portal</div>
-                                <small class="text-muted">Attendance, dues &amp; marksheets</small>
+                                <div class="fw-bold small">Parent &amp; Student Portal</div>
+                                <div class="text-secondary" style="font-size: 0.78rem;">Attendance, due fees &amp; digital grade cards</div>
                             </div>
-                            <i class="bi bi-chevron-right text-muted"></i>
+                            <i class="bi bi-chevron-right text-secondary"></i>
                         </a>
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0 px-4 pb-4 justify-content-center">
-                    <small class="text-muted">Need help with credentials? Contact College Administration.</small>
+                    <small class="text-secondary">New school? <a href="#onboard" data-bs-dismiss="modal" class="text-emerald-400 text-decoration-none fw-semibold" style="color:var(--emerald-400)">Request an MoU Partnership</a></small>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="py-4 border-top">
-        <div class="container text-center">
+    <footer class="py-4 border-top border-secondary border-opacity-10 bg-surface">
+        <div class="container">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                <div class="text-muted small">
-                    &copy; {{ date('Y') }} <strong>{{ $siteSettings->site_name }}</strong>. All rights reserved.
+                <div class="text-secondary small">
+                    &copy; {{ date('Y') }} <strong>NSMS SaaS Platform</strong>. Institutional Education Technologies.
                 </div>
                 <div class="d-flex gap-3 small">
-                    <a href="{{ route('home') }}" class="text-decoration-none text-muted">College Website</a>
-                    <a href="{{ route('accounting.login') }}" class="text-decoration-none text-muted">Accounting
-                        Login</a>
-                    <a href="{{ route('admin.login') }}" class="text-decoration-none text-muted">Staff Login</a>
-                    <a href="{{ route('privacy.policy') }}" class="text-decoration-none text-muted">Privacy Policy</a>
+                    <a href="{{ route('home') }}" class="text-decoration-none text-secondary">Demo School</a>
+                    <a href="{{ route('accounting.login') }}" class="text-decoration-none text-secondary">Finance Login</a>
+                    <a href="{{ route('admin.login') }}" class="text-decoration-none text-secondary">Staff Login</a>
+                    <a href="#onboard" class="text-decoration-none text-secondary">MoU Inquiries</a>
+                    <a href="{{ route('privacy.policy') }}" class="text-decoration-none text-secondary">Privacy</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS & Theme Toggle Script -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Global Theme Toggle Function
-        function toggleTheme() {
-            const html = document.documentElement;
-            const current = html.getAttribute('data-bs-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-bs-theme', next);
-            localStorage.setItem('theme', next);
-            updateThemeIcon();
+        const toggleBtn = document.getElementById('themeToggleBtn');
+        const toggleIcon = document.getElementById('themeToggleIcon');
+
+        function updateThemeDisplay(theme) {
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('nsms_theme', theme);
+            if (theme === 'dark') {
+                toggleIcon.className = 'bi bi-sun-fill fs-6 text-warning';
+            } else {
+                toggleIcon.className = 'bi bi-moon-stars-fill fs-6 text-secondary';
+            }
         }
 
-        function updateThemeIcon() {
-            const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
-            document.querySelectorAll('.theme-toggle-icon').forEach(icon => {
-                icon.className = isDark ? 'bi bi-sun fs-5 theme-toggle-icon' : 'bi bi-moon fs-5 theme-toggle-icon';
-            });
-        }
+        const currentTheme = localStorage.getItem('nsms_theme') || 'dark';
+        updateThemeDisplay(currentTheme);
 
-        document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                toggleTheme();
-            });
+        toggleBtn?.addEventListener('click', () => {
+            const active = document.documentElement.getAttribute('data-bs-theme');
+            const next = active === 'dark' ? 'light' : 'dark';
+            updateThemeDisplay(next);
         });
-
-        document.addEventListener('DOMContentLoaded', updateThemeIcon);
     </script>
 </body>
-
 </html>
