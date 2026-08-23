@@ -36,8 +36,9 @@ Route::get('/contact', [Frontend::class, 'contact'])->name('contact');
 Route::get('/admission', [Frontend::class, 'admission'])->name('admission.form');
 Route::post('/admission', [Frontend::class, 'submitAdmission'])->name('admission.submit');
 Route::get('/member', [Frontend::class, 'member'])->name('member');
-Route::get('/about/us', [Frontend::class, 'about'])->name('about.us');
-Route::get('/secure-login', [Admin::class, 'publicPortal'])->name('secure.login'); // Now acts as portal selection
+Route::get('/secure-login', [Admin::class, 'publicPortal'])->name('secure.login'); // Portal selection & Landing Page
+Route::get('/portal', [Admin::class, 'publicPortal'])->name('portal');
+Route::get('/nsms', [Admin::class, 'publicPortal'])->name('nsms.landing');
 Route::get('/admin/login', [Admin::class, 'login'])->name('admin.login');
 
 // Accounting Login

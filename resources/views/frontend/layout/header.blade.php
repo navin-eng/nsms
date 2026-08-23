@@ -16,11 +16,9 @@
                 <a href="{{ $siteSettings->youtube_url }}" target="_blank"><i class="fab fa-youtube"></i></a>
                 <a href="https://wa.me/{{ $siteSettings->whatsapp_number }}" target="_blank"><i class="fab fa-whatsapp"></i></a>
             </div>
-            @if(!empty($siteSettings->student_portal_text) && !empty($siteSettings->student_portal_url))
-                <a href="{{ $siteSettings->student_portal_url }}" class="portal-btn ms-2" target="_blank">
-                    <i class="fas fa-sign-in-alt"></i> {{ $siteSettings->student_portal_text }}
-                </a>
-            @endif
+            <a href="{{ route('secure.login') }}" class="portal-btn ms-2" title="NSMS & Accounting Portal">
+                <i class="fas fa-shield-alt"></i> NSMS Portal
+            </a>
             @if(!empty($siteSettings->header_button_text) && !empty($siteSettings->header_button_url))
                 <a href="{{ $siteSettings->header_button_url }}" class="portal-btn portal-btn-secondary" target="_blank">
                     <i class="fas fa-arrow-up-right-from-square"></i> {{ $siteSettings->header_button_text }}

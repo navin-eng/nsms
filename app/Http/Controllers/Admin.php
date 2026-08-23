@@ -21,8 +21,19 @@ class Admin extends Controller
 {
     public function publicPortal()
     {
-        $siteSettings = \App\Models\SiteSetting::first();
-        return view('backend.pages.portal_public', compact('siteSettings'));
+        $siteSettings = \App\Models\SiteSetting::current();
+        $totalStudents = \App\Models\Student::where('status', 'Active')->count();
+        $totalStaff = \App\Models\Staff::where('status', 'Active')->count();
+        $totalClasses = \App\Models\AcademicClass::count();
+        $currentYear = \App\Models\AcademicYear::where('is_active', 1)->first() ?? \App\Models\AcademicYear::latest()->first();
+        
+        return view('backend.pages.portal_public', compact(
+            'siteSettings',
+            'totalStudents',
+            'totalStaff',
+            'totalClasses',
+            'currentYear'
+        ));
     }
 
     public function login()
