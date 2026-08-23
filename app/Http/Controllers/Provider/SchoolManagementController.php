@@ -80,8 +80,9 @@ class SchoolManagementController extends Controller
     {
         $generatedCode = School::generateUniqueCode();
         $allModules = School::allModules();
+        $nepalLocations = \App\Helpers\NepalLocations::getHierarchy();
 
-        return view('provider.schools.create', compact('generatedCode', 'allModules'));
+        return view('provider.schools.create', compact('generatedCode', 'allModules', 'nepalLocations'));
     }
 
     /**
@@ -94,7 +95,11 @@ class SchoolManagementController extends Controller
             'school_code' => 'required|string|max:32|unique:schools,school_code',
             'contact_email' => 'required|email|max:255',
             'contact_phone' => 'nullable|string|max:30',
-            'address' => 'nullable|string|max:255',
+            'province' => 'nullable|string|max:100',
+            'district' => 'nullable|string|max:100',
+            'municipality' => 'nullable|string|max:150',
+            'ward_no' => 'nullable|string|max:10',
+            'street_address' => 'nullable|string|max:255',
             'package_name' => 'required|string|in:Basic,Professional,Enterprise,Custom',
             'status' => 'required|string|in:pending,trial,active,suspended,disabled',
             'admin_name' => 'required|string|max:255',
@@ -108,6 +113,16 @@ class SchoolManagementController extends Controller
             $slug = $slug . '-' . strtolower(Str::random(4));
         }
 
+        // Build clean structured address
+        $addressParts = array_filter([
+            $request->street_address ? trim($request->street_address) : null,
+            $request->ward_no ? 'Ward No. ' . trim($request->ward_no) : null,
+            $request->municipality,
+            $request->district,
+            $request->province,
+        ]);
+        $compiledAddress = !empty($addressParts) ? implode(', ', $addressParts) : ($request->address ?? null);
+
         // 1. Create School Tenant
         $school = School::create([
             'name' => $request->name,
@@ -115,7 +130,7 @@ class SchoolManagementController extends Controller
             'slug' => $slug,
             'contact_email' => $request->contact_email,
             'contact_phone' => $request->contact_phone,
-            'address' => $request->address,
+            'address' => $compiledAddress,
             'status' => $request->status,
             'package_name' => $request->package_name,
             'subscription_start' => now(),

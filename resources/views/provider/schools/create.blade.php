@@ -56,9 +56,42 @@
                     </div>
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label small text-muted fw-semibold">School Physical Address</label>
-                    <input type="text" name="address" class="form-control" placeholder="City, District, Province" value="{{ old('address') }}">
+                <!-- Dynamic Nepali Administrative Location Selectors -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-semibold">Province (प्रदेश)</label>
+                        <select name="province" id="provinceSelect" class="form-select">
+                            <option value="">-- Select Province --</option>
+                            @foreach($nepalLocations as $provinceName => $districts)
+                                <option value="{{ $provinceName }}" {{ old('province') == $provinceName ? 'selected' : '' }}>{{ $provinceName }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-semibold">District (जिल्ला)</label>
+                        <select name="district" id="districtSelect" class="form-select" disabled>
+                            <option value="">-- Select District --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-semibold">Municipality (पालिका)</label>
+                        <select name="municipality" id="municipalitySelect" class="form-select" disabled>
+                            <option value="">-- Select Municipality --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label small text-muted fw-semibold">Ward No. (वडा नं.)</label>
+                        <input type="number" name="ward_no" class="form-control" placeholder="e.g. 5" min="1" max="35" value="{{ old('ward_no') }}">
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label small text-muted fw-semibold">Tole / Street Address (टोल / सडक)</label>
+                        <input type="text" name="street_address" class="form-control" placeholder="e.g. Main Chowk, School Road" value="{{ old('street_address') }}">
+                    </div>
                 </div>
 
                 <div class="mb-0">
@@ -131,4 +164,50 @@
         </div>
     </div>
 </form>
+
+@push('scripts')
+<script>
+    const nepalHierarchy = @json($nepalLocations);
+    const provinceSelect = document.getElementById('provinceSelect');
+    const districtSelect = document.getElementById('districtSelect');
+    const municipalitySelect = document.getElementById('municipalitySelect');
+
+    provinceSelect?.addEventListener('change', function() {
+        const province = this.value;
+        districtSelect.innerHTML = '<option value="">-- Select District --</option>';
+        municipalitySelect.innerHTML = '<option value="">-- Select Municipality --</option>';
+        municipalitySelect.disabled = true;
+
+        if (province && nepalHierarchy[province]) {
+            districtSelect.disabled = false;
+            Object.keys(nepalHierarchy[province]).sort().forEach(dist => {
+                const opt = document.createElement('option');
+                opt.value = dist;
+                opt.textContent = dist;
+                districtSelect.appendChild(opt);
+            });
+        } else {
+            districtSelect.disabled = true;
+        }
+    });
+
+    districtSelect?.addEventListener('change', function() {
+        const province = provinceSelect.value;
+        const district = this.value;
+        municipalitySelect.innerHTML = '<option value="">-- Select Municipality --</option>';
+
+        if (province && district && nepalHierarchy[province] && nepalHierarchy[province][district]) {
+            municipalitySelect.disabled = false;
+            nepalHierarchy[province][district].sort().forEach(mun => {
+                const opt = document.createElement('option');
+                opt.value = mun;
+                opt.textContent = mun;
+                municipalitySelect.appendChild(opt);
+            });
+        } else {
+            municipalitySelect.disabled = true;
+        }
+    });
+</script>
+@endpush
 @endsection
