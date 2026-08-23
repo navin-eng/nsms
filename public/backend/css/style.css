@@ -1169,7 +1169,7 @@ body {
 }
 
 /* Responsive */
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .admin-sidebar {
     transform: translateX(0) !important;
     display: flex !important;
@@ -1178,11 +1178,48 @@ body {
   .admin-main {
     margin-left: var(--sb-width) !important;
   }
+
+  .admin-main.sb-collapsed {
+    margin-left: 70px !important;
+  }
+
+  .admin-sidebar.collapsed {
+    width: 70px !important;
+  }
+
+  .admin-sidebar.collapsed .sb-logo-text,
+  .admin-sidebar.collapsed .sb-text,
+  .admin-sidebar.collapsed .sb-group-label,
+  .admin-sidebar.collapsed .sb-arrow,
+  .admin-sidebar.collapsed .sb-submenu {
+    display: none !important;
+  }
+
+  .admin-sidebar.collapsed .sb-logo {
+    justify-content: center;
+    padding: 18px 10px;
+  }
+
+  .admin-sidebar.collapsed .sb-link {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .admin-sidebar.collapsed .sb-link i {
+    margin: 0;
+    font-size: 18px;
+  }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 991px) {
   .admin-sidebar {
     transform: translateX(-100%);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1050;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
   }
 
   .admin-sidebar.open {
@@ -1190,25 +1227,58 @@ body {
   }
 
   .admin-main {
-    margin-left: 0;
+    margin-left: 0 !important;
+  }
+
+  .sb-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+    z-index: 1045;
   }
 
   .sb-overlay.show {
-    display: block;
+    display: block !important;
   }
 
   .topbar-user-info {
     display: none;
   }
+
+  .topbar-breadcrumb .breadcrumb-trail {
+    display: none;
+  }
+
+  .admin-topbar {
+    padding: 0 16px;
+  }
 }
 
 @media (max-width: 576px) {
   .admin-content {
-    padding: 16px;
+    padding: 12px;
+  }
+
+  .topbar-breadcrumb .page-title {
+    font-size: 13.5px;
+    max-width: 140px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .stat-num {
-    font-size: 22px;
+    font-size: 20px;
+  }
+
+  .table-responsive {
+    border-radius: 8px;
+  }
+
+  .card-god-metric {
+    padding: 1rem;
   }
 }
 

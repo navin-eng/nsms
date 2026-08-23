@@ -128,7 +128,73 @@
   <!-- Scripts -->
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="{{ asset('backend/js/script.js') }}"></script>
+
+  <script>
+    const adminSidebar = document.getElementById('adminSidebar');
+    const sbOverlay = document.getElementById('sbOverlay');
+
+    function openSidebar() { 
+      adminSidebar?.classList.add('open'); 
+      sbOverlay?.classList.add('show'); 
+    }
+    function closeSidebar() { 
+      adminSidebar?.classList.remove('open'); 
+      sbOverlay?.classList.remove('show'); 
+    }
+
+    document.getElementById('sidebarToggle')?.addEventListener('click', function () {
+      if (window.innerWidth <= 767) {
+        adminSidebar?.classList.contains('open') ? closeSidebar() : openSidebar();
+      } else {
+        adminSidebar?.classList.toggle('collapsed');
+        document.getElementById('adminMain')?.classList.toggle('sb-collapsed');
+        localStorage.setItem('sbCollapsed', adminSidebar?.classList.contains('collapsed') ? '1' : '0');
+      }
+    });
+
+    sbOverlay?.addEventListener('click', closeSidebar);
+
+    if (window.innerWidth > 767 && localStorage.getItem('sbCollapsed') === '1') {
+      adminSidebar?.classList.add('collapsed');
+      document.getElementById('adminMain')?.classList.add('sb-collapsed');
+    }
+
+    // User Profile Dropdown
+    document.getElementById('userMenuBtn')?.addEventListener('click', function (e) {
+      e.stopPropagation();
+      document.getElementById('userDropdown')?.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function () {
+      document.getElementById('userDropdown')?.classList.remove('show');
+    });
+
+    // Theme Toggle Function
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-bs-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-bs-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeIcon();
+    }
+
+    function updateThemeIcon() {
+      const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+      document.querySelectorAll('.theme-toggle-icon').forEach(icon => {
+        icon.className = isDark ? 'bi bi-sun theme-toggle-icon' : 'bi bi-moon theme-toggle-icon';
+      });
+    }
+
+    document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggleTheme();
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', updateThemeIcon);
+  </script>
 
   @stack('scripts')
 </body>
