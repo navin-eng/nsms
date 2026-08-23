@@ -117,7 +117,11 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label small text-muted fw-semibold">Admin Login Email <span class="text-danger">*</span></label>
-                        <input type="email" name="admin_email" class="form-control" placeholder="principal@school.edu.np" value="{{ old('admin_email') }}" required>
+                        <div class="input-group">
+                            <input type="text" name="admin_email_prefix" class="form-control" placeholder="e.g. principal.kma" value="{{ old('admin_email_prefix') }}" required>
+                            <span class="input-group-text bg-light text-muted font-monospace fw-bold" style="font-size: 0.85rem;">@nsms.com</span>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.72rem;">User will log in with <code>prefix@nsms.com</code></small>
                     </div>
 
                     <div class="col-md-6">

@@ -90,6 +90,18 @@ class SchoolManagementController extends Controller
      */
     public function store(Request $request)
     {
+        // Assemble full admin email with @nsms.com suffix
+        $prefix = strtolower(trim($request->admin_email_prefix ?? $request->admin_email));
+        // Remove any @nsms.com if typed in prefix
+        $prefix = str_replace('@nsms.com', '', $prefix);
+        $prefix = preg_replace('/[^a-z0-9._-]/', '', $prefix);
+        $fullAdminEmail = $prefix . '@nsms.com';
+
+        // Check uniqueness of constructed email
+        if (User::where('email', $fullAdminEmail)->exists()) {
+            return back()->withErrors(['admin_email_prefix' => "The login email '{$fullAdminEmail}' is already taken. Please choose a different prefix."])->withInput();
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'school_code' => 'required|string|max:32|unique:schools,school_code',
@@ -103,7 +115,6 @@ class SchoolManagementController extends Controller
             'package_name' => 'required|string|in:Basic,Professional,Enterprise,Custom',
             'status' => 'required|string|in:pending,trial,active,suspended,disabled',
             'admin_name' => 'required|string|max:255',
-            'admin_email' => 'required|email|unique:users,email',
             'admin_password' => 'required|string|min:6',
             'modules' => 'nullable|array',
         ]);
@@ -152,8 +163,8 @@ class SchoolManagementController extends Controller
         $admin = User::create([
             'school_id' => $school->id,
             'name' => $request->admin_name,
-            'email' => $request->admin_email,
-            'username' => 'admin',
+            'email' => $fullAdminEmail,
+            'username' => $prefix,
             'password' => Hash::make($request->admin_password),
             'a_type' => 'A',
         ]);
