@@ -63,13 +63,13 @@
       <li class="sb-item">
         <a href="{{ route('secure.login') }}" target="_blank" class="sb-link" title="SaaS Public Landing">
           <i class="bi bi-globe2"></i><span class="sb-text">SaaS Public Portal</span>
-          <i class="bi bi-box-arrow-up-right ms-auto" style="font-size: 0.75rem; opacity: 0.7;"></i>
+          <i class="bi bi-box-arrow-up-right sb-arrow ms-auto" style="font-size: 0.75rem; opacity: 0.7;"></i>
         </a>
       </li>
       <li class="sb-item">
         <a href="{{ route('home') }}" target="_blank" class="sb-link" title="Demo School Site">
           <i class="bi bi-mortarboard"></i><span class="sb-text">Demo School Site</span>
-          <i class="bi bi-box-arrow-up-right ms-auto" style="font-size: 0.75rem; opacity: 0.7;"></i>
+          <i class="bi bi-box-arrow-up-right sb-arrow ms-auto" style="font-size: 0.75rem; opacity: 0.7;"></i>
         </a>
       </li>
 

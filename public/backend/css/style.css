@@ -1207,14 +1207,21 @@ body {
   }
 
   .admin-sidebar.collapsed .sb-link {
-    justify-content: center;
-    padding: 12px 0;
-    gap: 0;
+    justify-content: center !important;
+    padding: 12px 0 !important;
+    gap: 0 !important;
   }
 
-  .admin-sidebar.collapsed .sb-link i {
-    margin: 0 auto;
-    font-size: 18px;
+  .admin-sidebar.collapsed .sb-link i:first-child {
+    margin: 0 auto !important;
+    font-size: 18px !important;
+    display: inline-block !important;
+  }
+
+  .admin-sidebar.collapsed .sb-link i:not(:first-child),
+  .admin-sidebar.collapsed .sb-link .ms-auto,
+  .admin-sidebar.collapsed .sb-link .badge {
+    display: none !important;
   }
 }
 
