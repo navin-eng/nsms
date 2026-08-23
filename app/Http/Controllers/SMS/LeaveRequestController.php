@@ -39,7 +39,7 @@ class LeaveRequestController extends Controller
         $students = Student::where('status', 'Active')->get();
         $staffMembers = Staff::where('status', 'Active')->get();
 
-        $calendarSystem = SiteSetting::current()->calendar_system ?? 'AD';
+        $calendarSystem = app(\App\Services\CalendarService::class)->system();
 
         return view('backend.pages.sms.leave-requests.index', compact(
             'leaveRequests', 'status', 'userType', 'students', 'staffMembers', 'calendarSystem'
@@ -51,6 +51,15 @@ class LeaveRequestController extends Controller
      */
     public function store(Request $request)
     {
+        $input = $request->all();
+        $calendarService = app(\App\Services\CalendarService::class);
+        
+        if ($calendarService->system() === 'BS' && !empty($input['start_date']) && !empty($input['end_date'])) {
+            $input['start_date'] = $calendarService->toDbDate($input['start_date'])->toDateString();
+            $input['end_date'] = $calendarService->toDbDate($input['end_date'])->toDateString();
+            $request->merge($input);
+        }
+
         $request->validate([
             'user_type' => 'required|in:student,staff',
             'user_id' => 'required|integer',

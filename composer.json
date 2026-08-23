@@ -9,10 +9,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "barryvdh/laravel-dompdf": "^3.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "maatwebsite/excel": "^3.1",
         "pratiksh/nepalidate": "^2.0",
         "realrashid/sweet-alert": "^5.1",
         "spatie/laravel-permission": "^6.25"
@@ -31,7 +33,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/DateHelper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

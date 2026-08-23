@@ -19,6 +19,10 @@
         <div class="card-body">
             <form action="{{ route('sms.students.index') }}" method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
+                    <label class="form-label small text-muted">Search</label>
+                    <input type="text" name="search" class="form-control" placeholder="Name or Admission No..." value="{{ request('search') }}">
+                </div>
+                <div class="col-md-3">
                     <label class="form-label small text-muted">Class</label>
                     <select name="class_id" class="form-select">
                         <option value="">All Classes</option>
@@ -42,7 +46,7 @@
                         <i class="bi bi-funnel"></i> Filter
                     </button>
                 </div>
-                @if(request()->has('class_id') || request()->has('status'))
+                @if(request()->has('class_id') || request()->has('status') || request()->has('search'))
                 <div class="col-md-3">
                     <a href="{{ route('sms.students.index') }}" class="btn btn-light w-100 border">
                         <i class="bi bi-x-circle"></i> Clear Filters

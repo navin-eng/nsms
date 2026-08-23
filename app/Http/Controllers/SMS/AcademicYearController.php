@@ -15,19 +15,18 @@ class AcademicYearController extends Controller
     public function index()
     {
         $years = AcademicYear::orderBy('start_date', 'desc')->get();
-        $calendarSystem = SiteSetting::current()->calendar_system ?? 'AD';
+        $calendarSystem = app(\App\Services\CalendarService::class)->system();
         return view('backend.pages.sms.academic_years.index', compact('years', 'calendarSystem'));
     }
 
     public function store(Request $request)
     {
-        $calendarSystem = SiteSetting::current()->calendar_system ?? 'AD';
-        
         $input = $request->all();
-        if ($calendarSystem === 'BS') {
-            // Convert BS string inputs back to AD
-            $input['start_date'] = EnglishDate::create($request->start_date)->toAD();
-            $input['end_date'] = EnglishDate::create($request->end_date)->toAD();
+        $calendarService = app(\App\Services\CalendarService::class);
+        
+        if ($calendarService->system() === 'BS' && !empty($input['start_date']) && !empty($input['end_date'])) {
+            $input['start_date'] = $calendarService->toDbDate($input['start_date'])->toDateString();
+            $input['end_date'] = $calendarService->toDbDate($input['end_date'])->toDateString();
             $request->merge($input);
         }
 
@@ -50,12 +49,12 @@ class AcademicYearController extends Controller
 
     public function update(Request $request, $id)
     {
-        $calendarSystem = SiteSetting::current()->calendar_system ?? 'AD';
-        
         $input = $request->all();
-        if ($calendarSystem === 'BS') {
-            $input['start_date'] = EnglishDate::create($request->start_date)->toAD();
-            $input['end_date'] = EnglishDate::create($request->end_date)->toAD();
+        $calendarService = app(\App\Services\CalendarService::class);
+        
+        if ($calendarService->system() === 'BS' && !empty($input['start_date']) && !empty($input['end_date'])) {
+            $input['start_date'] = $calendarService->toDbDate($input['start_date'])->toDateString();
+            $input['end_date'] = $calendarService->toDbDate($input['end_date'])->toDateString();
             $request->merge($input);
         }
 

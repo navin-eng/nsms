@@ -162,6 +162,46 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Handle class to section filtering
+        const classSelect = document.querySelector('select[name="academic_class_id"]');
+        const sectionSelect = document.querySelector('select[name="section_id"]');
+        
+        if (classSelect && sectionSelect) {
+            const allSectionOptions = Array.from(sectionSelect.querySelectorAll('option'));
+            
+            function filterSections() {
+                const classId = classSelect.value;
+                const currentSelected = sectionSelect.value;
+                
+                sectionSelect.innerHTML = '';
+                
+                let hasSelected = false;
+                allSectionOptions.forEach(option => {
+                    if (option.value === "") {
+                        sectionSelect.appendChild(option.cloneNode(true));
+                        return;
+                    }
+                    
+                    const classIds = option.getAttribute('data-class-ids') ? option.getAttribute('data-class-ids').split(',') : [];
+                    if (!classId || classIds.includes(classId)) {
+                        const newOption = option.cloneNode(true);
+                        sectionSelect.appendChild(newOption);
+                        if (newOption.value === currentSelected) {
+                            newOption.selected = true;
+                            hasSelected = true;
+                        }
+                    }
+                });
+                
+                if (!hasSelected && sectionSelect.options.length > 0) {
+                    sectionSelect.selectedIndex = 0;
+                }
+            }
+            
+            classSelect.addEventListener('change', filterSections);
+            filterSections(); // Initialize on load
+        }
+
         // Handle "Mark All" buttons
         const markAllBtns = document.querySelectorAll('.mark-all');
         

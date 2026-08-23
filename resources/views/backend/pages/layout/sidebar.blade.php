@@ -253,7 +253,7 @@
           </li>
         @endcan
 
-      @elseif(request()->is('admin/sms*'))
+      @elseif(request()->is('admin/sms*') || request()->is('admin/inventory*') || request()->is('admin/analytics*'))
         {{-- ========================================= --}}
         {{-- SCHOOL MANAGEMENT SYSTEM (SMS) SIDEBAR --}}
         {{-- ========================================= --}}
@@ -266,6 +266,8 @@
             <i class="bi bi-grid-1x2-fill"></i><span class="sb-text">Dashboard</span>
           </a>
         </li>
+
+
 
         @can('manage_admission')
           {{-- Admissions Management --}}
@@ -511,6 +513,46 @@
           </div>
         </li>
 
+        {{-- Hostel Management --}}
+        <li class="sb-item">
+          <a class="sb-link {{ request()->routeIs('sms.hostel.*') ? 'active' : '' }}" data-bs-toggle="collapse"
+            href="#sbHostel" aria-expanded="{{ request()->routeIs('sms.hostel.*') ? 'true' : 'false' }}"
+            title="Hostel Management">
+            <i class="bi bi-building"></i>
+            <span class="sb-text">Hostel Management</span>
+            <i class="bi bi-chevron-right sb-arrow"></i>
+          </a>
+          <div class="collapse {{ request()->routeIs('sms.hostel.*') ? 'show' : '' }}" id="sbHostel"
+            data-bs-parent="#sb-menu">
+            <ul class="sb-submenu">
+              <li class="sb-item">
+                <a href="{{ route('sms.hostel.hostels.index') }}"
+                  class="sb-link {{ request()->routeIs('sms.hostel.hostels.*') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Hostel Buildings</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('sms.hostel.rooms.index') }}"
+                  class="sb-link {{ request()->routeIs('sms.hostel.rooms.*') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Rooms & Beds</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('sms.hostel.allocations.index') }}"
+                  class="sb-link {{ request()->routeIs('sms.hostel.allocations.*') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Allocations</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('sms.hostel.attendance.index') }}"
+                  class="sb-link {{ request()->routeIs('sms.hostel.attendance.*') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Hostel Attendance</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+
         {{-- Library Management --}}
         <li class="sb-item">
           <a class="sb-link {{ request()->routeIs('sms.library.*') ? 'active' : '' }}" data-bs-toggle="collapse"
@@ -551,6 +593,34 @@
                 <a href="{{ route('sms.library.settings.index') }}"
                   class="sb-link {{ request()->routeIs('sms.library.settings.*') ? 'active' : '' }}">
                   <i class="bi bi-dot"></i><span class="sb-text">Settings</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+        {{-- Events & Activities --}}
+        <li class="sb-item">
+          <a class="sb-link {{ request()->routeIs('sms.events.*') ? 'active' : '' }}" data-bs-toggle="collapse"
+            href="#sbSmsEvents" aria-expanded="{{ request()->routeIs('sms.events.*') ? 'true' : 'false' }}"
+            title="Events & Activities">
+            <i class="bi bi-calendar-event-fill"></i>
+            <span class="sb-text">Events & Activities</span>
+            <i class="bi bi-chevron-right sb-arrow"></i>
+          </a>
+          <div class="collapse {{ request()->routeIs('sms.events.*') ? 'show' : '' }}" id="sbSmsEvents"
+            data-bs-parent="#sb-menu">
+            <ul class="sb-submenu">
+              <li class="sb-item">
+                <a href="{{ route('sms.events.index') }}"
+                  class="sb-link {{ request()->routeIs('sms.events.index') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">All Events</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('sms.events.create') }}"
+                  class="sb-link {{ request()->routeIs('sms.events.create') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Create Event</span>
                 </a>
               </li>
             </ul>
@@ -717,41 +787,41 @@
           </div>
         </li>
 
-          <li class="sb-group-label"><span class="sb-text">Inventory &amp; Assets</span></li>
-          
-          <li class="sb-item">
-            <a href="#collapseInventory" class="sb-link {{ request()->routeIs('admin.inventory.*') ? '' : 'collapsed' }}" data-bs-toggle="collapse"
-              aria-expanded="{{ request()->routeIs('admin.inventory.*') ? 'true' : 'false' }}">
-              <i class="bi bi-box-seam"></i><span class="sb-text">Inventory & Assets</span><i
-                class="bi bi-chevron-down sb-caret"></i>
-            </a>
-            <div class="collapse {{ request()->routeIs('admin.inventory.*') ? 'show' : '' }}" id="collapseInventory"
-              data-bs-parent="#sidebarMenu">
-              <ul class="sb-submenu">
-                <li class="sb-item"><a href="{{ route('admin.inventory.categories.index') }}"
-                    class="sb-link {{ request()->routeIs('admin.inventory.categories.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span
-                      class="sb-text">Categories</span></a></li>
-                <li class="sb-item"><a href="{{ route('admin.inventory.stores.index') }}"
-                    class="sb-link {{ request()->routeIs('admin.inventory.stores.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span
-                      class="sb-text">Stores</span></a></li>
-                <li class="sb-item"><a href="{{ route('admin.inventory.suppliers.index') }}"
-                    class="sb-link {{ request()->routeIs('admin.inventory.suppliers.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span
-                      class="sb-text">Suppliers</span></a></li>
-                <li class="sb-item"><a href="{{ route('admin.inventory.items.index') }}"
-                    class="sb-link {{ request()->routeIs('admin.inventory.items.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span
-                      class="sb-text">Item Master</span></a></li>
-                <li class="sb-item"><a href="{{ route('admin.inventory.purchases.index') }}"
-                    class="sb-link {{ request()->routeIs('admin.inventory.purchases.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span
-                      class="sb-text">Purchases (Stock)</span></a></li>
-                <li class="sb-item"><a href="{{ route('admin.inventory.issues.index') }}"
-                    class="sb-link {{ request()->routeIs('admin.inventory.issues.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span
-                      class="sb-text">Issue & Return</span></a></li>
-                <li class="sb-item"><a href="{{ route('admin.inventory.maintenance.index') }}"
-                    class="sb-link {{ request()->routeIs('admin.inventory.maintenance.*') ? 'active' : '' }}"><i class="bi bi-dot"></i><span
-                      class="sb-text">Maintenance</span></a></li>
-              </ul>
-            </div>
-          </li>
+        <li class="sb-group-label"><span class="sb-text">Inventory &amp; Assets</span></li>
+
+        <li class="sb-item">
+          <a href="#collapseInventory" class="sb-link {{ request()->routeIs('admin.inventory.*') ? '' : 'collapsed' }}"
+            data-bs-toggle="collapse" aria-expanded="{{ request()->routeIs('admin.inventory.*') ? 'true' : 'false' }}">
+            <i class="bi bi-box-seam"></i><span class="sb-text">Inventory & Assets</span><i
+              class="bi bi-chevron-down sb-caret"></i>
+          </a>
+          <div class="collapse {{ request()->routeIs('admin.inventory.*') ? 'show' : '' }}" id="collapseInventory"
+            data-bs-parent="#sidebarMenu">
+            <ul class="sb-submenu">
+              <li class="sb-item"><a href="{{ route('admin.inventory.categories.index') }}"
+                  class="sb-link {{ request()->routeIs('admin.inventory.categories.*') ? 'active' : '' }}"><i
+                    class="bi bi-dot"></i><span class="sb-text">Categories</span></a></li>
+              <li class="sb-item"><a href="{{ route('admin.inventory.stores.index') }}"
+                  class="sb-link {{ request()->routeIs('admin.inventory.stores.*') ? 'active' : '' }}"><i
+                    class="bi bi-dot"></i><span class="sb-text">Stores</span></a></li>
+              <li class="sb-item"><a href="{{ route('admin.inventory.suppliers.index') }}"
+                  class="sb-link {{ request()->routeIs('admin.inventory.suppliers.*') ? 'active' : '' }}"><i
+                    class="bi bi-dot"></i><span class="sb-text">Suppliers</span></a></li>
+              <li class="sb-item"><a href="{{ route('admin.inventory.items.index') }}"
+                  class="sb-link {{ request()->routeIs('admin.inventory.items.*') ? 'active' : '' }}"><i
+                    class="bi bi-dot"></i><span class="sb-text">Item Master</span></a></li>
+              <li class="sb-item"><a href="{{ route('admin.inventory.purchases.index') }}"
+                  class="sb-link {{ request()->routeIs('admin.inventory.purchases.*') ? 'active' : '' }}"><i
+                    class="bi bi-dot"></i><span class="sb-text">Purchases (Stock)</span></a></li>
+              <li class="sb-item"><a href="{{ route('admin.inventory.issues.index') }}"
+                  class="sb-link {{ request()->routeIs('admin.inventory.issues.*') ? 'active' : '' }}"><i
+                    class="bi bi-dot"></i><span class="sb-text">Issue & Return</span></a></li>
+              <li class="sb-item"><a href="{{ route('admin.inventory.maintenance.index') }}"
+                  class="sb-link {{ request()->routeIs('admin.inventory.maintenance.*') ? 'active' : '' }}"><i
+                    class="bi bi-dot"></i><span class="sb-text">Maintenance</span></a></li>
+            </ul>
+          </div>
+        </li>
 
         @can('manage_school_info')
           {{-- System --}}

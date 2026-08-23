@@ -1,4 +1,5 @@
 <?php
+// @mago-format-ignore
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Carbon;
@@ -74,7 +75,8 @@ Route::middleware('webGuard')->group(function () {
     // Backend Routes
     Route::get('/admin/portal', [Admin::class, 'portal'])->name('admin.portal');
     Route::get('/admin/sms/dashboard', [Admin::class, 'smsDashboard'])->name('sms.dashboard');
-
+    Route::post('/admin/sms/dashboard/preferences', [Admin::class, 'saveDashboardPreferences'])->name('sms.dashboard.preferences');
+    Route::post('/admin/sms/dashboard/download-image', [\App\Http\Controllers\SMS\DownloadController::class, 'downloadImage'])->name('sms.dashboard.download-image');
     Route::get('/admin/dashboard', function () {
         return view('backend.pages.index');
     })->name('admin.dashboard');

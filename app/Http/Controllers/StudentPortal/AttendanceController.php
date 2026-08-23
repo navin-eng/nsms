@@ -19,16 +19,19 @@ class AttendanceController extends Controller
         $user = Auth::user();
         $student = Student::where('user_id', $user->id)->firstOrFail();
 
-        $calendarSystem = SiteSetting::current()->calendar_system ?? 'AD';
+        $calendarService = app(\App\Services\CalendarService::class);
+        $calendarSystem = $calendarService->system();
         
         $currentMonth = date('m');
         $currentYear = date('Y');
         
         if ($calendarSystem === 'BS') {
-            $currentBS = NepaliDate::create(Carbon::now())->toBS();
+            $currentBS = $calendarService->displayDate(date('Y-m-d'));
             $parts = explode('-', $currentBS);
-            $currentYear = $parts[0];
-            $currentMonth = $parts[1];
+            if (count($parts) >= 2) {
+                $currentYear = $parts[0];
+                $currentMonth = $parts[1];
+            }
         }
 
         $month = sprintf("%02d", $request->month ?? $currentMonth);
@@ -42,16 +45,14 @@ class AttendanceController extends Controller
             $daysInMonth = 32;
             while ($daysInMonth >= 29) {
                 try {
-                    EnglishDate::create("$year-$month-$daysInMonth")->toAD();
-                    break;
+                    $startDateAD = $calendarService->toDbDate("$year-$month-01")?->toDateString();
+                    $endDateAD = $calendarService->toDbDate("$year-$month-$daysInMonth")?->toDateString();
+                    if ($endDateAD) break;
                 } catch (\Exception $e) {
                     $daysInMonth--;
                 }
             }
             $totalDays = $daysInMonth;
-            
-            $startDateAD = EnglishDate::create("$year-$month-01")->toAD();
-            $endDateAD = EnglishDate::create("$year-$month-$daysInMonth")->toAD();
         } else {
             $startDateAD = "$year-$month-01";
             $totalDays = Carbon::create($year, $month)->daysInMonth;

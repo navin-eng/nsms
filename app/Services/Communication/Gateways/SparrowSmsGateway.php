@@ -14,7 +14,7 @@ class SparrowSmsGateway implements SmsGatewayInterface
     public function send(string $phone, string $message): bool
     {
         $config = CommunicationConfig::activeFor('sms');
-        
+
         if (!$config || $config->driver !== 'sparrow' || empty($config->config['token']) || empty($config->config['identity'])) {
             Log::error('Sparrow SMS config missing or inactive.');
             return false;
@@ -26,9 +26,9 @@ class SparrowSmsGateway implements SmsGatewayInterface
         try {
             $response = Http::get($this->url, [
                 'token' => $token,
-                'from'  => $identity,
-                'to'    => $phone,
-                'text'  => $message,
+                'from' => $identity,
+                'to' => $phone,
+                'text' => $message,
             ]);
 
             if ($response->successful()) {

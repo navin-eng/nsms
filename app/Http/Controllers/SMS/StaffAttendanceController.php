@@ -23,27 +23,16 @@ class StaffAttendanceController extends Controller
         $departments = Department::all();
         $staffMembers = [];
 
-        $calendarSystem = SiteSetting::current()->calendar_system ?? 'AD';
+        $calendarService = app(\App\Services\CalendarService::class);
+        $calendarSystem = $calendarService->system();
 
         $defaultDateAD = date('Y-m-d');
-        $defaultDateDisplay = $calendarSystem === 'BS'
-            ? NepaliDate::create(Carbon::now())->toBS()
-            : $defaultDateAD;
+        $defaultDateDisplay = $calendarService->displayDate($defaultDateAD);
 
         $inputDate = $request->input('date', $defaultDateDisplay);
 
-        if ($calendarSystem === 'BS') {
-            $selectedDateDisplay = $inputDate;
-            try {
-                $selectedDateAD = EnglishDate::create($inputDate)->toAD();
-            } catch (\Exception $e) {
-                $selectedDateAD = $defaultDateAD;
-                $selectedDateDisplay = $defaultDateDisplay;
-            }
-        } else {
-            $selectedDateDisplay = $inputDate;
-            $selectedDateAD = $inputDate;
-        }
+        $selectedDateDisplay = $inputDate;
+        $selectedDateAD = $calendarService->toDbDate($inputDate)?->toDateString() ?? $defaultDateAD;
 
         $selectedDepartmentId = $request->input('department_id');
 
@@ -106,8 +95,7 @@ class StaffAttendanceController extends Controller
 
             DB::commit();
 
-            $calendarSystem = SiteSetting::current()->calendar_system ?? 'AD';
-            $displayDate = $calendarSystem === 'BS' ? NepaliDate::create(Carbon::parse($date))->toBS() : Carbon::parse($date)->format('M d, Y');
+            $displayDate = system_date($date);
 
             return back()->with('success', 'Staff Attendance saved successfully for ' . $displayDate);
         } catch (\Exception $e) {
@@ -122,17 +110,20 @@ class StaffAttendanceController extends Controller
     public function report(Request $request)
     {
         $departments = Department::all();
-        $calendarSystem = SiteSetting::current()->calendar_system ?? 'AD';
+        $calendarService = app(\App\Services\CalendarService::class);
+        $calendarSystem = $calendarService->system();
 
         // Default to current month/year
         $currentMonth = date('m');
         $currentYear = date('Y');
 
         if ($calendarSystem === 'BS') {
-            $bsDate = NepaliDate::create(Carbon::now())->toBS();
+            $bsDate = $calendarService->displayDate(date('Y-m-d'));
             $parts = explode('-', $bsDate);
-            $currentYear = $parts[0];
-            $currentMonth = $parts[1];
+            if (count($parts) >= 2) {
+                $currentYear = $parts[0];
+                $currentMonth = $parts[1];
+            }
         }
 
         $month = sprintf("%02d", $request->input('month', $currentMonth));
@@ -140,23 +131,9 @@ class StaffAttendanceController extends Controller
 
         $startDateDisplay = $request->input('start_date');
         $endDateDisplay = $request->input('end_date');
-        $startDateAD = null;
-        $endDateAD = null;
-
-        if ($startDateDisplay && $endDateDisplay) {
-            if ($calendarSystem === 'BS') {
-                try {
-                    $startDateAD = EnglishDate::create($startDateDisplay)->toAD();
-                    $endDateAD = EnglishDate::create($endDateDisplay)->toAD();
-                } catch (\Exception $e) {
-                    $startDateAD = date('Y-m-d');
-                    $endDateAD = date('Y-m-d');
-                }
-            } else {
-                $startDateAD = $startDateDisplay;
-                $endDateAD = $endDateDisplay;
-            }
-        }
+        
+        $startDateAD = $startDateDisplay ? $calendarService->toDbDate($startDateDisplay)?->toDateString() : null;
+        $endDateAD = $endDateDisplay ? $calendarService->toDbDate($endDateDisplay)?->toDateString() : null;
 
         $selectedDepartmentId = $request->input('department_id');
         $reportType = $request->input('report_type', 'monthly_grid');

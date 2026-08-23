@@ -164,7 +164,7 @@ Route::prefix('library')->name('sms.library.')->group(function () {
     Route::get('issues/api/borrowers-list', [\App\Http\Controllers\SMS\LibraryIssueController::class, 'getBorrowersList'])->name('issues.api.borrowers-list');
     Route::get('issues/api/book', [\App\Http\Controllers\SMS\LibraryIssueController::class, 'getBook'])->name('issues.api.book');
     Route::get('borrowers/{type}/{id}/history', [\App\Http\Controllers\SMS\LibraryIssueController::class, 'borrowerHistory'])->name('borrowers.history');
-    
+
     // Print Barcodes
     Route::get('books/{book}/print-barcodes', [\App\Http\Controllers\SMS\LibraryBookController::class, 'printBarcodes'])->name('books.print-barcodes');
     Route::get('books/copy/{copy}/history', [\App\Http\Controllers\SMS\LibraryBookController::class, 'copyHistory'])->name('books.copy.history');
@@ -196,3 +196,46 @@ Route::prefix('communications')->name('admin.communications.')->group(function (
     Route::post('test-sms', [\App\Http\Controllers\Backend\CommunicationController::class, 'testSms'])->name('test-sms');
 });
 
+// --- HOSTEL MANAGEMENT ---
+Route::prefix('hostel')->name('sms.hostel.')->group(function () {
+    Route::resource('hostels', \App\Http\Controllers\SMS\HostelController::class)->except(['create', 'edit', 'show']);
+    Route::resource('rooms', \App\Http\Controllers\SMS\HostelRoomController::class)->except(['create', 'edit', 'show']);
+    
+    Route::get('allocations', [\App\Http\Controllers\SMS\HostelAllocationController::class, 'index'])->name('allocations.index');
+    Route::post('allocations', [\App\Http\Controllers\SMS\HostelAllocationController::class, 'store'])->name('allocations.store');
+    Route::post('allocations/{id}/vacate', [\App\Http\Controllers\SMS\HostelAllocationController::class, 'vacate'])->name('allocations.vacate');
+    
+    Route::get('attendance', [\App\Http\Controllers\SMS\HostelAttendanceController::class, 'index'])->name('attendance.index');
+    Route::post('attendance', [\App\Http\Controllers\SMS\HostelAttendanceController::class, 'store'])->name('attendance.store');
+
+    Route::get('reports/attendance', [\App\Http\Controllers\SMS\HostelReportController::class, 'attendance'])->name('reports.attendance');
+    Route::get('reports/allocation', [\App\Http\Controllers\SMS\HostelReportController::class, 'allocation'])->name('reports.allocation');
+});
+
+// Analytics & Reporting
+Route::prefix('analytics')->name('admin.analytics.')->group(function () {
+    Route::get('academic', [\App\Http\Controllers\SMS\AnalyticsController::class, 'academic'])->name('academic');
+    Route::get('attendance', [\App\Http\Controllers\SMS\AnalyticsController::class, 'attendance'])->name('attendance');
+    Route::get('financial', [\App\Http\Controllers\SMS\AnalyticsController::class, 'financial'])->name('financial');
+});
+
+// --- EVENTS & ACTIVITIES ---
+Route::prefix('events')->name('sms.events.')->group(function () {
+    Route::get('/',            [\App\Http\Controllers\SMS\EventController::class, 'index'])->name('index');
+    Route::get('/create',      [\App\Http\Controllers\SMS\EventController::class, 'create'])->name('create');
+    Route::post('/',           [\App\Http\Controllers\SMS\EventController::class, 'store'])->name('store');
+    Route::get('/{event}',     [\App\Http\Controllers\SMS\EventController::class, 'show'])->name('show');
+    Route::get('/{event}/edit',[\App\Http\Controllers\SMS\EventController::class, 'edit'])->name('edit');
+    Route::put('/{event}',     [\App\Http\Controllers\SMS\EventController::class, 'update'])->name('update');
+    Route::delete('/{event}',  [\App\Http\Controllers\SMS\EventController::class, 'destroy'])->name('destroy');
+
+    // Participants
+    Route::post('/{event}/participants',              [\App\Http\Controllers\SMS\EventController::class, 'registerParticipant'])->name('participants.store');
+    Route::delete('/{event}/participants/{participant}', [\App\Http\Controllers\SMS\EventController::class, 'removeParticipant'])->name('participants.remove');
+
+    // Attendance
+    Route::post('/{event}/attendance',               [\App\Http\Controllers\SMS\EventController::class, 'markAttendance'])->name('attendance');
+
+    // Certificate
+    Route::get('/{event}/participants/{participant}/certificate', [\App\Http\Controllers\SMS\EventController::class, 'issueCertificate'])->name('certificate');
+});

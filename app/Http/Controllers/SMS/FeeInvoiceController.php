@@ -34,32 +34,64 @@ class FeeInvoiceController extends Controller
         $students = collect();
         $structures = collect();
         
-        if ($request->filled('academic_year_id') && $request->filled('academic_class_id')) {
+        if ($request->filled('academic_year_id') && ($request->filled('academic_class_id') || $request->filled('search_term'))) {
             $yearId = $request->academic_year_id;
-            $classId = $request->academic_class_id;
             
-            // Get students
-            $students = Student::where('status', 'Active')->whereHas('enrollments', function($q) use ($yearId, $classId) {
+            $query = Student::where('status', 'Active')->whereHas('enrollments', function($q) use ($yearId) {
                 $q->where('academic_year_id', $yearId)
-                  ->where('academic_class_id', $classId)
                   ->whereIn('status', ['Continuing', 'Promoted', 'New']);
-            })->orderBy('first_name')->get();
+            });
+
+            if ($request->filled('academic_class_id')) {
+                $classId = $request->academic_class_id;
+                $query->whereHas('enrollments', function($q) use ($classId) {
+                    $q->where('academic_class_id', $classId);
+                });
+            }
+
+            if ($request->filled('search_term')) {
+                $term = $request->search_term;
+                $query->where(function($q) use ($term) {
+                    $q->where('first_name', 'like', "%{$term}%")
+                      ->orWhere('last_name', 'like', "%{$term}%")
+                      ->orWhere('registration_number', 'like', "%{$term}%");
+                });
+            }
             
-            // Calculate previous dues
+            $students = $query->orderBy('first_name')->get();
+            
+            // Calculate previous dues and hostel fees
             foreach ($students as $student) {
                 $due = FeeInvoice::where('student_id', $student->id)
                     ->where('status', '!=', 'Paid')
                     ->selectRaw('SUM(total_amount - paid_amount) as due_amount')
                     ->value('due_amount');
                 $student->previous_due = $due ?? 0;
+
+                // Check for active hostel allocation
+                $activeAllocation = \App\Models\HostelAllocation::where('student_id', $student->id)
+                    ->where('status', 'Active')
+                    ->with('bed.room')
+                    ->first();
+                
+                if ($activeAllocation && $activeAllocation->bed->room->cost_per_bed > 0) {
+                    $student->hostel_fee = $activeAllocation->bed->room->cost_per_bed;
+                } else {
+                    $student->hostel_fee = 0;
+                }
             }
             
-            // Get fee structures
+            // Get unique classes from students
+            $classIds = $students->map(function($student) use ($yearId) {
+                return $student->enrollments->where('academic_year_id', $yearId)->first()->academic_class_id ?? null;
+            })->filter()->unique();
+
+            // Get all relevant fee structures for these classes
             $structures = FeeStructure::with('feeType')->where('academic_year_id', $yearId)
-                ->where(function($q) use ($classId) {
-                    $q->where('academic_class_id', $classId)
+                ->where(function($q) use ($classIds) {
+                    $q->whereIn('academic_class_id', $classIds)
                       ->orWhereNull('academic_class_id');
-                })->get();
+                })->get()->unique('fee_type_id');
         }
         
         return view('backend.pages.sms.finance.invoices.generate', compact('years', 'classes', 'students', 'structures'));
@@ -69,7 +101,7 @@ class FeeInvoiceController extends Controller
     {
         $request->validate([
             'academic_year_id' => 'required|exists:academic_years,id',
-            'academic_class_id' => 'required|exists:academic_classes,id',
+            'academic_class_id' => 'nullable|exists:academic_classes,id',
             'nepali_month' => 'required|string',
             'title' => 'required|string|max:255',
             'due_date' => 'required|date',

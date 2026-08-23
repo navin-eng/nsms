@@ -49,18 +49,6 @@ class LibraryIssue extends Model
 
     private function formatDate($date)
     {
-        if (!$date) return null;
-        
-        $calendarSystem = SiteSetting::current()->calendar_system ?? 'AD';
-        
-        if ($calendarSystem === 'BS') {
-            try {
-                return \Pratiksh\Nepalidate\Services\NepaliDate::create(\Carbon\Carbon::parse($date))->toBS();
-            } catch (\Exception $e) {
-                return $date->format('M d, Y');
-            }
-        }
-        
-        return $date->format('M d, Y');
+        return system_date($date);
     }
 }

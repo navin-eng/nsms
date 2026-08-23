@@ -68,7 +68,8 @@
                     <div class="d-flex gap-2">
                         <span class="badge bg-primary">Total: {{ $book->total_copies }}</span>
                         <span class="badge bg-success">Available: {{ $book->available_copies }}</span>
-                        <a href="{{ route('sms.library.books.print-barcodes', $book->id) }}" target="_blank" class="btn btn-outline-secondary btn-sm" style="padding: 0.1rem 0.5rem; font-size: 0.75rem;">
+                        <a href="{{ route('sms.library.books.print-barcodes', $book->id) }}" target="_blank"
+                            class="btn btn-outline-secondary btn-sm" style="padding: 0.1rem 0.5rem; font-size: 0.75rem;">
                             <i class="bi bi-printer"></i> Print Barcodes
                         </a>
                     </div>
@@ -87,7 +88,8 @@
                                 @foreach($book->copies as $copy)
                                     <tr>
                                         <td class="ps-4 fw-medium font-monospace">
-                                            <a href="{{ route('sms.library.books.copy.history', $copy->id) }}" class="text-primary text-decoration-none">
+                                            <a href="{{ route('sms.library.books.copy.history', $copy->id) }}"
+                                                class="text-primary text-decoration-none">
                                                 {{ $copy->barcode }}
                                                 <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.75rem;"></i>
                                             </a>

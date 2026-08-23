@@ -57,17 +57,21 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-bold">Class <span class="text-danger">*</span></label>
-                    <select name="academic_class_id" class="form-select" required>
-                        <option value="">Select Class</option>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Class</label>
+                    <select name="academic_class_id" class="form-select">
+                        <option value="">All Classes</option>
                         @foreach($classes as $class)
                             <option value="{{ $class->id }}" {{ request('academic_class_id') == $class->id ? 'selected' : '' }}>{{ $class->name }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-search"></i> Load Students</button>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Search Student</label>
+                    <input type="text" name="search_term" class="form-control" placeholder="Name or Adm No" value="{{ request('search_term') }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary w-100"><i class="bi bi-search"></i> Load</button>
                 </div>
             </form>
         </div>
@@ -84,14 +88,18 @@
         <div class="card border-0 shadow-sm mb-4">
             <div class="card-body p-4 border-bottom">
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <label class="form-label fw-bold">Invoice Title <span class="text-danger">*</span></label>
                         <input type="text" name="title" class="form-control" required placeholder="e.g. Tuition Fee" value="{{ request('nepali_month') ? request('nepali_month') . ' Fee' : old('title') }}">
                         <div class="form-text">This will be shown on the student's bill.</div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label class="form-label fw-bold">Due Date <span class="text-danger">*</span></label>
                         <input type="date" name="due_date" class="form-control" required value="{{ old('due_date', now()->addDays(7)->format('Y-m-d')) }}">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Search Student</label>
+                        <input type="text" id="studentSearch" class="form-control" placeholder="Search by name or admission no...">
                     </div>
                 </div>
             </div>
@@ -108,6 +116,7 @@
                                 @foreach($structures as $structure)
                                     <th class="text-center" style="min-width: 150px;">{{ $structure->feeType->name }}<br><small class="text-muted">(Base: Rs.{{ $structure->amount }})</small></th>
                                 @endforeach
+                                <th class="text-center" style="min-width: 150px;">Hostel Fee<br><small class="text-muted">(Per Bed)</small></th>
                                 <th style="width: 120px;">Discount (Rs.)</th>
                                 <th style="width: 150px;">Remarks</th>
                                 <th class="text-end" style="width: 150px;">Previous Due</th>
@@ -115,6 +124,9 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $hostelFeeType = \App\Models\FeeType::where('name', 'Hostel Fee')->first();
+                            @endphp
                             @foreach($students as $student)
                                 <tr class="student-row">
                                     <td class="text-center">
@@ -125,17 +137,47 @@
                                     
                                     @php $rowTotal = 0; @endphp
                                     @foreach($structures as $structure)
-                                        @php $rowTotal += $structure->amount; @endphp
+                                        @php
+                                            // Find specific structure for this student's class, or fallback to 0
+                                            $studentClassId = $student->enrollments->where('academic_year_id', request('academic_year_id'))->first()->academic_class_id ?? null;
+                                            $studentStructure = \App\Models\FeeStructure::where('academic_year_id', request('academic_year_id'))
+                                                ->where('fee_type_id', $structure->feeType->id)
+                                                ->where(function($q) use ($studentClassId) {
+                                                    $q->where('academic_class_id', $studentClassId)
+                                                      ->orWhereNull('academic_class_id');
+                                                })->first();
+                                            $amt = $studentStructure ? $studentStructure->amount : 0;
+                                            if ($amt > 0) $rowTotal += $amt;
+                                        @endphp
                                         <td class="text-center bg-light">
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-text">
-                                                    <input class="form-check-input mt-0 fee-checkbox" type="checkbox" name="students[{{ $student->id }}][fees][{{ $structure->feeType->id }}][include]" value="1" checked>
+                                            @if($amt > 0)
+                                                <div class="input-group input-group-sm">
+                                                    <div class="input-group-text">
+                                                        <input class="form-check-input mt-0 fee-checkbox" type="checkbox" name="students[{{ $student->id }}][fees][{{ $structure->feeType->id }}][include]" value="1" checked>
+                                                    </div>
+                                                    <input type="number" step="0.01" min="0" class="form-control fee-amount" name="students[{{ $student->id }}][fees][{{ $structure->feeType->id }}][amount]" value="{{ $amt }}">
                                                 </div>
-                                                <input type="number" step="0.01" min="0" class="form-control fee-amount" name="students[{{ $student->id }}][fees][{{ $structure->feeType->id }}][amount]" value="{{ $structure->amount }}">
-                                            </div>
+                                            @else
+                                                <span class="text-muted small">-</span>
+                                            @endif
                                         </td>
                                     @endforeach
                                     
+                                    <!-- Hostel Fee -->
+                                    <td class="text-center bg-light">
+                                        @if($student->hostel_fee > 0 && $hostelFeeType)
+                                            @php $rowTotal += $student->hostel_fee; @endphp
+                                            <div class="input-group input-group-sm">
+                                                <div class="input-group-text">
+                                                    <input class="form-check-input mt-0 fee-checkbox" type="checkbox" name="students[{{ $student->id }}][fees][{{ $hostelFeeType->id }}][include]" value="1" checked>
+                                                </div>
+                                                <input type="number" step="0.01" min="0" class="form-control fee-amount" name="students[{{ $student->id }}][fees][{{ $hostelFeeType->id }}][amount]" value="{{ $student->hostel_fee }}">
+                                            </div>
+                                        @else
+                                            <span class="text-muted small">Not Allocated</span>
+                                        @endif
+                                    </td>
+
                                     <td>
                                         <input type="number" step="0.01" min="0" class="form-control form-control-sm discount-input" name="students[{{ $student->id }}][discount]" value="0">
                                     </td>
@@ -169,7 +211,24 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectAll = document.getElementById('selectAll');
     if(selectAll) {
         selectAll.addEventListener('change', function() {
-            document.querySelectorAll('.student-checkbox').forEach(cb => cb.checked = this.checked);
+            document.querySelectorAll('.student-checkbox').forEach(cb => {
+                // Only select visible rows
+                if(cb.closest('.student-row').style.display !== 'none') {
+                    cb.checked = this.checked;
+                }
+            });
+        });
+    }
+
+    // Student Search
+    const searchInput = document.getElementById('studentSearch');
+    if(searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const term = this.value.toLowerCase();
+            document.querySelectorAll('.student-row').forEach(row => {
+                const text = row.cells[1].textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
+            });
         });
     }
 

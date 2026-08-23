@@ -19,7 +19,8 @@
                     <select name="class_id" id="classFilter" class="form-select" required>
                         <option value="">-- Select Class --</option>
                         @foreach($classes as $c)
-                            <option value="{{ $c->id }}" {{ $selectedClassId == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
+                            <option value="{{ $c->id }}" {{ $selectedClassId == $c->id ? 'selected' : '' }}>{{ $c->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -28,12 +29,14 @@
                     <select name="section_id" id="sectionFilter" class="form-select">
                         <option value="">All Sections</option>
                         @foreach($sections as $s)
-                            <option value="{{ $s->id }}" {{ $selectedSectionId == $s->id ? 'selected' : '' }}>{{ $s->name }}</option>
+                            <option value="{{ $s->id }}" {{ $selectedSectionId == $s->id ? 'selected' : '' }}>{{ $s->name }}
+                            </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-md-4 d-flex align-items-end">
-                    <button type="button" id="btnLoadStudents" class="btn btn-primary w-100"><i class="bi bi-people me-1"></i> Load Students</button>
+                    <button type="button" id="btnLoadStudents" class="btn btn-primary w-100"><i
+                            class="bi bi-people me-1"></i> Load Students</button>
                 </div>
             </div>
         </div>
@@ -46,7 +49,7 @@
             <form action="{{ route('sms.id-cards.students') }}" method="GET" id="generateForm">
                 <input type="hidden" name="class_id" id="hidden_class_id" value="{{ $selectedClassId }}">
                 <input type="hidden" name="section_id" id="hidden_section_id" value="{{ $selectedSectionId }}">
-                
+
                 <div class="table-responsive border rounded" style="max-height: 300px; overflow-y: auto;">
                     <table class="table table-hover table-sm mb-0 align-middle">
                         <thead class="table-light sticky-top">
@@ -67,7 +70,8 @@
                     </table>
                 </div>
                 <div class="mt-3 text-end">
-                    <button type="submit" class="btn btn-success fw-semibold px-4"><i class="bi bi-magic me-1"></i> Generate Preview</button>
+                    <button type="submit" class="btn btn-success fw-semibold px-4"><i class="bi bi-magic me-1"></i> Generate
+                        Preview</button>
                 </div>
             </form>
         </div>
@@ -77,10 +81,12 @@
         {{-- 3. Print Settings & Live Preview --}}
         <div class="card border-0 shadow-sm mb-4 border-top border-primary border-3">
             <div class="card-header bg-white py-3">
-                <h6 class="mb-0 fw-bold"><span class="badge bg-primary me-2">3</span> Print Settings & Preview ({{ $students->count() }} Cards)</h6>
+                <h6 class="mb-0 fw-bold"><span class="badge bg-primary me-2">3</span> Print Settings & Preview
+                    ({{ $students->count() }} Cards)</h6>
             </div>
             <div class="card-body bg-light border-bottom">
-                <form action="{{ route('sms.id-cards.students') }}" method="GET" class="row g-3 align-items-end" id="printSettingsForm">
+                <form action="{{ route('sms.id-cards.students') }}" method="GET" class="row g-3 align-items-end"
+                    id="printSettingsForm">
                     <input type="hidden" name="class_id" value="{{ $selectedClassId }}">
                     <input type="hidden" name="section_id" value="{{ $selectedSectionId }}">
                     @foreach(request()->input('student_ids', []) as $stId)
@@ -91,7 +97,8 @@
                         <label class="form-label small fw-semibold">Card Layout</label>
                         <select name="layout" class="form-select form-select-sm">
                             <option value="portrait" {{ $layout == 'portrait' ? 'selected' : '' }}>Portrait (Vertical)</option>
-                            <option value="landscape" {{ $layout == 'landscape' ? 'selected' : '' }}>Landscape (Horizontal)</option>
+                            <option value="landscape" {{ $layout == 'landscape' ? 'selected' : '' }}>Landscape (Horizontal)
+                            </option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -99,11 +106,13 @@
                         <select name="template_id" class="form-select form-select-sm">
                             <option value="modern" {{ $selectedTemplateId == 'modern' ? 'selected' : '' }}>Modern Blue</option>
                             <option value="classic" {{ $selectedTemplateId == 'classic' ? 'selected' : '' }}>Classic Navy</option>
-                            <option value="elegant" {{ $selectedTemplateId == 'elegant' ? 'selected' : '' }}>Elegant Maroon</option>
+                            <option value="elegant" {{ $selectedTemplateId == 'elegant' ? 'selected' : '' }}>Elegant Maroon
+                            </option>
                             @if(isset($customTemplates) && $customTemplates->count() > 0)
                                 <optgroup label="Custom Templates">
                                     @foreach($customTemplates as $ct)
-                                        <option value="{{ $ct->id }}" {{ $selectedTemplateId == $ct->id ? 'selected' : '' }}>{{ $ct->name }}</option>
+                                        <option value="{{ $ct->id }}" {{ $selectedTemplateId == $ct->id ? 'selected' : '' }}>
+                                            {{ $ct->name }}</option>
                                     @endforeach
                                 </optgroup>
                             @endif
@@ -113,12 +122,15 @@
                         <label class="form-label small fw-semibold">Print Format</label>
                         <select name="print_format" class="form-select form-select-sm">
                             <option value="a4" {{ $printFormat == 'a4' ? 'selected' : '' }}>A4 Sheet (Grid)</option>
-                            <option value="id_printer" {{ $printFormat == 'id_printer' ? 'selected' : '' }}>ID Card Printer Machine (CR80)</option>
+                            <option value="id_printer" {{ $printFormat == 'id_printer' ? 'selected' : '' }}>ID Card Printer
+                                Machine (CR80)</option>
                         </select>
                     </div>
                     <div class="col-md-3 d-flex gap-2">
-                        <button type="submit" class="btn btn-sm btn-outline-secondary w-50"><i class="bi bi-arrow-clockwise me-1"></i> Update Preview</button>
-                        <button type="button" class="btn btn-sm btn-primary w-50" onclick="printCards()"><i class="bi bi-printer me-1"></i> Print Now</button>
+                        <button type="submit" class="btn btn-sm btn-outline-secondary w-50"><i
+                                class="bi bi-arrow-clockwise me-1"></i> Update Preview</button>
+                        <button type="button" class="btn btn-sm btn-primary w-50" onclick="printCards()"><i
+                                class="bi bi-printer me-1"></i> Print Now</button>
                     </div>
                 </form>
             </div>
@@ -170,7 +182,8 @@
                                                     style="height: 24px; filter: brightness(0) invert(1);">
                                             @endif
                                             <div class="fw-bold text-uppercase" style="font-size: 8.5pt; letter-spacing: 0.5px;">
-                                                {{ $setting->title ?? 'BLESSED SACRAMENT' }}</div>
+                                                {{ $setting->title ?? 'BLESSED SACRAMENT' }}
+                                            </div>
                                             <div style="font-size: 6pt; opacity: 0.9;">STUDENT IDENTITY CARD</div>
                                         </div>
                                         <div class="id-body text-center p-3">
@@ -210,7 +223,8 @@
                                                 <tr>
                                                     <td class="text-muted p-0">Emergency:</td>
                                                     <td class="fw-bold text-dark p-0">
-                                                        {{ $st->phone ?? $st->guardian?->guardian_phone ?? '—' }}</td>
+                                                        {{ $st->phone ?? $st->guardian?->guardian_phone ?? '—' }}
+                                                    </td>
                                                 </tr>
                                             </table>
 
@@ -236,7 +250,8 @@
                                                         style="height: 20px; filter: brightness(0) invert(1);">
                                                 @endif
                                                 <div class="fw-bold text-uppercase" style="font-size: 8pt;">
-                                                    {{ $setting->title ?? 'BLESSED SACRAMENT' }}</div>
+                                                    {{ $setting->title ?? 'BLESSED SACRAMENT' }}
+                                                </div>
                                             </div>
                                             <span class="badge bg-white text-primary" style="font-size: 6pt;">STUDENT</span>
                                         </div>
@@ -258,13 +273,16 @@
                                                 </div>
                                                 <div class="text-primary fw-semibold mb-1">
                                                     {{ $enrollment?->academicClass?->name ?? 'Class' }}
-                                                    ({{ $enrollment?->section?->name ?? 'Sec' }})</div>
+                                                    ({{ $enrollment?->section?->name ?? 'Sec' }})
+                                                </div>
                                                 <div><span class="text-muted">Adm No:</span>
-                                                    <strong>{{ $st->admission_no ?? '#' . $st->id }}</strong></div>
+                                                    <strong>{{ $st->admission_no ?? '#' . $st->id }}</strong>
+                                                </div>
                                                 <div><span class="text-muted">Blood:</span> <strong
                                                         class="text-danger">{{ $st->blood_group ?? '—' }}</strong></div>
                                                 <div><span class="text-muted">Emergency:</span>
-                                                    <strong>{{ $st->phone ?? $st->guardian?->guardian_phone ?? '—' }}</strong></div>
+                                                    <strong>{{ $st->phone ?? $st->guardian?->guardian_phone ?? '—' }}</strong>
+                                                </div>
                                             </div>
                                             <div class="flex-shrink-0 text-center">
                                                 {!! \App\Services\QrCodeService::svg($verifyUrl, 42) !!}
@@ -334,87 +352,7 @@
                         sectionSelect.html('<option value="">All Sections</option>');
                     }
                 });
-                
-                // 2. Load Students via AJAX
-                $('#btnLoadStudents').on('click', function() {
-                    var classId = $('#classFilter').val();
-                    var sectionId = $('#sectionFilter').val();
-                    
-                    if (!classId) {
-                        alert('Please select a class first.');
-                        return;
-                    }
-                    
-                    $(this).html('<i class="spinner-border spinner-border-sm me-1"></i> Loading...');
-                    $(this).prop('disabled', true);
-                    
-                    $.ajax({
-                        url: "{{ route('sms.id-cards.api.students') }}",
-                        type: "GET",
-                        data: { class_id: classId, section_id: sectionId },
-                        success: function(students) {
-                            $('#btnLoadStudents').html('<i class="bi bi-people me-1"></i> Load Students').prop('disabled', false);
-                            
-                            var tbody = $('#studentListBody');
-                            tbody.empty();
-                            
-                            if (students.length === 0) {
-                                tbody.append('<tr><td colspan="4" class="text-center py-4 text-muted">No students found in this class.</td></tr>');
-                            } else {
-                                $.each(students, function(index, student) {
-                                    var roll = student.roll_number ? student.roll_number : '-';
-                                    var adm = student.admission_no ? student.admission_no : '#'+student.id;
-                                    var row = '<tr>' +
-                                        '<td class="text-center"><div class="form-check d-flex justify-content-center"><input class="form-check-input student-checkbox" type="checkbox" name="student_ids[]" value="' + student.id + '" checked></div></td>' +
-                                        '<td class="fw-medium">' + student.name + '</td>' +
-                                        '<td>' + adm + '</td>' +
-                                        '<td>' + roll + '</td>' +
-                                        '</tr>';
-                                    tbody.append(row);
-                                });
-                            }
-                            
-                            // Update hidden inputs for generate form
-                            $('#hidden_class_id').val(classId);
-                            $('#hidden_section_id').val(sectionId);
-                            
-                            // Show checklist card
-                            $('#studentSelectionCard').removeClass('d-none');
-                        },
-                        error: function() {
-                            $('#btnLoadStudents').html('<i class="bi bi-people me-1"></i> Load Students').prop('disabled', false);
-                            alert('An error occurred while loading students.');
-                        }
-                    });
-                });
-                
-                // Select All Checkbox
-                $('#selectAllStudents').on('change', function() {
-                    $('.student-checkbox').prop('checked', $(this).prop('checked'));
-                });
             });
-
-            // Print Function
-            function printCards() {
-                var form = document.getElementById('printSettingsForm');
-                // Create a hidden input for print=1
-                var printInput = document.createElement('input');
-                printInput.type = 'hidden';
-                printInput.name = 'print';
-                printInput.value = '1';
-                form.appendChild(printInput);
-                
-                // Set target to _blank
-                var originalTarget = form.target;
-                form.target = '_blank';
-                
-                // Submit
-                form.submit();
-                
-                // Cleanup
-                form.removeChild(printInput);
-                form.target = originalTarget;
-            }
         </script>
     @endpush
 @endsection
