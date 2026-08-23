@@ -126,29 +126,12 @@ Route::resource('certificates', \App\Http\Controllers\SMS\CertificateController:
 Route::get('certificates/{id}/print', [\App\Http\Controllers\SMS\CertificateController::class, 'print'])->name('sms.certificates.print');
 Route::post('certificates/{id}/revoke', [\App\Http\Controllers\SMS\CertificateController::class, 'revoke'])->name('sms.certificates.revoke');
 
-// --- FEE & FINANCE MANAGEMENT ---
-Route::prefix('finance')->name('sms.finance.')->group(function () {
-    Route::resource('fee-types', \App\Http\Controllers\SMS\FeeTypeController::class)->except(['show']);
-    Route::resource('fee-structures', \App\Http\Controllers\SMS\FeeStructureController::class)->except(['show']);
-    Route::get('invoices/generate', [\App\Http\Controllers\SMS\FeeInvoiceController::class, 'generateIndex'])->name('invoices.generate');
-    Route::post('invoices/generate', [\App\Http\Controllers\SMS\FeeInvoiceController::class, 'generateProcess'])->name('invoices.generate.process');
-    Route::get('invoices/{invoice}/print', [\App\Http\Controllers\SMS\FeeInvoiceController::class, 'print'])->name('invoices.print');
-    Route::resource('invoices', \App\Http\Controllers\SMS\FeeInvoiceController::class);
-
-    Route::post('fee-structures/copy', [\App\Http\Controllers\SMS\FeeStructureController::class, 'copy'])->name('fee-structures.copy');
-
-    Route::get('payments/receipt/{payment}', [\App\Http\Controllers\SMS\FeePaymentController::class, 'receipt'])->name('payments.receipt');
-    Route::resource('payments', \App\Http\Controllers\SMS\FeePaymentController::class)->only(['store', 'destroy']);
-
-    Route::get('reports/outstanding', [\App\Http\Controllers\SMS\FeeReportController::class, 'outstanding'])->name('reports.outstanding');
-
     // Accounting
     Route::resource('accounting/accounts', \App\Http\Controllers\SMS\AccountController::class)->only(['index', 'store', 'update', 'destroy'])->names('accounting.accounts');
     // We will leave JournalEntry controller for later as manual UI if needed, but accounts is ready.
     Route::get('accounting/daybook', [\App\Http\Controllers\SMS\AccountingReportController::class, 'daybook'])->name('accounting.daybook');
     Route::get('accounting/ledger', [\App\Http\Controllers\SMS\AccountingReportController::class, 'ledger'])->name('accounting.ledger');
     Route::get('accounting/balance-sheet', [\App\Http\Controllers\SMS\AccountingReportController::class, 'balanceSheet'])->name('accounting.balance-sheet');
-});
 
 Route::resource('school-notices', \App\Http\Controllers\SMS\NoticeController::class, ['as' => 'sms']);
 

@@ -1,66 +1,202 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Green Peace Lincoln College (GPLC) - SMS & Accounting System
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A comprehensive School Management System (SMS) and Dedicated Finance & Accounting Portal built with **Laravel 9**, **Bootstrap 5**, and **Vite**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📋 Features Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **🏫 School Management System (SMS)**:
+  - Student Admissions, Enrollments, and Profiles
+  - Class, Section, and Academic Year Management
+  - Teacher & Staff Directory
+  - Attendance Tracking (Daily Student & Staff Attendance)
+  - Examination Management & Grading (Report Cards, Marksheets)
+  - Homework & Study Material Submissions
+  - Hostel & Transportation Modules
+  - Real-time Analytics & Birthday Notification Widgets
+- **💼 Finance & Accounting Portal**:
+  - Secure, dedicated accounting portal with multi-guard authentication
+  - Student Fee Structures & Bulk Invoice Generation (Nepali/Bikram Sambat Calendar support)
+  - Partial/Full Fee Collections & Instant Printable Receipts (A4 / A5)
+  - Outstanding Fees & Arrears Reports with multi-filter queries
+  - Expense Tracking & Vendor Management
+  - Bank Account Management & Reconciliation
+  - Budgeting & Budget Utilization Tracking
+  - Real-time Financial Statements (Income Statement / P&L, Balance Sheet, Trial Balance)
+  - Double-entry Journal System & Chart of Accounts
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 💻 System Prerequisites
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Before running the project on **Windows, macOS, or Linux**, ensure you have installed:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. **PHP >= 8.1** (Recommended: PHP 8.2+)
+   - Required PHP Extensions enabled in `php.ini`:
+     - `openssl`, `pdo`, `mbstring`, `tokenizer`, `xml`, `ctype`, `json`, `bcmath`, `fileinfo`, `curl`, `gd`, `zip`
+     - Database driver: `pdo_sqlite` / `sqlite3` (if using SQLite) OR `pdo_mysql` (if using MySQL/XAMPP)
+2. **Composer >= 2.2** ([Download Composer](https://getcomposer.org/))
+3. **Node.js >= 18.x & NPM** ([Download Node.js](https://nodejs.org/))
+4. **Git** ([Download Git](https://git-scm.com/))
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🚀 Setup & Installation Guide (Windows / Mac / Linux)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### 1. Clone the Repository
+```bash
+git clone https://github.com/navin-eng/nsms.git
+cd nsms
+```
 
-### Premium Partners
+### 2. Install Dependencies
+```bash
+# Install PHP dependencies
+composer install
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+# Install Frontend / NPM packages
+npm install
+```
 
-## Contributing
+### 3. Environment Configuration
+Copy the example environment configuration:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**On Windows (Command Prompt):**
+```cmd
+copy .env.example .env
+```
 
-## Code of Conduct
+**On Windows (PowerShell) / Mac / Linux:**
+```bash
+cp .env.example .env
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Generate the Laravel application encryption key:
+```bash
+php artisan key:generate
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Database Configuration
 
-## License
+You can use either **SQLite** (quickest setup) or **MySQL** (e.g. XAMPP/WAMP).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### Option A: Using SQLite (Recommended for quick local testing)
+1. Open `.env` and set:
+   ```env
+   DB_CONNECTION=sqlite
+   # Comment out or remove DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
+   ```
+2. Create the SQLite database file:
+   - **Windows (Command Prompt):**
+     ```cmd
+     type nul > database\database.sqlite
+     ```
+   - **Windows (PowerShell):**
+     ```powershell
+     New-Item database/database.sqlite -ItemType File
+     ```
+   - **Mac / Linux:**
+     ```bash
+     touch database/database.sqlite
+     ```
+
+#### Option B: Using MySQL (XAMPP / WAMP / Native MySQL)
+1. Create a new database named `gplc_sms` in phpMyAdmin or MySQL CLI.
+2. In `.env`, configure:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=gplc_sms
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+---
+
+### 5. Run Migrations & Seed Database
+
+Run migrations and seed the initial accounts (including Super Admin & Head Accountant):
+```bash
+php artisan migrate --seed
+```
+
+---
+
+### 6. Create Storage Symlink
+
+Create the public storage link for uploaded student photos, school logos, and documents:
+```bash
+php artisan storage:link
+```
+
+> **Windows Note:** If `php artisan storage:link` gives a permission error on Windows, either run Command Prompt / PowerShell **as Administrator** or enable **Developer Mode** in Windows Settings (*Settings > Update & Security > For Developers*).
+
+---
+
+### 7. Start Local Development Servers
+
+Open two terminal tabs/windows:
+
+**Terminal 1 (Backend Server):**
+```bash
+php artisan serve
+```
+*(Server will start on `http://127.0.0.1:8000`)*
+
+**Terminal 2 (Vite Asset Server):**
+```bash
+npm run dev
+```
+
+---
+
+## 🔑 Portals & Default Credentials
+
+| Portal | URL | Default Login |
+|---|---|---|
+| **Portal Selector** | `http://localhost:8000/admin/portal` | Gateway to all sub-systems |
+| **SMS Admin Dashboard** | `http://localhost:8000/admin/sms/dashboard` | Main Administrative Portal |
+| **Accounting System** | `http://localhost:8000/accounting/login` | **Email:** `accountant@school.com`<br>**Password:** `password` |
+
+---
+
+## 🪟 Windows Specific Troubleshooting & Tips
+
+### 1. Enabling PHP Extensions on Windows
+If you install PHP manually or via XAMPP on Windows, make sure the following lines are uncommented (no leading semicolon `;`) in your `php.ini` file:
+```ini
+extension=curl
+extension=fileinfo
+extension=gd
+extension=mbstring
+extension=openssl
+extension=pdo_mysql
+extension=pdo_sqlite
+extension=sqlite3
+extension=zip
+```
+After modifying `php.ini`, verify with:
+```cmd
+php -m
+```
+
+### 2. Vite Hot Module Replacement (HMR) on Windows
+If assets fail to load or live reload doesn't work, ensure your `vite.config.js` is running and you are accessing the app via `http://localhost:8000`.
+
+### 3. Clear Caches if Updating Views or Routes
+Whenever switching branches or pulling changes:
+```bash
+php artisan optimize:clear
+php artisan view:clear
+php artisan route:clear
+php artisan config:clear
+```
+
+---
+
+## 📄 License
+This project is proprietary software developed for Green Peace Lincoln College.

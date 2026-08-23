@@ -1,4 +1,3 @@
-// @mago-format-ignore
 @extends('backend.pages.layout.master')
 @push('b-title', 'SMS Dashboard')
 @push('styles')

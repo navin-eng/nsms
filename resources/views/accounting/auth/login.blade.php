@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>{{ \App\Models\SiteSetting::current()->site_name ?? 'Portal' }} - Login</title>
+    <title>Accounting System - Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ \App\Models\SiteSetting::current()->site_favicon ? asset('storage/' . \App\Models\SiteSetting::current()->site_favicon) : asset('backend/images/favicon.ico') }}">
@@ -12,7 +12,7 @@
     <link href="{{ asset('backend/assets/css/app.min.css') }}" rel="stylesheet" type="text/css" id="light-style" />
     <style>
         body {
-            background-color: #f8fafc;
+            background-color: #f3f4f6;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -22,19 +22,20 @@
         }
         .login-container {
             width: 100%;
-            max-width: 420px;
-            padding: 2.5rem 2rem;
+            max-width: 440px;
+            margin: 1rem;
+            padding: clamp(1.5rem, 5vw, 2.5rem);
             background: #ffffff;
-            border-radius: 12px;
+            border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
         .brand-logo {
             text-align: center;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
-        .brand-logo img {
-            height: 60px;
-            object-fit: contain;
+        .brand-logo i {
+            font-size: 3.5rem;
+            color: #0ea5e9;
         }
         .title {
             text-align: center;
@@ -55,12 +56,12 @@
             border: 1px solid #d1d5db;
         }
         .form-control:focus {
-            border-color: #10b981;
-            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
         }
         .btn-primary {
-            background-color: #10b981;
-            border-color: #10b981;
+            background-color: #0ea5e9;
+            border-color: #0ea5e9;
             border-radius: 8px;
             padding: 0.75rem;
             font-weight: 600;
@@ -68,8 +69,8 @@
             margin-top: 1rem;
         }
         .btn-primary:hover {
-            background-color: #059669;
-            border-color: #059669;
+            background-color: #0284c7;
+            border-color: #0284c7;
         }
         .back-link {
             text-align: center;
@@ -89,16 +90,13 @@
 
     <div class="login-container">
         <div class="brand-logo">
-            <img src="{{ \App\Models\SiteSetting::current()->site_logo ? asset('storage/' . \App\Models\SiteSetting::current()->site_logo) : asset('backend/images/logo.png') }}" alt="Logo">
+            <i class="bi bi-calculator-fill"></i>
         </div>
-        <h2 class="title">Admin Login</h2>
-        <p class="subtitle">Enter your credentials to access the CMS & SMS</p>
+        <h2 class="title">Accounting System</h2>
+        <p class="subtitle">Enter your credentials to access the financial portal</p>
 
         @if (session('error'))
             <div class="alert alert-danger">{{ session('error') }}</div>
-        @endif
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
         @endif
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -110,7 +108,7 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.check') }}" method="POST">
+        <form action="{{ route('accounting.login.submit') }}" method="POST">
             @csrf
             <div class="mb-3">
                 <label for="emailaddress" class="form-label text-muted">Email Address</label>
@@ -118,10 +116,7 @@
             </div>
 
             <div class="mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label for="password" class="form-label text-muted mb-0">Password</label>
-                    <a href="{{ route('forgot.password') }}" class="text-muted" style="font-size: 0.8rem;">Forgot password?</a>
-                </div>
+                <label for="password" class="form-label text-muted">Password</label>
                 <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
             </div>
 

@@ -19,6 +19,12 @@ use Carbon\Carbon;
 
 class Admin extends Controller
 {
+    public function publicPortal()
+    {
+        $siteSettings = \App\Models\SiteSetting::first();
+        return view('backend.pages.portal_public', compact('siteSettings'));
+    }
+
     public function login()
     {
         Token::truncate();

@@ -16,4 +16,15 @@ class JournalEntry extends Model
     {
         return $this->hasMany(JournalEntryItem::class);
     }
+
+    protected static function booted()
+    {
+        static::updating(function ($entry) {
+            throw new \Exception('Journal Entries are immutable and cannot be updated. Please post a reversing Contra-Entry instead.');
+        });
+
+        static::deleting(function ($entry) {
+            throw new \Exception('Journal Entries are immutable and cannot be deleted. Please post a reversing Contra-Entry instead.');
+        });
+    }
 }

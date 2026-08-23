@@ -37,7 +37,13 @@ Route::get('/admission', [Frontend::class, 'admission'])->name('admission.form')
 Route::post('/admission', [Frontend::class, 'submitAdmission'])->name('admission.submit');
 Route::get('/member', [Frontend::class, 'member'])->name('member');
 Route::get('/about/us', [Frontend::class, 'about'])->name('about.us');
-Route::get('/secure-login', [Admin::class, 'login'])->name('secure.login');
+Route::get('/secure-login', [Admin::class, 'publicPortal'])->name('secure.login'); // Now acts as portal selection
+Route::get('/admin/login', [Admin::class, 'login'])->name('admin.login');
+
+// Accounting Login
+Route::get('/accounting/login', [\App\Http\Controllers\Accounting\AccountingAuthController::class, 'showLoginForm'])->name('accounting.login');
+Route::post('/accounting/login', [\App\Http\Controllers\Accounting\AccountingAuthController::class, 'login'])->name('accounting.login.submit');
+Route::get('/accounting/logout', [\App\Http\Controllers\Accounting\AccountingAuthController::class, 'logout'])->name('accounting.logout');
 
 Route::get('/privacy/policy', [Frontend::class, 'privacy'])->name('privacy.policy');
 

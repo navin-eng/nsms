@@ -422,41 +422,83 @@
             aria-expanded="{{ request()->is('admin/sms/finance*') || request()->is('admin/sms/accounting*') ? 'true' : 'false' }}">
             <i class="bi bi-cash-coin"></i>
             <span class="sb-text">Finance &amp; Accounting</span>
+        {{-- Finance & Fees --}}
+        <li class="sb-item">
+          <a class="sb-link {{ request()->is('admin/sms/finance*') || request()->is('admin/sms/accounting*') || request()->is('accounting*') ? 'active' : '' }}"
+            data-bs-toggle="collapse" href="#sbFinance"
+            aria-expanded="{{ request()->is('admin/sms/finance*') || request()->is('admin/sms/accounting*') || request()->is('accounting*') ? 'true' : 'false' }}">
+            <i class="bi bi-cash-coin"></i>
+            <span class="sb-text">Finance &amp; Accounting</span>
             <i class="bi bi-chevron-right sb-arrow"></i>
           </a>
           <div
-            class="collapse {{ request()->is('admin/sms/finance*') || request()->is('admin/sms/accounting*') ? 'show' : '' }}"
+            class="collapse {{ request()->is('admin/sms/finance*') || request()->is('admin/sms/accounting*') || request()->is('accounting*') ? 'show' : '' }}"
             id="sbFinance">
             <ul class="sb-submenu">
-              <li class="sb-group-label"><span class="sb-text ps-3 text-muted" style="font-size: 0.75rem">Fees &
-                  Invoicing</span></li>
-              <li class="sb-item"><a href="{{ route('sms.finance.fee-types.index') }}"
-                  class="sb-link {{ request()->routeIs('sms.finance.fee-types.*') ? 'active' : '' }}"><i
-                    class="bi bi-dot"></i><span class="sb-text">Fee Types</span></a></li>
-              <li class="sb-item"><a href="{{ route('sms.finance.fee-structures.index') }}"
-                  class="sb-link {{ request()->routeIs('sms.finance.fee-structures.*') ? 'active' : '' }}"><i
-                    class="bi bi-dot"></i><span class="sb-text">Fee Structures</span></a></li>
-              <li class="sb-item"><a href="{{ route('sms.finance.invoices.generate') }}"
-                  class="sb-link {{ request()->routeIs('sms.finance.invoices.generate*') ? 'active' : '' }}"><i
-                    class="bi bi-dot"></i><span class="sb-text">Generate Invoices</span></a></li>
-              <li class="sb-item"><a href="{{ route('sms.finance.invoices.index') }}"
-                  class="sb-link {{ request()->routeIs('sms.finance.invoices.index') ? 'active' : '' }}"><i
-                    class="bi bi-dot"></i><span class="sb-text">All Invoices</span></a></li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.dashboard') }}"
+                  class="sb-link {{ request()->routeIs('accounting.dashboard') ? 'active' : '' }}">
+                  <i class="bi bi-speedometer2"></i><span class="sb-text">Finance Portal</span>
+                </a>
+              </li>
 
-              <li class="sb-group-label mt-2"><span class="sb-text ps-3 text-muted"
-                  style="font-size: 0.75rem">Accounting</span></li>
-              <li class="sb-item"><a href="{{ route('sms.finance.accounting.accounts.index') }}"
-                  class="sb-link {{ request()->routeIs('sms.finance.accounting.accounts.*') ? 'active' : '' }}"><i
-                    class="bi bi-dot"></i><span class="sb-text">Chart of Accounts</span></a></li>
-              <li class="sb-item"><a href="{{ route('sms.finance.accounting.daybook') }}"
-                  class="sb-link {{ request()->routeIs('sms.finance.accounting.daybook') ? 'active' : '' }}"><i
-                    class="bi bi-dot"></i><span class="sb-text">Day Book</span></a></li>
-              <li class="sb-item"><a href="{{ route('sms.finance.accounting.ledger') }}"
-                  class="sb-link {{ request()->routeIs('sms.finance.accounting.ledger') ? 'active' : '' }}"><i
-                    class="bi bi-dot"></i><span class="sb-text">General Ledger</span></a></li>
-              <li class="sb-item"><a href="{{ route('sms.finance.accounting.balance-sheet') }}"
-                  class="sb-link {{ request()->routeIs('sms.finance.accounting.balance-sheet') ? 'active' : '' }}"><i
-                    class="bi bi-dot"></i><span class="sb-text">Balance Sheet</span></a></li>
+              <li class="sb-group-label"><span class="sb-text ps-3 text-muted" style="font-size: 0.75rem">Fees & Invoicing</span></li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.fees.fee-types.index') }}"
+                  class="sb-link {{ request()->routeIs('accounting.fees.fee-types.*') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Fee Types</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.fees.fee-structures.index') }}"
+                  class="sb-link {{ request()->routeIs('accounting.fees.fee-structures.*') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Fee Structures</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.fees.invoices.generate') }}"
+                  class="sb-link {{ request()->routeIs('accounting.fees.invoices.generate*') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Generate Invoices</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.fees.invoices.index') }}"
+                  class="sb-link {{ request()->routeIs('accounting.fees.invoices.index') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">All Invoices</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.fees.reports.outstanding') }}"
+                  class="sb-link {{ request()->routeIs('accounting.fees.reports.outstanding') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Outstanding Report</span>
+                </a>
+              </li>
+
+              <li class="sb-group-label mt-2"><span class="sb-text ps-3 text-muted" style="font-size: 0.75rem">Accounting</span></li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.accounts.index') }}"
+                  class="sb-link {{ request()->routeIs('accounting.accounts.*') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Chart of Accounts</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.daybook') }}"
+                  class="sb-link {{ request()->routeIs('accounting.daybook') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Day Book</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.ledger') }}"
+                  class="sb-link {{ request()->routeIs('accounting.ledger') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">General Ledger</span>
+                </a>
+              </li>
+              <li class="sb-item">
+                <a href="{{ route('accounting.balance-sheet') }}"
+                  class="sb-link {{ request()->routeIs('accounting.balance-sheet') ? 'active' : '' }}">
+                  <i class="bi bi-dot"></i><span class="sb-text">Balance Sheet</span>
+                </a>
+              </li>
             </ul>
           </div>
         </li>
