@@ -1,34 +1,38 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
+
 <head>
     @php($siteSettings = \App\Models\SiteSetting::current())
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NSMS Cloud — Next-Gen School Management & Finance SaaS Platform</title>
-    
+
     <script>
-        (function() {
+        (function () {
             var theme = localStorage.getItem('nsms_theme') || 'dark';
             document.documentElement.setAttribute('data-bs-theme', theme);
         })();
     </script>
 
-    <link rel="icon" href="{{ $siteSettings->site_favicon ? asset('storage/' . $siteSettings->site_favicon) : asset('backend/images/favicon.ico') }}">
-    
+    <link rel="icon"
+        href="{{ $siteSettings->site_favicon ? asset('storage/' . $siteSettings->site_favicon) : asset('backend/images/favicon.ico') }}">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
     <!-- Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
+
     <style>
         :root {
             --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            
+
             /* Dark Theme Tokens (Default) */
             --bg-base: #06090e;
             --bg-surface: #0d121c;
@@ -37,15 +41,15 @@
             --border-subtle: rgba(255, 255, 255, 0.08);
             --border-strong: rgba(255, 255, 255, 0.16);
             --border-focus: #10b981;
-            
+
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
             --text-tertiary: #64748b;
-            
+
             --emerald-500: #10b981;
             --emerald-400: #34d399;
             --emerald-glow: rgba(16, 185, 129, 0.18);
-            
+
             --header-bg: rgba(6, 9, 14, 0.85);
         }
 
@@ -57,15 +61,15 @@
             --border-subtle: rgba(0, 0, 0, 0.07);
             --border-strong: rgba(0, 0, 0, 0.14);
             --border-focus: #059669;
-            
+
             --text-primary: #0f172a;
             --text-secondary: #475569;
             --text-tertiary: #94a3b8;
-            
+
             --emerald-500: #059669;
             --emerald-400: #10b981;
             --emerald-glow: rgba(5, 150, 105, 0.12);
-            
+
             --header-bg: rgba(248, 250, 252, 0.88);
         }
 
@@ -92,7 +96,7 @@
             left: 0;
             right: 0;
             height: 900px;
-            background-image: 
+            background-image:
                 linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
                 linear-gradient(to bottom, var(--border-subtle) 1px, transparent 1px);
             background-size: 48px 48px;
@@ -116,7 +120,12 @@
         }
 
         /* Typography */
-        h1, h2, h3, h4, h5, h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             color: var(--text-primary);
             font-weight: 700;
             letter-spacing: -0.03em;
@@ -422,6 +431,7 @@
         }
     </style>
 </head>
+
 <body class="position-relative">
 
     <!-- Subtle Grid & Top Ambient Glow -->
@@ -431,15 +441,19 @@
     <!-- Header / Navigation -->
     <nav class="navbar navbar-expand-lg sticky-top nav-scrolled py-3">
         <div class="container position-relative z-2">
-            <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="{{ route('secure.login') }}">
-                <div class="rounded-2 bg-success bg-opacity-10 p-1 text-success d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; border: 1px solid rgba(16, 185, 129, 0.25);">
+            <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none"
+                href="{{ route('secure.login') }}">
+                <div class="rounded-2 bg-success bg-opacity-10 p-1 text-success d-flex align-items-center justify-content-center"
+                    style="width: 34px; height: 34px; border: 1px solid rgba(16, 185, 129, 0.25);">
                     <i class="bi bi-clouds-fill fs-5" style="color: var(--emerald-400);"></i>
                 </div>
-                <span class="fw-bold fs-5 tracking-tight">NSMS<span style="color:var(--emerald-400)">.cloud</span></span>
+                <span class="fw-bold fs-5 tracking-tight">NSMS<span
+                        style="color:var(--emerald-400)">.cloud</span></span>
                 <span class="brand-badge ms-1">SaaS Platform</span>
             </a>
 
-            <button class="navbar-toggler border-0 text-white shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false">
+            <button class="navbar-toggler border-0 text-white shadow-none" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false">
                 <i class="bi bi-list fs-3"></i>
             </button>
 
@@ -454,7 +468,8 @@
 
                 <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
                     {{-- Theme Switcher --}}
-                    <button type="button" class="btn btn-sm btn-link text-secondary text-decoration-none p-2" id="themeToggleBtn" title="Toggle Theme">
+                    <button type="button" class="btn btn-sm btn-link text-secondary text-decoration-none p-2"
+                        id="themeToggleBtn" title="Toggle Theme">
                         <i class="bi bi-sun-fill fs-6" id="themeToggleIcon"></i>
                     </button>
 
@@ -463,8 +478,14 @@
                         <i class="bi bi-buildings"></i> Demo School
                     </a>
 
+                    {{-- Provider God Mode Login --}}
+                    <a href="{{ route('provider.login') }}" class="btn-saas-secondary py-2 px-3 small text-emerald-400" style="font-size:0.85rem; color: var(--emerald-400);">
+                        <i class="bi bi-cpu"></i> Provider Console
+                    </a>
+
                     {{-- School Login Modal Trigger --}}
-                    <button class="btn-saas-primary py-2 px-3 small" data-bs-toggle="modal" data-bs-target="#schoolLoginModal" style="font-size:0.85rem">
+                    <button class="btn-saas-primary py-2 px-3 small" data-bs-toggle="modal"
+                        data-bs-target="#schoolLoginModal" style="font-size:0.85rem">
                         <i class="bi bi-box-arrow-in-right"></i> School Login
                     </button>
                 </div>
@@ -477,7 +498,7 @@
         <div class="container">
             <div class="row align-items-center pt-3 pb-5">
                 <div class="col-lg-7 text-start">
-                    
+
                     {{-- Top Status Pill --}}
                     <div class="mb-3">
                         <span class="pill-tag">
@@ -493,7 +514,9 @@
                     </h1>
 
                     <p class="text-secondary fs-5 mb-4" style="max-width: 600px; font-weight: 400;">
-                        NSMS is an enterprise SaaS platform provided to educational institutions via institutional MoUs. We provision dedicated school environments with complete Nepali Bikram Sambat fee invoicing, academic grading, and financial ledgers.
+                        NSMS is an enterprise SaaS platform provided to educational institutions via institutional MoUs.
+                        We provision dedicated school environments with complete Nepali Bikram Sambat fee invoicing,
+                        academic grading, and financial ledgers.
                     </p>
 
                     <div class="d-flex flex-wrap gap-3 mb-4">
@@ -507,9 +530,12 @@
 
                     {{-- Micro Trust Tags --}}
                     <div class="d-flex flex-wrap align-items-center gap-4 pt-3 text-secondary small">
-                        <span class="d-flex align-items-center gap-2"><i class="bi bi-check2 text-success"></i> Bikram Sambat 2083 Ready</span>
-                        <span class="d-flex align-items-center gap-2"><i class="bi bi-check2 text-success"></i> Double-Entry Journal Core</span>
-                        <span class="d-flex align-items-center gap-2"><i class="bi bi-check2 text-success"></i> Multi-Guard Auth</span>
+                        <span class="d-flex align-items-center gap-2"><i class="bi bi-check2 text-success"></i> Bikram
+                            Sambat 2083 Ready</span>
+                        <span class="d-flex align-items-center gap-2"><i class="bi bi-check2 text-success"></i>
+                            Double-Entry Journal Core</span>
+                        <span class="d-flex align-items-center gap-2"><i class="bi bi-check2 text-success"></i>
+                            Multi-Guard Auth</span>
                     </div>
                 </div>
 
@@ -522,19 +548,24 @@
                                 <div class="window-dot"></div>
                                 <div class="window-dot"></div>
                             </div>
-                            <span class="mono small text-secondary" style="font-size: 0.75rem;">nsms://tenant.demo/finance/overview</span>
-                            <span class="badge bg-success bg-opacity-10 text-success mono" style="font-size: 0.7rem;">LIVE SYNC</span>
+                            <span class="mono small text-secondary"
+                                style="font-size: 0.75rem;">nsms://tenant.demo/finance/overview</span>
+                            <span class="badge bg-success bg-opacity-10 text-success mono"
+                                style="font-size: 0.7rem;">LIVE SYNC</span>
                         </div>
                         <div class="p-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div>
                                     <div class="text-secondary small">Monthly Revenue (Bhadra 2083)</div>
-                                    <div class="fs-4 fw-bold mono text-emerald-400" style="color:var(--emerald-400)">Rs. 428,000.00</div>
+                                    <div class="fs-4 fw-bold mono text-emerald-400" style="color:var(--emerald-400)">Rs.
+                                        428,000.00</div>
                                 </div>
-                                <span class="badge bg-success bg-opacity-20 text-success p-2"><i class="bi bi-graph-up-arrow"></i> +14.2%</span>
+                                <span class="badge bg-success bg-opacity-20 text-success p-2"><i
+                                        class="bi bi-graph-up-arrow"></i> +14.2%</span>
                             </div>
 
-                            <div class="p-3 rounded-3 mb-3" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+                            <div class="p-3 rounded-3 mb-3"
+                                style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
                                 <div class="d-flex justify-content-between text-secondary small mb-2">
                                     <span>Fee Collection Efficiency</span>
                                     <span class="mono text-white">88.4%</span>
@@ -546,25 +577,30 @@
 
                             <div class="row g-2 text-start">
                                 <div class="col-6">
-                                    <div class="p-2 rounded-2" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+                                    <div class="p-2 rounded-2"
+                                        style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
                                         <div class="text-secondary" style="font-size: 0.75rem;">Active Enrolments</div>
-                                        <div class="fw-bold mono">{{ number_format($totalStudents ?? 189) }} Students</div>
+                                        <div class="fw-bold mono">{{ number_format($totalStudents ?? 189) }} Students
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="p-2 rounded-2" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+                                    <div class="p-2 rounded-2"
+                                        style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
                                         <div class="text-secondary" style="font-size: 0.75rem;">Ledger Balance</div>
                                         <div class="fw-bold mono">Rs. 1.42M</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="mt-3 pt-3 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
+                            <div
+                                class="mt-3 pt-3 border-top border-secondary border-opacity-10 d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="pulse-indicator"></span>
                                     <span class="text-secondary small">Cloud Tenant Active</span>
                                 </div>
-                                <button class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem;" data-bs-toggle="modal" data-bs-target="#schoolLoginModal">
+                                <button class="btn btn-sm btn-outline-secondary py-1 px-2" style="font-size: 0.75rem;"
+                                    data-bs-toggle="modal" data-bs-target="#schoolLoginModal">
                                     Enter Dashboard &rarr;
                                 </button>
                             </div>
@@ -582,7 +618,8 @@
                 <div>
                     <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">WORKSPACES</span>
                     <h3 class="fw-bold mb-1">Select Your Institutional Portal</h3>
-                    <p class="text-secondary mb-0">Sign in to your provisioned school environment based on your operational role.</p>
+                    <p class="text-secondary mb-0">Sign in to your provisioned school environment based on your
+                        operational role.</p>
                 </div>
                 <div class="text-secondary small mono mt-2 mt-md-0">
                     <i class="bi bi-shield-check text-success"></i> 256-Bit Encrypted Sessions
@@ -599,12 +636,15 @@
                             </div>
                             <div class="fw-bold fs-6 mb-1">Administrative Staff</div>
                             <p class="text-secondary small mb-3">
-                                Enrolments, academic sessions, teacher rosters, class schedules, and system configurations.
+                                Enrolments, academic sessions, teacher rosters, class schedules, and system
+                                configurations.
                             </p>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
+                        <div
+                            class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
                             <span class="small mono fw-semibold text-primary">admin.auth &rarr;</span>
-                            <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 0.7rem;">SMS Core</span>
+                            <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 0.7rem;">SMS
+                                Core</span>
                         </div>
                     </a>
                 </div>
@@ -618,12 +658,15 @@
                             </div>
                             <div class="fw-bold fs-6 mb-1">Finance &amp; Bursar</div>
                             <p class="text-secondary small mb-3">
-                                Bikram Sambat fee invoicing, payment receipts, expense ledgers, trial balance, and P&amp;L reports.
+                                Bikram Sambat fee invoicing, payment receipts, expense ledgers, trial balance, and
+                                P&amp;L reports.
                             </p>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
+                        <div
+                            class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
                             <span class="small mono fw-semibold text-success">finance.auth &rarr;</span>
-                            <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 0.7rem;">Ledger Guard</span>
+                            <span class="badge bg-success bg-opacity-10 text-success" style="font-size: 0.7rem;">Ledger
+                                Guard</span>
                         </div>
                     </a>
                 </div>
@@ -637,12 +680,15 @@
                             </div>
                             <div class="fw-bold fs-6 mb-1">Parents &amp; Guardians</div>
                             <p class="text-secondary small mb-3">
-                                Attendance tracking, digital fee receipts, outstanding balance alerts, and student progress reports.
+                                Attendance tracking, digital fee receipts, outstanding balance alerts, and student
+                                progress reports.
                             </p>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
+                        <div
+                            class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
                             <span class="small mono fw-semibold text-info">parent.auth &rarr;</span>
-                            <span class="badge bg-info bg-opacity-10 text-info" style="font-size: 0.7rem;">Family App</span>
+                            <span class="badge bg-info bg-opacity-10 text-info" style="font-size: 0.7rem;">Family
+                                App</span>
                         </div>
                     </a>
                 </div>
@@ -656,12 +702,15 @@
                             </div>
                             <div class="fw-bold fs-6 mb-1">Student Workspace</div>
                             <p class="text-secondary small mb-3">
-                                Download homework, review course materials, check examination schedules, and view grade cards.
+                                Download homework, review course materials, check examination schedules, and view grade
+                                cards.
                             </p>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
+                        <div
+                            class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-10">
                             <span class="small mono fw-semibold text-warning">student.auth &rarr;</span>
-                            <span class="badge bg-warning bg-opacity-10 text-warning" style="font-size: 0.7rem;">Student App</span>
+                            <span class="badge bg-warning bg-opacity-10 text-warning" style="font-size: 0.7rem;">Student
+                                App</span>
                         </div>
                     </a>
                 </div>
@@ -674,18 +723,22 @@
         <div class="container py-3">
             <div class="row g-5 align-items-center">
                 <div class="col-lg-5">
-                    <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">SaaS PARTNERSHIP MODEL</span>
+                    <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">SaaS PARTNERSHIP
+                        MODEL</span>
                     <h2 class="display-6 fw-bold mb-3">How Schools Partner &amp; Deploy NSMS</h2>
                     <p class="text-secondary mb-4">
-                        We don't just sell software; we enter into institutional partnerships (MoUs) to provide end-to-end digitisation, continuous cloud hosting, and compliance updates.
+                        We don't just sell software; we enter into institutional partnerships (MoUs) to provide
+                        end-to-end digitisation, continuous cloud hosting, and compliance updates.
                     </p>
 
-                    <div class="p-3 rounded-3 mb-4" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+                    <div class="p-3 rounded-3 mb-4"
+                        style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
                         <div class="d-flex align-items-center gap-3">
                             <i class="bi bi-shield-check text-success fs-3"></i>
                             <div>
                                 <div class="fw-bold small">Enterprise SLA &amp; Support</div>
-                                <div class="text-secondary small">24/7 dedicated support line with 99.9% uptime guarantee.</div>
+                                <div class="text-secondary small">24/7 dedicated support line with 99.9% uptime
+                                    guarantee.</div>
                             </div>
                         </div>
                     </div>
@@ -701,7 +754,8 @@
                             <div class="timeline-node"></div>
                             <h5 class="fw-bold mb-1">01. Institutional MoU &amp; Scope Alignment</h5>
                             <p class="text-secondary small mb-0">
-                                We establish an MoU defining your academic grading schemes, class tiers, and fee structures (Bikram Sambat 12-month calendar).
+                                We establish an MoU defining your academic grading schemes, class tiers, and fee
+                                structures (Bikram Sambat 12-month calendar).
                             </p>
                         </div>
 
@@ -709,7 +763,8 @@
                             <div class="timeline-node"></div>
                             <h5 class="fw-bold mb-1">02. Tenant Provisioning &amp; Data Migration</h5>
                             <p class="text-secondary small mb-0">
-                                Our data engineers import your existing student records, faculty rosters, and opening chart of accounts into an isolated cloud database.
+                                Our data engineers import your existing student records, faculty rosters, and opening
+                                chart of accounts into an isolated cloud database.
                             </p>
                         </div>
 
@@ -717,7 +772,8 @@
                             <div class="timeline-node"></div>
                             <h5 class="fw-bold mb-1">03. Staff Onboarding &amp; Role Handover</h5>
                             <p class="text-secondary small mb-0">
-                                Principal, bursar, and administrative credentials are created. Hands-on training is provided for invoice generation and day books.
+                                Principal, bursar, and administrative credentials are created. Hands-on training is
+                                provided for invoice generation and day books.
                             </p>
                         </div>
 
@@ -725,7 +781,8 @@
                             <div class="timeline-node"></div>
                             <h5 class="fw-bold mb-1">04. Live Operations &amp; Managed Cloud</h5>
                             <p class="text-secondary small mb-0">
-                                Daily attendance, billing, exam marksheets, and ledger reconciliations run on zero-maintenance cloud infrastructure.
+                                Daily attendance, billing, exam marksheets, and ledger reconciliations run on
+                                zero-maintenance cloud infrastructure.
                             </p>
                         </div>
                     </div>
@@ -740,7 +797,8 @@
             <div class="text-center max-w-2xl mx-auto mb-5">
                 <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">SYSTEM ARCHITECTURE</span>
                 <h2 class="display-6 fw-bold mb-2">Designed for Total Operational Command</h2>
-                <p class="text-secondary">Every component is engineered for data integrity, speed, and audit compliance.</p>
+                <p class="text-secondary">Every component is engineered for data integrity, speed, and audit compliance.
+                </p>
             </div>
 
             <div class="row g-3">
@@ -749,7 +807,8 @@
                         <i class="bi bi-mortarboard feature-icon-mini"></i>
                         <h6 class="fw-bold mb-2">Student Lifecycle &amp; Enrolment</h6>
                         <p class="text-secondary small mb-0">
-                            Digital admission forms, roll allocation algorithms, class promotion workflows, and automated ID badge printing.
+                            Digital admission forms, roll allocation algorithms, class promotion workflows, and
+                            automated ID badge printing.
                         </p>
                     </div>
                 </div>
@@ -759,7 +818,8 @@
                         <i class="bi bi-calendar2-range feature-icon-mini"></i>
                         <h6 class="fw-bold mb-2">Bikram Sambat Billing Engine</h6>
                         <p class="text-secondary small mb-0">
-                            Class-wise dynamic fee structures with 12 Nepali months batch invoicing, arrears carryover, and A4/A5 receipt printing.
+                            Class-wise dynamic fee structures with 12 Nepali months batch invoicing, arrears carryover,
+                            and A4/A5 receipt printing.
                         </p>
                     </div>
                 </div>
@@ -769,7 +829,8 @@
                         <i class="bi bi-journal-bookmark feature-icon-mini"></i>
                         <h6 class="fw-bold mb-2">Double-Entry Financial Suite</h6>
                         <p class="text-secondary small mb-0">
-                            Real-time day books, general ledgers, trial balance calculation, automated profit &amp; loss, and bank reconciliations.
+                            Real-time day books, general ledgers, trial balance calculation, automated profit &amp;
+                            loss, and bank reconciliations.
                         </p>
                     </div>
                 </div>
@@ -779,7 +840,8 @@
                         <i class="bi bi-clipboard2-data feature-icon-mini"></i>
                         <h6 class="fw-bold mb-2">Examination &amp; GPA Engine</h6>
                         <p class="text-secondary small mb-0">
-                            Custom grading criteria, terminal marks entry, tabulations, automated GPA conversion, and printable marksheets.
+                            Custom grading criteria, terminal marks entry, tabulations, automated GPA conversion, and
+                            printable marksheets.
                         </p>
                     </div>
                 </div>
@@ -789,7 +851,8 @@
                         <i class="bi bi-fingerprint feature-icon-mini"></i>
                         <h6 class="fw-bold mb-2">Attendance &amp; Log Analytics</h6>
                         <p class="text-secondary small mb-0">
-                            Daily student &amp; staff attendance logs, absent SMS alerts, monthly percentage trends, and printable registers.
+                            Daily student &amp; staff attendance logs, absent SMS alerts, monthly percentage trends, and
+                            printable registers.
                         </p>
                     </div>
                 </div>
@@ -799,7 +862,8 @@
                         <i class="bi bi-qr-code-scan feature-icon-mini"></i>
                         <h6 class="fw-bold mb-2">QR Document Verification</h6>
                         <p class="text-secondary small mb-0">
-                            Tamper-proof cryptographic QR tokens on student certificates and report cards with public instant authenticity check.
+                            Tamper-proof cryptographic QR tokens on student certificates and report cards with public
+                            instant authenticity check.
                         </p>
                     </div>
                 </div>
@@ -812,48 +876,58 @@
         <div class="container py-3">
             <div class="row g-5 align-items-center">
                 <div class="col-lg-6">
-                    <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">INSTITUTIONAL ONBOARDING</span>
+                    <span class="mono text-emerald-400 small" style="color:var(--emerald-400)">INSTITUTIONAL
+                        ONBOARDING</span>
                     <h2 class="display-6 fw-bold mb-3">Deploy NSMS In Your Institution</h2>
                     <p class="text-secondary mb-4">
-                        Schedule a live presentation with our educational technology specialists. We provide transparent MoU agreements and zero-downtime migration.
+                        Schedule a live presentation with our educational technology specialists. We provide transparent
+                        MoU agreements and zero-downtime migration.
                     </p>
 
                     <div class="d-flex flex-column gap-3 text-secondary small">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-check-circle text-success"></i> Custom Nepali Calendar (BS) and Grading Scales configured
+                            <i class="bi bi-check-circle text-success"></i> Custom Nepali Calendar (BS) and Grading
+                            Scales configured
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-check-circle text-success"></i> On-site &amp; remote hands-on workshops for staff &amp; accountants
+                            <i class="bi bi-check-circle text-success"></i> On-site &amp; remote hands-on workshops for
+                            staff &amp; accountants
                         </div>
                         <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-check-circle text-success"></i> Dedicated server provisioning with encrypted cloud backups
+                            <i class="bi bi-check-circle text-success"></i> Dedicated server provisioning with encrypted
+                            cloud backups
                         </div>
                     </div>
                 </div>
 
                 <div class="col-lg-6">
-                    <div class="p-4 p-md-5 rounded-4" style="background: var(--bg-card); border: 1px solid var(--border-strong);">
+                    <div class="p-4 p-md-5 rounded-4"
+                        style="background: var(--bg-card); border: 1px solid var(--border-strong);">
                         <h5 class="fw-bold mb-1">Request MoU Consultation</h5>
                         <p class="text-secondary small mb-4">Fill out your school details to schedule a live demo.</p>
 
                         <form action="{{ route('contact') }}" method="GET">
                             <div class="mb-3">
                                 <label class="form-label small text-secondary">Institution / College Name</label>
-                                <input type="text" class="form-control saas-input" placeholder="e.g. Model Academy" required>
+                                <input type="text" class="form-control saas-input" placeholder="e.g. Model Academy"
+                                    required>
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-md-6">
                                     <label class="form-label small text-secondary">Contact Person</label>
-                                    <input type="text" class="form-control saas-input" placeholder="Principal / Admin" required>
+                                    <input type="text" class="form-control saas-input" placeholder="Principal / Admin"
+                                        required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small text-secondary">Phone Number</label>
-                                    <input type="tel" class="form-control saas-input" placeholder="+977 98XXXXXXXX" required>
+                                    <input type="tel" class="form-control saas-input" placeholder="+977 98XXXXXXXX"
+                                        required>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label small text-secondary">Official Email</label>
-                                <input type="email" class="form-control saas-input" placeholder="principal@school.edu.np" required>
+                                <input type="email" class="form-control saas-input"
+                                    placeholder="principal@school.edu.np" required>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label small text-secondary">Student Body Capacity</label>
@@ -882,7 +956,8 @@
                         <h5 class="modal-title fw-bold">Sign In to Your School Portal</h5>
                         <p class="text-secondary small mb-0">Select your institutional role to continue</p>
                     </div>
-                    <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body p-4">
                     <div class="d-flex flex-column gap-2">
@@ -892,7 +967,8 @@
                             </div>
                             <div class="flex-grow-1">
                                 <div class="fw-bold small">Administrator &amp; Staff</div>
-                                <div class="text-secondary" style="font-size: 0.78rem;">Student management, exams &amp; routines</div>
+                                <div class="text-secondary" style="font-size: 0.78rem;">Student management, exams &amp;
+                                    routines</div>
                             </div>
                             <i class="bi bi-chevron-right text-secondary"></i>
                         </a>
@@ -903,7 +979,8 @@
                             </div>
                             <div class="flex-grow-1">
                                 <div class="fw-bold small">Bursar &amp; Finance Accountant</div>
-                                <div class="text-secondary" style="font-size: 0.78rem;">Fee invoicing, ledgers &amp; balance sheet</div>
+                                <div class="text-secondary" style="font-size: 0.78rem;">Fee invoicing, ledgers &amp;
+                                    balance sheet</div>
                             </div>
                             <i class="bi bi-chevron-right text-secondary"></i>
                         </a>
@@ -914,14 +991,17 @@
                             </div>
                             <div class="flex-grow-1">
                                 <div class="fw-bold small">Parent &amp; Student Portal</div>
-                                <div class="text-secondary" style="font-size: 0.78rem;">Attendance, due fees &amp; digital grade cards</div>
+                                <div class="text-secondary" style="font-size: 0.78rem;">Attendance, due fees &amp;
+                                    digital grade cards</div>
                             </div>
                             <i class="bi bi-chevron-right text-secondary"></i>
                         </a>
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0 px-4 pb-4 justify-content-center">
-                    <small class="text-secondary">New school? <a href="#onboard" data-bs-dismiss="modal" class="text-emerald-400 text-decoration-none fw-semibold" style="color:var(--emerald-400)">Request an MoU Partnership</a></small>
+                    <small class="text-secondary">New school? <a href="#onboard" data-bs-dismiss="modal"
+                            class="text-emerald-400 text-decoration-none fw-semibold"
+                            style="color:var(--emerald-400)">Request an MoU Partnership</a></small>
                 </div>
             </div>
         </div>
@@ -936,7 +1016,8 @@
                 </div>
                 <div class="d-flex gap-3 small">
                     <a href="{{ route('home') }}" class="text-decoration-none text-secondary">Demo School</a>
-                    <a href="{{ route('accounting.login') }}" class="text-decoration-none text-secondary">Finance Login</a>
+                    <a href="{{ route('accounting.login') }}" class="text-decoration-none text-secondary">Finance
+                        Login</a>
                     <a href="{{ route('admin.login') }}" class="text-decoration-none text-secondary">Staff Login</a>
                     <a href="#onboard" class="text-decoration-none text-secondary">MoU Inquiries</a>
                     <a href="{{ route('privacy.policy') }}" class="text-decoration-none text-secondary">Privacy</a>
@@ -971,4 +1052,5 @@
         });
     </script>
 </body>
+
 </html>

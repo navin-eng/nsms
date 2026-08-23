@@ -94,21 +94,60 @@ class Admin extends Controller
     public function adminCheck(Request $request)
     {
         Token::truncate();
-        $credentail = $request->only('email', 'password');
-        $remeber = true;
-        if (Auth::attempt($credentail, $remeber)) {
-            $user = Auth::user();
-            if ($user->a_type === 'P') {
-                return redirect()->route('parent.dashboard')->with('success', 'Login Successfully');
+
+        // 1. If school_code is supplied, resolve tenant
+        $school = null;
+        if ($request->filled('school_code')) {
+            $schoolCode = strtoupper(trim($request->school_code));
+            $school = \App\Models\School::where('school_code', $schoolCode)->first();
+
+            if (!$school) {
+                return back()->with('error', "Invalid School Code '{$schoolCode}'. Please check your institution code.")->withInput();
             }
-            if ($user->a_type === 'ST') {
-                return redirect()->route('student.dashboard')->with('success', 'Login Successfully');
+
+            if (!$school->isOperational()) {
+                return back()->with('error', "Your school account status is currently '" . ucfirst($school->status) . "'. Please contact the SaaS provider.")->withInput();
             }
-            return redirect('/admin/portal')->with('success', 'Login Successfully');
-        } else {
-            return back()->with('error', 'Email and password doesnot match');
         }
 
+        $credential = $request->only('email', 'password');
+        $remember = $request->filled('remember') || true;
+
+        // Try direct email authentication
+        $loginField = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+        $attemptCredentials = [
+            $loginField => $request->email,
+            'password' => $request->password,
+        ];
+
+        // Scope to school if school resolved
+        if ($school) {
+            $attemptCredentials['school_id'] = $school->id;
+        }
+
+        if (Auth::attempt($attemptCredentials, $remember) || Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
+            $user = Auth::user();
+
+            // Set current school in session
+            if ($user->school_id) {
+                $userSchool = $user->school ?? \App\Models\School::find($user->school_id);
+                if ($userSchool && !$userSchool->isOperational()) {
+                    Auth::logout();
+                    return back()->with('error', "Access restricted: Institution status is '" . ucfirst($userSchool->status) . "'.");
+                }
+                session(['tenant_school_id' => $user->school_id]);
+            }
+
+            if ($user->a_type === 'P') {
+                return redirect()->route('parent.dashboard')->with('success', 'Logged in successfully');
+            }
+            if ($user->a_type === 'ST') {
+                return redirect()->route('student.dashboard')->with('success', 'Logged in successfully');
+            }
+            return redirect('/admin/portal')->with('success', 'Logged in successfully');
+        } else {
+            return back()->with('error', 'Invalid login credentials. Please check your username/email and password.')->withInput();
+        }
     }
 
     public function forgotPassword()

@@ -113,8 +113,16 @@
         <form action="{{ route('admin.check') }}" method="POST">
             @csrf
             <div class="mb-3">
-                <label for="emailaddress" class="form-label text-muted">Email Address</label>
-                <input class="form-control" name="email" type="email" id="emailaddress" required placeholder="name@example.com" value="{{ old('email') }}">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label for="school_code" class="form-label text-muted mb-0">School Code (Optional)</label>
+                    <span class="badge bg-light text-secondary font-monospace" style="font-size:0.7rem;">e.g. SCH-000101</span>
+                </div>
+                <input class="form-control font-monospace" name="school_code" type="text" id="school_code" placeholder="SCH-XXXXXX" value="{{ old('school_code', request('school_code')) }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="emailaddress" class="form-label text-muted">Username / Email Address</label>
+                <input class="form-control" name="email" type="text" id="emailaddress" required placeholder="name@example.com or admin" value="{{ old('email') }}">
             </div>
 
             <div class="mb-3">

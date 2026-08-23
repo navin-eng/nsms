@@ -30,6 +30,9 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
+// SaaS Provider God Mode Routes
+require base_path('routes/provider.php');
+
 Route::get('/', [Frontend::class, 'home'])->name('home');
 Route::get('/gallery', [Frontend::class, 'gallery'])->name('gallery');
 Route::get('/contact', [Frontend::class, 'contact'])->name('contact');

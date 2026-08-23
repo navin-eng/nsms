@@ -45,6 +45,11 @@ return [
             'driver' => 'session',
             'provider' => 'accountants',
         ],
+
+        'provider' => [
+            'driver' => 'session',
+            'provider' => 'provider_users',
+        ],
     ],
 
     /*
@@ -75,10 +80,10 @@ return [
             'model' => App\Models\Accountant::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'provider_users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\ProviderUser::class,
+        ],
     ],
 
     /*
