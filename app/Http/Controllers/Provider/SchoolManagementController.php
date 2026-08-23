@@ -190,10 +190,11 @@ class SchoolManagementController extends Controller
             $q->where('a_type', 'A')->orWhere('role', 'Super Admin');
         }])->withCount(['students', 'staff', 'users'])->findOrFail($id);
 
+        $superAdmin = $school->users->first();
         $allModules = School::allModules();
         $auditLogs = ProviderAuditLog::where('school_id', $school->id)->with('providerUser')->latest()->take(10)->get();
 
-        return view('provider.schools.show', compact('school', 'allModules', 'auditLogs'));
+        return view('provider.schools.show', compact('school', 'superAdmin', 'allModules', 'auditLogs'));
     }
 
     /**
