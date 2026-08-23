@@ -1,189 +1,135 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'God Mode Console') — NSMS SaaS Provider</title>
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    
-    <style>
-        :root {
-            --font-sans: 'Plus Jakarta Sans', sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
-            --bg-base: #06090e;
-            --bg-surface: #0c121e;
-            --bg-card: #101726;
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-strong: rgba(255, 255, 255, 0.16);
-            --emerald-500: #10b981;
-            --emerald-400: #34d399;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>@yield('title', 'God Mode Console') — NSMS Provider</title>
 
-        body {
-            font-family: var(--font-sans);
-            background-color: var(--bg-base);
-            color: #f1f5f9;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            letter-spacing: -0.01em;
-        }
+  <!-- Theme Initialization (Prevents FOUC) -->
+  <script>
+    (function () {
+      var theme = localStorage.getItem('theme');
+      if (!theme) {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-bs-theme', theme);
+    })();
+  </script>
 
-        .mono {
-            font-family: var(--font-mono);
-        }
+  <link rel="icon" href="{{ \App\Models\SiteSetting::current()->site_favicon ? asset('storage/' . \App\Models\SiteSetting::current()->site_favicon) : asset('backend/images/favicon.ico') }}">
 
-        /* Top Header */
-        .provider-navbar {
-            background: rgba(12, 18, 30, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-subtle);
-        }
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Datatables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
 
-        .god-badge {
-            font-family: var(--font-mono);
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--emerald-400);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            text-transform: uppercase;
-        }
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        .provider-nav-link {
-            color: #94a3b8;
-            font-size: 0.9rem;
-            font-weight: 500;
-            padding: 8px 14px;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.15s;
-        }
+  <!-- SMS & Admin Main CSS -->
+  <link rel="stylesheet" href="{{ asset('backend/css/style.css') }}">
 
-        .provider-nav-link:hover, .provider-nav-link.active {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.05);
-        }
+  @stack('styles')
+  <style>
+    :root {
+      --sb-active: #047857;
+      --sb-accent: #34d399;
+      --green: #047857;
+      --green-mid: #10b981;
+      --green-light: #34d399;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
 
-        /* Cards */
-        .card-god {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-        }
+    .mono {
+      font-family: var(--font-mono);
+    }
 
-        .stat-god-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            padding: 20px;
-            transition: transform 0.2s, border-color 0.2s;
-        }
+    .card-god-metric {
+      border: 1px solid var(--border-color, #e2e8f0);
+      border-radius: 12px;
+      padding: 1.25rem;
+      background: var(--bg-card, #ffffff);
+      transition: all 0.2s ease;
+    }
 
-        .stat-god-card:hover {
-            border-color: var(--border-strong);
-            transform: translateY(-2px);
-        }
+    [data-bs-theme="dark"] .card-god-metric {
+      border-color: #334155;
+      background: #1e293b;
+    }
 
-        .btn-emerald {
-            background: var(--emerald-500);
-            color: #06090e;
-            font-weight: 600;
-            border-radius: 8px;
-            border: none;
-            padding: 8px 16px;
-            transition: all 0.15s;
-        }
-
-        .btn-emerald:hover {
-            background: var(--emerald-400);
-            transform: translateY(-1px);
-        }
-    </style>
-    @stack('styles')
+    .card-god-metric:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
+
 <body>
-    <!-- Provider Topbar -->
-    <nav class="navbar navbar-expand-lg sticky-top provider-navbar py-2 px-3">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="{{ route('provider.dashboard') }}">
-                <div class="rounded-2 bg-success bg-opacity-15 p-1 text-success d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; border: 1px solid rgba(16, 185, 129, 0.3);">
-                    <i class="bi bi-cpu-fill text-success" style="color: var(--emerald-400) !important;"></i>
-                </div>
-                <span class="fw-bold fs-6 text-white">NSMS Provider</span>
-                <span class="god-badge ms-1">GOD MODE</span>
-            </a>
 
-            <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#providerNav">
-                <i class="bi bi-list fs-4"></i>
-            </button>
+  {{-- Sidebar overlay (mobile) --}}
+  <div class="sb-overlay" id="sbOverlay"></div>
 
-            <div class="collapse navbar-collapse" id="providerNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-1">
-                    <li class="nav-item">
-                        <a class="provider-nav-link {{ request()->routeIs('provider.dashboard') ? 'active' : '' }}" href="{{ route('provider.dashboard') }}">
-                            <i class="bi bi-grid-1x2-fill me-1"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="provider-nav-link {{ request()->routeIs('provider.schools.*') ? 'active' : '' }}" href="{{ route('provider.schools.index') }}">
-                            <i class="bi bi-buildings-fill me-1"></i> Partner Schools
-                        </a>
-                    </li>
-                </ul>
+  {{-- Provider Sidebar --}}
+  @include('provider.layout.sidebar')
 
-                <div class="d-flex align-items-center gap-3">
-                    <div class="text-end d-none d-sm-block">
-                        <div class="fw-semibold small text-white">{{ auth('provider')->user()->name }}</div>
-                        <small class="mono text-secondary" style="font-size: 0.72rem;">{{ auth('provider')->user()->role }}</small>
-                    </div>
+  {{-- Main Wrapper --}}
+  <div class="admin-main" id="adminMain">
 
-                    <form action="{{ route('provider.logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-outline-secondary py-1 px-2 rounded-2" title="Sign Out">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            </div>
+    @include('provider.layout.header')
+
+    <div class="admin-content">
+
+      {{-- Flash alerts --}}
+      @if(session('success'))
+        <div class="admin-alert admin-alert-success">
+          <i class="bi bi-check-circle-fill"></i>
+          <div class="alert-body"><strong>Success!</strong> {{ session('success') }}</div>
+          <button class="alert-close" onclick="this.closest('.admin-alert').remove()">&times;</button>
         </div>
-    </nav>
+      @endif
 
-    <!-- Content Area -->
-    <main class="flex-grow-1 py-4">
-        <div class="container-fluid px-lg-4">
-            @if(session('success'))
-                <div class="alert alert-success py-2 px-3 small mb-4 rounded-3 d-flex align-items-center gap-2">
-                    <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
-                </div>
-            @endif
-            @if(session('error'))
-                <div class="alert alert-danger py-2 px-3 small mb-4 rounded-3 d-flex align-items-center gap-2">
-                    <i class="bi bi-exclamation-triangle-fill"></i> {{ session('error') }}
-                </div>
-            @endif
-
-            @yield('content')
+      @if(session('error'))
+        <div class="admin-alert admin-alert-danger">
+          <i class="bi bi-exclamation-circle-fill"></i>
+          <div class="alert-body"><strong>Error!</strong> {{ session('error') }}</div>
+          <button class="alert-close" onclick="this.closest('.admin-alert').remove()">&times;</button>
         </div>
-    </main>
+      @endif
 
-    <!-- Footer -->
-    <footer class="py-3 border-top border-secondary border-opacity-10 text-center text-secondary small">
-        <div class="container-fluid">
-            &copy; {{ date('Y') }} <strong>NSMS SaaS Provider System</strong>. God Mode Control Center.
+      @if($errors->any())
+        <div class="admin-alert admin-alert-danger">
+          <i class="bi bi-exclamation-circle-fill"></i>
+          <div class="alert-body">
+            <strong>Please fix the following:</strong>
+            <ul style="margin:6px 0 0;padding-left:18px;">
+              @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+              @endforeach
+            </ul>
+          </div>
+          <button class="alert-close" onclick="this.closest('.admin-alert').remove()">&times;</button>
         </div>
-    </footer>
+      @endif
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    @stack('scripts')
+      @yield('content')
+    </div>
+
+    @include('provider.layout.footer')
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ asset('backend/js/script.js') }}"></script>
+
+  @stack('scripts')
 </body>
 </html>
