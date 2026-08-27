@@ -44,6 +44,61 @@
     </div>
   </div>
 
+  @if(($totalStudents ?? 0) == 0 && ($totalStaff ?? 0) == 0)
+    <!-- Onboarding Guide for New System -->
+    <div class="row mb-4 mt-3">
+      <div class="col-12">
+        <div class="card border-0 shadow-lg" style="border-radius: 20px; overflow: hidden; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+          <div class="card-body p-5 position-relative">
+             <i class="bi bi-rocket-takeoff position-absolute" style="font-size: 180px; opacity: 0.1; right: 40px; top: -10px; transform: rotate(15deg);"></i>
+             
+             <div style="position: relative; z-index: 2;">
+                 <h2 class="fw-bold mb-2">Welcome to NSMS, {{ Auth::user()->name }}!</h2>
+                 <p class="fs-5 mb-5 opacity-75">Your school management workspace is provisioned and ready. Let's get things set up.</p>
+                 
+                 <div class="row g-4 mt-2">
+                   <!-- Step 1 -->
+                   <div class="col-md-4">
+                     <div class="card h-100 border-0 text-white p-4" style="border-radius: 16px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div class="d-flex align-items-center mb-4">
+                          <div class="rounded-circle bg-white text-success d-flex align-items-center justify-content-center fw-bold fs-4 shadow-sm" style="width: 48px; height: 48px; flex-shrink: 0;">1</div>
+                          <h4 class="mb-0 ms-3 fw-bold">Set Up Classes</h4>
+                        </div>
+                        <p class="small text-white opacity-75 mb-4" style="line-height: 1.6;">First, define your academic classes and sections so you have a structure for enrolments.</p>
+                        <a href="{{ route('sms.academic-classes.index') }}" class="btn btn-light text-success fw-bold w-100 mt-auto shadow-sm py-2" style="border-radius: 10px;">Go to Classes</a>
+                     </div>
+                   </div>
+                   
+                   <!-- Step 2 -->
+                   <div class="col-md-4">
+                     <div class="card h-100 border-0 text-white p-4" style="border-radius: 16px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div class="d-flex align-items-center mb-4">
+                          <div class="rounded-circle bg-white text-success d-flex align-items-center justify-content-center fw-bold fs-4 shadow-sm" style="width: 48px; height: 48px; flex-shrink: 0;">2</div>
+                          <h4 class="mb-0 ms-3 fw-bold">Add Staff</h4>
+                        </div>
+                        <p class="small text-white opacity-75 mb-4" style="line-height: 1.6;">Register your teachers and administrative staff. They will receive their login credentials automatically.</p>
+                        <a href="{{ route('sms.staff.create') }}" class="btn btn-light text-success fw-bold w-100 mt-auto shadow-sm py-2" style="border-radius: 10px;">Add Staff</a>
+                     </div>
+                   </div>
+                   
+                   <!-- Step 3 -->
+                   <div class="col-md-4">
+                     <div class="card h-100 border-0 text-white p-4" style="border-radius: 16px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); transition: transform 0.3s; cursor: pointer;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div class="d-flex align-items-center mb-4">
+                          <div class="rounded-circle bg-white text-success d-flex align-items-center justify-content-center fw-bold fs-4 shadow-sm" style="width: 48px; height: 48px; flex-shrink: 0;">3</div>
+                          <h4 class="mb-0 ms-3 fw-bold">Enroll Students</h4>
+                        </div>
+                        <p class="small text-white opacity-75 mb-4" style="line-height: 1.6;">Finally, admit your students into their respective classes to start generating fee invoices.</p>
+                        <a href="{{ route('sms.students.create') }}" class="btn btn-light text-success fw-bold w-100 mt-auto shadow-sm py-2" style="border-radius: 10px;">Enroll Students</a>
+                     </div>
+                   </div>
+                 </div>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  @else
   {{-- Stat Cards --}}
   <div class="row g-3 mb-4">
     <div class="col-6 col-md-4 col-xl-3">
@@ -286,6 +341,7 @@
       <input type="hidden" name="filename" id="downloadImageFilename">
   </form>
 
+  @endif
 @endsection
 
 @push("scripts")

@@ -66,15 +66,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 3. Add school_id to users table if not present
-        if (!Schema::hasColumn('users', 'school_id')) {
-            Schema::table('users', function (Blueprint $table) {
-                $table->foreignId('school_id')->nullable()->after('id')->constrained('schools')->nullOnDelete();
-                $table->string('username')->nullable()->after('email');
-            });
-        }
-
-        // 4. Provider Audit Logs
+        // 3. Provider Audit Logs
         Schema::create('provider_audit_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('provider_user_id')->nullable()->constrained('provider_users')->nullOnDelete();
@@ -96,12 +88,6 @@ return new class extends Migration
      */
     public function down()
     {
-        if (Schema::hasColumn('users', 'school_id')) {
-            Schema::table('users', function (Blueprint $table) {
-                $table->dropConstrainedForeignId('school_id');
-                $table->dropColumn('username');
-            });
-        }
         Schema::dropIfExists('provider_audit_logs');
         Schema::dropIfExists('schools');
         Schema::dropIfExists('provider_users');

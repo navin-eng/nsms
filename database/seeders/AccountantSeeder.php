@@ -14,10 +14,12 @@ class AccountantSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Accountant::create([
-            'name' => 'Head Accountant',
-            'email' => 'accountant@school.com',
-            'password' => \Illuminate\Support\Facades\Hash::make('password'),
-        ]);
+        \App\Models\Accountant::firstOrCreate(
+            ['email' => 'accountant@school.com'],
+            [
+                'name' => 'Head Accountant',
+                'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            ]
+        );
     }
 }

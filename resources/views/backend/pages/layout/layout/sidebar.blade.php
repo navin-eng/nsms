@@ -2,10 +2,10 @@
 
   {{-- Logo --}}
   <a href="{{ url('admin/dashboard') }}" class="sb-logo">
-    <img src="{{ \App\Models\SiteSetting::current()->site_logo ? asset('storage/' . \App\Models\SiteSetting::current()->site_logo) : asset('backend/images/logo.png') }}" alt="GPLC">
+    <img src="{{ (auth()->user()->school && auth()->user()->school->logo) ? asset('storage/' . auth()->user()->school->logo) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->school->name ?? 'System') . '&background=0D8ABC&color=fff&rounded=true&bold=true' }}" alt="{{ auth()->user()->school->school_code ?? 'Logo' }}">
     <div class="sb-logo-text">
-      <span class="sb-name">GPLC Admin</span>
-      <span class="sb-sub">Green Peace Lincoln College</span>
+      <span class="sb-name">{{ auth()->user()->school->school_code ?? 'System' }} Admin</span>
+      <span class="sb-sub">{{ auth()->user()->school->name ?? 'School Portal' }}</span>
     </div>
   </a>
 

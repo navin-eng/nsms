@@ -143,7 +143,7 @@
     }
 
     document.getElementById('sidebarToggle')?.addEventListener('click', function () {
-      if (window.innerWidth <= 767) {
+      if (window.innerWidth <= 991) {
         adminSidebar?.classList.contains('open') ? closeSidebar() : openSidebar();
       } else {
         adminSidebar?.classList.toggle('collapsed');
@@ -154,7 +154,7 @@
 
     sbOverlay?.addEventListener('click', closeSidebar);
 
-    if (window.innerWidth > 767 && localStorage.getItem('sbCollapsed') === '1') {
+    if (window.innerWidth > 991 && localStorage.getItem('sbCollapsed') === '1') {
       adminSidebar?.classList.add('collapsed');
       document.getElementById('adminMain')?.classList.add('sb-collapsed');
     }

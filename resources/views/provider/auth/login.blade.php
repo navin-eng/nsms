@@ -147,7 +147,7 @@
                     <span class="input-group-text bg-transparent border-end-0 border-secondary border-opacity-25 text-secondary">
                         <i class="bi bi-envelope-fill"></i>
                     </span>
-                    <input type="email" name="email" class="form-control form-control-custom border-start-0 ps-0" placeholder="admin@nsms.cloud" value="{{ old('email', 'godmode@nsms.cloud') }}" required autofocus>
+                    <input type="email" name="email" class="form-control form-control-custom border-start-0 ps-0" placeholder="subscribe.navin@gmail.com" value="{{ old('email', 'subscribe.navin@gmail.com') }}" required autofocus>
                 </div>
             </div>
 

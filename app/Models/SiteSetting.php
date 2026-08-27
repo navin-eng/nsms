@@ -5,12 +5,16 @@ namespace App\Models;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
+use App\Support\TenantContext;
 
 class SiteSetting extends Model
 {
+    use BelongsToTenant;
     use HasFactory;
 
     protected $fillable = [
+        'school_id',
         'calendar_system',
         'site_favicon',
         'site_logo',
@@ -46,7 +50,9 @@ class SiteSetting extends Model
 
     public static function current()
     {
-        return Cache::rememberForever('site_settings.current', function () {
+        $schoolId = TenantContext::schoolId() ?: 'public';
+
+        return Cache::rememberForever("site_settings.current.{$schoolId}", function () {
             return static::first() ?? static::make([
                 'site_favicon' => null,
                 'site_logo' => null,

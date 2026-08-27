@@ -9,7 +9,7 @@ use App\Http\Controllers\Inventory\InventoryPurchaseController;
 use App\Http\Controllers\Inventory\InventoryIssueController;
 use App\Http\Controllers\Inventory\InventoryMaintenanceController;
 
-Route::prefix('admin/inventory')->name('admin.inventory.')->middleware(['auth'])->group(function () {
+Route::prefix('admin/inventory')->name('admin.inventory.')->middleware(['auth', 'tenant.active', 'tenant.module:inventory'])->group(function () {
     // Categories
     Route::resource('categories', InventoryCategoryController::class)->except(['show']);
     

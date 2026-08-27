@@ -43,6 +43,14 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
+        'provider' => [
+            'driver' => 'sqlite',
+            'url' => env('DATABASE_URL'),
+            'database' => env('DB_PROVIDER_DATABASE', database_path('provider.sqlite')),
+            'prefix' => '',
+            'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
+        ],
+
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DATABASE_URL'),

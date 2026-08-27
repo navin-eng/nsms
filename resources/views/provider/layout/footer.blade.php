@@ -5,7 +5,7 @@
     </span>
     <span class="footer-links">
       <a href="{{ route('secure.login') }}" target="_blank">Public Portal</a>
-      <a href="{{ route('home') }}" target="_blank">Demo School</a>
+      <a href="{{ '#' }}" target="_blank">Demo School</a>
     </span>
   </div>
 </footer>

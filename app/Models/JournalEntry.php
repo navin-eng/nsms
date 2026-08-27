@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class JournalEntry extends Model
 {
+    use BelongsToTenant;
     protected $fillable = ['entry_date', 'reference', 'description'];
 
     protected $casts = [

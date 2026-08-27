@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +12,12 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->connection = config('database.default');
+    }
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, \App\Traits\BelongsToTenant;
 
     /**
      * The attributes that are mass assignable.
@@ -21,9 +27,11 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
         'a_type',
         'image',
+        'school_id',
         'dashboard_preferences',
     ];
 
@@ -46,4 +54,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'dashboard_preferences' => 'array',
     ];
+
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
 }

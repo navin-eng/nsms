@@ -3,11 +3,11 @@
   {{-- Logo --}}
   <a href="{{ request()->is('admin/sms*') ? route('sms.dashboard') : url('admin/dashboard') }}" class="sb-logo">
     <img
-      src="{{ \App\Models\SiteSetting::current()->site_logo ? asset('storage/' . \App\Models\SiteSetting::current()->site_logo) : asset('backend/images/logo.png') }}"
-      alt="GPLC">
+      src="{{ (auth()->user()->school && auth()->user()->school->logo) ? asset('storage/' . auth()->user()->school->logo) : 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->school->name ?? 'System') . '&background=0D8ABC&color=fff&rounded=true&bold=true' }}"
+      alt="{{ auth()->user()->school->school_code ?? 'Logo' }}">
     <div class="sb-logo-text">
-      <span class="sb-name">GPLC Admin</span>
-      <span class="sb-sub">Green Peace Lincoln College</span>
+      <span class="sb-name">{{ auth()->user()->school->school_code ?? 'System' }} Admin</span>
+      <span class="sb-sub">{{ auth()->user()->school->name ?? 'School Portal' }}</span>
     </div>
   </a>
 
@@ -269,6 +269,7 @@
 
 
 
+        @if(auth()->user()->school && auth()->user()->school->hasModule('student_management'))
         @can('manage_admission')
           {{-- Admissions Management --}}
           <li class="sb-item">
@@ -291,7 +292,9 @@
             </div>
           </li>
         @endcan
+        @endif
 
+        @if(auth()->user()->school && auth()->user()->school->hasModule('academic_structure'))
         @can('manage_academic_structure')
           {{-- Academic Structure --}}
           <li class="sb-item">
@@ -328,7 +331,9 @@
             </div>
           </li>
         @endcan
+        @endif
 
+        @if(auth()->user()->school && auth()->user()->school->hasModule('student_management'))
         @can('manage_staff')
           {{-- HR / Staff Management --}}
           <li class="sb-item">
@@ -356,7 +361,9 @@
             </div>
           </li>
         @endcan
+        @endif
 
+        @if(auth()->user()->school && auth()->user()->school->hasModule('student_management'))
         @can('manage_students')
           {{-- Student Management --}}
           <li class="sb-item">
@@ -379,7 +386,9 @@
             </div>
           </li>
         @endcan
+        @endif
 
+        @if(auth()->user()->school && auth()->user()->school->hasModule('attendance'))
         @can('manage_attendance')
           {{-- Attendance Management --}}
           <li class="sb-item">
@@ -413,7 +422,9 @@
             </div>
           </li>
         @endcan
+        @endif
 
+        @if(auth()->user()->school && auth()->user()->school->hasModule('academic_structure'))
         @can('manage_academic_structure')
           <li class="sb-item">
             <a class="sb-link {{ request()->is('admin/sms/timetable*') ? 'active' : '' }}" data-bs-toggle="collapse"
@@ -435,7 +446,9 @@
               </ul>
             </div>
         @endcan
+        @endif
 
+        @if(auth()->user()->school && auth()->user()->school->hasModule('finance_billing'))
           {{-- Finance & Fees --}}
         {{-- Finance & Fees --}}
         <li class="sb-item">
@@ -517,6 +530,7 @@
             </ul>
           </div>
         </li>
+        @endif
 
         {{-- Homework & Materials --}}
         <li class="sb-group-label"><span class="sb-text">Academics & Tasks</span></li>
@@ -549,6 +563,7 @@
           </div>
         </li>
 
+        @if(auth()->user()->school && auth()->user()->school->hasModule('hostel'))
         {{-- Hostel Management --}}
         <li class="sb-item">
           <a class="sb-link {{ request()->routeIs('sms.hostel.*') ? 'active' : '' }}" data-bs-toggle="collapse"
@@ -588,6 +603,7 @@
             </ul>
           </div>
         </li>
+        @endif
 
         {{-- Library Management --}}
         <li class="sb-item">

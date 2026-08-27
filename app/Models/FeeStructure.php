@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class FeeStructure extends Model
 {
+    use BelongsToTenant;
     protected $fillable = ['academic_year_id', 'academic_class_id', 'fee_type_id', 'billing_cycle', 'amount'];
 
     public function academicYear()

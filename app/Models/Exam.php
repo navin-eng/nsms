@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class Exam extends Model
 {
+    use BelongsToTenant;
     protected $fillable = ['academic_year_id', 'title', 'start_date', 'end_date', 'description', 'status', 'is_published'];
 
     protected $casts = [

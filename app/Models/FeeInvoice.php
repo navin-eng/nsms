@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class FeeInvoice extends Model
 {
+    use BelongsToTenant;
     protected $fillable = [
         'student_id', 'academic_year_id', 'nepali_month', 'title', 'subtotal', 
         'discount_amount', 'fine_amount', 'total_amount', 'paid_amount', 

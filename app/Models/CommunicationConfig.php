@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class CommunicationConfig extends Model
 {
+    use BelongsToTenant;
     protected $fillable = ['channel', 'driver', 'config', 'is_active'];
 
     protected $casts = [

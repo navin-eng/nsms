@@ -10,6 +10,8 @@ class School extends Model
 {
     use HasFactory;
 
+    protected $connection = 'provider';
+
     protected $fillable = [
         'school_code',
         'name',
@@ -49,7 +51,10 @@ class School extends Model
             'finance_billing' => 'Bikram Sambat Fee Invoicing & Receipts',
             'double_entry_accounting' => 'General Ledger, P&L & Balance Sheet',
             'hostel' => 'Hostel Rooms & Occupancy',
+            'library' => 'Library Books, Issues & Borrower History',
+            'inventory' => 'Inventory, Stock, Purchases & Maintenance',
             'transportation' => 'Fleet & Transport Routes',
+            'communication' => 'Notices, Homework, Materials & Messaging',
             'website_cms' => 'School Public Website CMS',
             'qr_verification' => 'QR Code Document Verification',
         ];
@@ -93,6 +98,11 @@ class School extends Model
     public function auditLogs()
     {
         return $this->hasMany(ProviderAuditLog::class, 'school_id');
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(ProviderInvoice::class, 'school_id');
     }
 
     /**

@@ -167,7 +167,7 @@
                         @endif
                         <!-- Logo -->
                         <div class="card-header pt-4 pb-4 text-center">
-                            <a href="{{ route('home') }}">
+                            <a href="{{ '#' }}">
                                 <span><img src="{{ \App\Models\SiteSetting::current()->site_logo ? asset('storage/' . \App\Models\SiteSetting::current()->site_logo) : asset('backend/images/logo.png') }}" alt="" height="68"></span>
                             </a>
                         </div>

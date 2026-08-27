@@ -64,6 +64,9 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'webGuard' => \App\Http\Middleware\WebGuard::class,
+        'tenant.active' => \App\Http\Middleware\EnsureTenantActive::class,
+        'resolve.public.tenant' => \App\Http\Middleware\ResolvePublicTenant::class,
+        'tenant.module' => \App\Http\Middleware\EnsureModuleEnabled::class,
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'activeChild' => \App\Http\Middleware\ActiveChild::class,
     ];

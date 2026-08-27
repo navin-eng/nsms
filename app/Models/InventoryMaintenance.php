@@ -2,9 +2,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class InventoryMaintenance extends Model
 {
+    use BelongsToTenant;
     protected $fillable = ['inventory_item_id', 'quantity', 'type', 'date', 'description', 'cost', 'status'];
 
     public function item()

@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// We'll require 'auth' for now.
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['tenant.active', 'tenant.module'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Accounting\DashboardController::class, 'index'])->name('dashboard');
 
     // Expenses & Vendors

@@ -41,102 +41,41 @@ class Admin extends Controller
         Token::truncate();
         return view('backend.auth.login');
     }
-    public function register()
-    {
-        Token::truncate();
-        if (DB::table('users')->count() > 0 && (!Auth::check() || Auth::user()->a_type !== 'A')) {
-            return redirect()->route('secure.login')->with('error', 'New users can only be created by the super admin.');
-        }
-        return view('backend.auth.register');
-    }
-
-    // Registering the user
-    public function registerAdmin(Request $request)
-    {
-        Token::truncate();
-        $count = DB::table('users')->count();
-        if ($count == 0) {
-            $admin = new User();
-            $admin->name = $request->name;
-            $admin->email = $request->email;
-            $admin->password = Hash::make($request->password);
-            $admin->a_type = 'A';
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $extension = $image->getClientOriginalExtension();
-                $imageName = Str::random(20) . rand(0, 9999) . time() . '.' . $extension;
-                $image->move('backend/admin/images/', $imageName);
-            }
-            $admin->image = 'backend/admin/images/' . $imageName;
-            $admin->save();
-            session()->flash('success', 'Register Successfully Login again for security reason');
-            return redirect('/admin/dashboard/login');
-        } elseif (Auth::user() && Auth::user()->a_type == 'A') {
-            $admin = new User();
-            $admin->name = $request->name;
-            $admin->email = $request->email;
-            $admin->password = Hash::make($request->password);
-            $admin->a_type = 'E';
-            if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $extension = $image->getClientOriginalExtension();
-                $imageName = Str::random(20) . rand(0, 9999) . time() . '.' . $extension;
-                $image->move('backend/admin/images/', $imageName);
-            }
-            $admin->image = 'backend/admin/images/' . $imageName;
-            $admin->save();
-            session()->flash('success', 'Register Successfully');
-            return back();
-        } else {
-            return back()->with('error', 'Owner are only allowed');
-        }
-    }
+    // Registration logic has been completely migrated to the SaaS Provider onboarding flow.
     public function adminCheck(Request $request)
     {
         Token::truncate();
 
-        // 1. If school_code is supplied, resolve tenant
-        $school = null;
-        if ($request->filled('school_code')) {
-            $schoolCode = strtoupper(trim($request->school_code));
-            $school = \App\Models\School::where('school_code', $schoolCode)->first();
+        $request->validate([
+            'school_code' => 'required|string',
+            'email' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-            if (!$school) {
-                return back()->with('error', "Invalid School Code '{$schoolCode}'. Please check your institution code.")->withInput();
-            }
+        $schoolCode = strtoupper(trim($request->school_code));
+        $school = \App\Models\School::where('school_code', $schoolCode)->first();
 
-            if (!$school->isOperational()) {
-                return back()->with('error', "Your school account status is currently '" . ucfirst($school->status) . "'. Please contact the SaaS provider.")->withInput();
-            }
+        if (!$school) {
+            return back()->with('error', "Invalid School Code '{$schoolCode}'. Please check your institution code.")->withInput();
         }
 
-        $credential = $request->only('email', 'password');
-        $remember = $request->filled('remember') || true;
+        if (!$school->isOperational()) {
+            return back()->with('error', "Your school account status is currently '" . ucfirst($school->status) . "'. Please contact the SaaS provider.")->withInput();
+        }
 
-        // Try direct email authentication
+        $remember = $request->filled('remember');
+
         $loginField = filter_var($request->email, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         $attemptCredentials = [
             $loginField => $request->email,
             'password' => $request->password,
+            'school_id' => $school->id,
         ];
 
-        // Scope to school if school resolved
-        if ($school) {
-            $attemptCredentials['school_id'] = $school->id;
-        }
-
-        if (Auth::attempt($attemptCredentials, $remember) || Auth::attempt(['email' => $request->email, 'password' => $request->password], $remember)) {
+        if (Auth::attempt($attemptCredentials, $remember)) {
             $user = Auth::user();
 
-            // Set current school in session
-            if ($user->school_id) {
-                $userSchool = $user->school ?? \App\Models\School::find($user->school_id);
-                if ($userSchool && !$userSchool->isOperational()) {
-                    Auth::logout();
-                    return back()->with('error', "Access restricted: Institution status is '" . ucfirst($userSchool->status) . "'.");
-                }
-                session(['tenant_school_id' => $user->school_id]);
-            }
+            session(['tenant_school_id' => $school->id]);
 
             if ($user->a_type === 'P') {
                 return redirect()->route('parent.dashboard')->with('success', 'Logged in successfully');
@@ -146,7 +85,7 @@ class Admin extends Controller
             }
             return redirect('/admin/portal')->with('success', 'Logged in successfully');
         } else {
-            return back()->with('error', 'Invalid login credentials. Please check your username/email and password.')->withInput();
+            return back()->with('error', 'Invalid school code, username/email, or password.')->withInput();
         }
     }
 
@@ -242,9 +181,18 @@ class Admin extends Controller
 
     public function portal()
     {
+        $user = auth()->user();
         // SMS staff users should go directly to SMS — they have no access to CMS
-        if (auth()->user()->a_type === 'S') {
+        if ($user->a_type === 'S') {
             return redirect()->route('sms.dashboard');
+        }
+
+        // Check if school has website module enabled, if not bypass portal
+        if ($user->school_id) {
+            $school = \App\Models\School::find($user->school_id);
+            if ($school && !$school->hasModule('website_cms')) {
+                return redirect()->route('sms.dashboard');
+            }
         }
 
         return view('backend.pages.portal');

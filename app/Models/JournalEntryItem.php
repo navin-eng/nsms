@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class JournalEntryItem extends Model
 {
+    use BelongsToTenant;
     protected $fillable = ['journal_entry_id', 'account_id', 'type', 'amount'];
 
     public function journalEntry()

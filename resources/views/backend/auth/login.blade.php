@@ -114,10 +114,10 @@
             @csrf
             <div class="mb-3">
                 <div class="d-flex justify-content-between align-items-center mb-1">
-                    <label for="school_code" class="form-label text-muted mb-0">School Code (Optional)</label>
+                    <label for="school_code" class="form-label text-muted mb-0">School Code</label>
                     <span class="badge bg-light text-secondary font-monospace" style="font-size:0.7rem;">e.g. SCH-000101</span>
                 </div>
-                <input class="form-control font-monospace" name="school_code" type="text" id="school_code" placeholder="SCH-XXXXXX" value="{{ old('school_code', request('school_code')) }}">
+                <input class="form-control font-monospace" name="school_code" type="text" id="school_code" placeholder="SCH-XXXXXX" value="{{ old('school_code', request('school_code')) }}" required>
             </div>
 
             <div class="mb-3">

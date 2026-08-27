@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class Hostel extends Model
 {
+    use BelongsToTenant;
     protected $fillable = ['name', 'type', 'address', 'warden_id', 'warden_name', 'description'];
 
     public function warden()

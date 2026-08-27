@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class ExamMark extends Model
 {
+    use BelongsToTenant;
     protected $fillable = [
         'exam_id', 'student_id', 'subject_id', 
         'theory_marks', 'practical_marks', 'is_absent', 'remarks'

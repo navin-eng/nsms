@@ -2,7 +2,8 @@
 
   {{-- Provider Logo / Branding --}}
   <a href="{{ route('provider.dashboard') }}" class="sb-logo">
-    <div class="rounded-2 p-2 d-flex align-items-center justify-content-center me-2" style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); width: 38px; height: 38px;">
+    <div class="rounded-2 p-2 d-flex align-items-center justify-content-center me-2"
+      style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); width: 38px; height: 38px;">
       <i class="bi bi-cpu-fill text-success" style="font-size: 1.25rem;"></i>
     </div>
     <div class="sb-logo-text">
@@ -27,7 +28,8 @@
       {{-- Overview Section --}}
       <li class="sb-group-label"><span class="sb-text">Core Platform</span></li>
       <li class="sb-item">
-        <a href="{{ route('provider.dashboard') }}" class="sb-link {{ request()->routeIs('provider.dashboard') ? 'active' : '' }}" title="Platform Telemetry">
+        <a href="{{ route('provider.dashboard') }}"
+          class="sb-link {{ request()->routeIs('provider.dashboard') ? 'active' : '' }}" title="Platform Telemetry">
           <i class="bi bi-grid-1x2-fill"></i><span class="sb-text">Platform Dashboard</span>
         </a>
       </li>
@@ -42,21 +44,50 @@
           <span class="sb-text">School Tenants</span>
           <i class="bi bi-chevron-right sb-arrow"></i>
         </a>
-        <div class="collapse {{ request()->routeIs('provider.schools.*') ? 'show' : '' }}" id="sbProviderSchools" data-bs-parent="#sb-menu">
+        <div class="collapse {{ request()->routeIs('provider.schools.*') ? 'show' : '' }}" id="sbProviderSchools"
+          data-bs-parent="#sb-menu">
           <ul class="sb-submenu">
             <li class="sb-item">
-              <a href="{{ route('provider.schools.index') }}" class="sb-link {{ request()->routeIs('provider.schools.index') ? 'active' : '' }}">
+              <a href="{{ route('provider.schools.index') }}"
+                class="sb-link {{ request()->routeIs('provider.schools.index') ? 'active' : '' }}">
                 <i class="bi bi-dot"></i><span class="sb-text">All Partner Schools</span>
               </a>
             </li>
             <li class="sb-item">
-              <a href="{{ route('provider.schools.create') }}" class="sb-link {{ request()->routeIs('provider.schools.create') ? 'active' : '' }}">
+              <a href="{{ route('provider.schools.create') }}"
+                class="sb-link {{ request()->routeIs('provider.schools.create') ? 'active' : '' }}">
                 <i class="bi bi-dot"></i><span class="sb-text">Onboard New School</span>
               </a>
             </li>
           </ul>
         </div>
       </li>
+
+      {{-- Internal Operations Section --}}
+      @if(auth('provider')->user()->can('provider_manage_users'))
+        <li class="sb-group-label"><span class="sb-text">Internal Operations</span></li>
+        <li class="sb-item">
+          <a href="{{ route('provider.users.index') }}"
+            class="sb-link {{ request()->routeIs('provider.users.*') ? 'active' : '' }}" title="Manage Provider Users">
+            <i class="bi bi-people-fill"></i><span class="sb-text">Provider Staff</span>
+          </a>
+        </li>
+        <li class="sb-item">
+          <a href="{{ route('provider.security.settings') }}"
+            class="sb-link {{ request()->routeIs('provider.security.*') ? 'active' : '' }}" title="Manage MFA & Security">
+            <i class="bi bi-shield-lock-fill"></i><span class="sb-text">Security Settings</span>
+          </a>
+        </li>
+      @endif
+      
+      @if(auth('provider')->user()->can('provider_technical_tools'))
+        <li class="sb-item">
+          <a href="{{ route('provider.settings') }}"
+            class="sb-link {{ request()->routeIs('provider.settings') ? 'active' : '' }}" title="Global Platform Settings">
+            <i class="bi bi-gear-fill"></i><span class="sb-text">Global Settings</span>
+          </a>
+        </li>
+      @endif
 
       {{-- Public Links & Settings --}}
       <li class="sb-group-label"><span class="sb-text">Quick Actions</span></li>
@@ -67,7 +98,7 @@
         </a>
       </li>
       <li class="sb-item">
-        <a href="{{ route('home') }}" target="_blank" class="sb-link" title="Demo School Site">
+        <a href="{{ '#' }}" target="_blank" class="sb-link" title="Demo School Site">
           <i class="bi bi-mortarboard"></i><span class="sb-text">Demo School Site</span>
           <i class="bi bi-box-arrow-up-right sb-arrow ms-auto" style="font-size: 0.75rem; opacity: 0.7;"></i>
         </a>
@@ -79,10 +110,10 @@
 </aside>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const searchInput = document.getElementById('providerSidebarSearch');
     if (searchInput) {
-      searchInput.addEventListener('input', function() {
+      searchInput.addEventListener('input', function () {
         const query = this.value.toLowerCase().trim();
         const items = document.querySelectorAll('.sb-nav .sb-item');
         const groups = document.querySelectorAll('.sb-nav .sb-group-label');

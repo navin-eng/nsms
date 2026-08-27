@@ -1458,7 +1458,7 @@ body {
   margin-left: 64px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .admin-sidebar.collapsed {
     transform: translateX(0) !important;
   }
@@ -1661,4 +1661,74 @@ body {
 
 [data-bs-theme="dark"] .admin-table thead th {
   border-bottom-color: rgba(255, 255, 255, .1);
+}
+
+/* --- System-Wide Dark Mode Overrides --- */
+[data-bs-theme="dark"] .bg-white {
+  background-color: var(--admin-card) !important;
+  color: var(--admin-text) !important;
+}
+
+[data-bs-theme="dark"] .bg-light {
+  background-color: var(--admin-bg) !important;
+  color: var(--admin-text) !important;
+}
+
+[data-bs-theme="dark"] .text-dark {
+  color: var(--admin-text) !important;
+}
+
+[data-bs-theme="dark"] .text-muted {
+  color: var(--admin-muted) !important;
+}
+
+[data-bs-theme="dark"] .card {
+  background-color: var(--admin-card);
+  border-color: var(--admin-border);
+}
+
+[data-bs-theme="dark"] .card-header,
+[data-bs-theme="dark"] .card-footer {
+  border-color: var(--admin-border);
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select,
+[data-bs-theme="dark"] .input-group-text {
+  background-color: var(--admin-bg) !important;
+  border-color: var(--admin-border) !important;
+  color: var(--admin-text) !important;
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+  background-color: #0b1120 !important;
+  border-color: var(--bs-primary) !important;
+  color: var(--admin-text) !important;
+}
+
+[data-bs-theme="dark"] .form-control::placeholder {
+  color: var(--admin-muted) !important;
+  opacity: 1;
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary {
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+}
+
+[data-bs-theme="dark"] .btn-outline-secondary:hover,
+[data-bs-theme="dark"] .btn-check:checked + .btn-outline-secondary {
+  background-color: var(--admin-border);
+  color: var(--admin-text);
+  border-color: var(--admin-border);
+}
+
+[data-bs-theme="dark"] .modal-content {
+  background-color: var(--admin-card);
+  border-color: var(--admin-border);
+}
+
+[data-bs-theme="dark"] .border {
+  border-color: var(--admin-border) !important;
 }

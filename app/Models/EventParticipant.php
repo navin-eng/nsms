@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class EventParticipant extends Model
 {
+    use BelongsToTenant;
     protected $fillable = [
         'event_id',
         'participant_type',

@@ -474,7 +474,7 @@
                     </button>
 
                     {{-- Partner School Web Link --}}
-                    <a href="{{ route('home') }}" class="btn-saas-secondary py-2 px-3 small" style="font-size:0.85rem">
+                    <a href="{{ route('saas.home') }}" class="btn-saas-secondary py-2 px-3 small" style="font-size:0.85rem">
                         <i class="bi bi-buildings"></i> Demo School
                     </a>
 
@@ -906,7 +906,7 @@
                         <h5 class="fw-bold mb-1">Request MoU Consultation</h5>
                         <p class="text-secondary small mb-4">Fill out your school details to schedule a live demo.</p>
 
-                        <form action="{{ route('contact') }}" method="GET">
+                        <form action="#" method="GET">
                             <div class="mb-3">
                                 <label class="form-label small text-secondary">Institution / College Name</label>
                                 <input type="text" class="form-control saas-input" placeholder="e.g. Model Academy"
@@ -1015,12 +1015,12 @@
                     &copy; {{ date('Y') }} <strong>NSMS SaaS Platform</strong>. Institutional Education Technologies.
                 </div>
                 <div class="d-flex gap-3 small">
-                    <a href="{{ route('home') }}" class="text-decoration-none text-secondary">Demo School</a>
+                    <a href="{{ route('saas.home') }}" class="text-decoration-none text-secondary">Demo School</a>
                     <a href="{{ route('accounting.login') }}" class="text-decoration-none text-secondary">Finance
                         Login</a>
                     <a href="{{ route('admin.login') }}" class="text-decoration-none text-secondary">Staff Login</a>
                     <a href="#onboard" class="text-decoration-none text-secondary">MoU Inquiries</a>
-                    <a href="{{ route('privacy.policy') }}" class="text-decoration-none text-secondary">Privacy</a>
+                    <a href="#" class="text-decoration-none text-secondary">Privacy</a>
                 </div>
             </div>
         </div>

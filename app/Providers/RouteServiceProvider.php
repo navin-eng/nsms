@@ -36,7 +36,7 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
 
-            Route::middleware(['web', 'auth:accounting'])
+            Route::middleware(['web', 'auth:accounting', 'tenant.active'])
                 ->prefix('accounting')
                 ->name('accounting.')
                 ->group(base_path('routes/accounting.php'));
@@ -52,6 +52,14 @@ class RouteServiceProvider extends ServiceProvider
     {
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('school-login', function (Request $request) {
+            return Limit::perMinute(5)->by(strtolower($request->input('school_code', '')) . '|' . $request->ip());
+        });
+
+        RateLimiter::for('provider-login', function (Request $request) {
+            return Limit::perMinute(5)->by(strtolower($request->input('email', '')) . '|' . $request->ip());
         });
     }
 }

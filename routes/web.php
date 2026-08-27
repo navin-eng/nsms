@@ -33,12 +33,8 @@ use Illuminate\Support\Facades\Auth;
 // SaaS Provider God Mode Routes
 require base_path('routes/provider.php');
 
-Route::get('/', [Frontend::class, 'home'])->name('home');
-Route::get('/gallery', [Frontend::class, 'gallery'])->name('gallery');
-Route::get('/contact', [Frontend::class, 'contact'])->name('contact');
-Route::get('/admission', [Frontend::class, 'admission'])->name('admission.form');
-Route::post('/admission', [Frontend::class, 'submitAdmission'])->name('admission.submit');
-Route::get('/member', [Frontend::class, 'member'])->name('member');
+// Root Domain -> SaaS Landing Page / Portal
+Route::get('/', [Admin::class, 'publicPortal'])->name('saas.home');
 Route::get('/secure-login', [Admin::class, 'publicPortal'])->name('secure.login'); // Portal selection & Landing Page
 Route::get('/portal', [Admin::class, 'publicPortal'])->name('portal');
 Route::get('/nsms', [Admin::class, 'publicPortal'])->name('nsms.landing');
@@ -46,33 +42,43 @@ Route::get('/admin/login', [Admin::class, 'login'])->name('admin.login');
 
 // Accounting Login
 Route::get('/accounting/login', [\App\Http\Controllers\Accounting\AccountingAuthController::class, 'showLoginForm'])->name('accounting.login');
-Route::post('/accounting/login', [\App\Http\Controllers\Accounting\AccountingAuthController::class, 'login'])->name('accounting.login.submit');
+Route::post('/accounting/login', [\App\Http\Controllers\Accounting\AccountingAuthController::class, 'login'])->middleware('throttle:school-login')->name('accounting.login.submit');
 Route::get('/accounting/logout', [\App\Http\Controllers\Accounting\AccountingAuthController::class, 'logout'])->name('accounting.logout');
 
-Route::get('/privacy/policy', [Frontend::class, 'privacy'])->name('privacy.policy');
+// Public Document QR Verification (Global, no specific school prefix needed)
+Route::get('/verify/doc/{token}', [\App\Http\Controllers\Frontend\VerificationController::class, 'show'])->name('verification.show');
 
-Route::get('/page/{slug}', [Frontend::class, 'pageDetail'])->name('custom.page');
-Route::get('/notices', [Frontend::class, 'noticeIndex'])->name('notices.index');
-Route::get('/calendar', [Frontend::class, 'calendar'])->name('calendar');
-Route::get('/events', [Frontend::class, 'eventsIndex'])->name('events.index');
-
-Route::get('/course/{slug}', [Frontend::class, 'courseDetail']);
-Route::get('/event/{slug}', [Frontend::class, 'eventDetail']);
-Route::get('/notice/detail/{id}', [Frontend::class, 'noticeDetail']);
+// Public CMS Isolated Routes (Mapped to specific schools via path segment)
+Route::group(['prefix' => '{school_slug}', 'middleware' => ['resolve.public.tenant']], function () {
+    Route::get('/', [Frontend::class, 'home'])->name('home');
+    Route::get('/gallery', [Frontend::class, 'gallery'])->name('gallery');
+    Route::get('/contact', [Frontend::class, 'contact'])->name('contact');
+    Route::get('/admission', [Frontend::class, 'admission'])->name('admission.form');
+    Route::post('/admission', [Frontend::class, 'submitAdmission'])->name('admission.submit');
+    Route::get('/member', [Frontend::class, 'member'])->name('member');
+    
+    Route::get('/privacy/policy', [Frontend::class, 'privacy'])->name('privacy.policy');
+    Route::get('/about', [Frontend::class, 'about'])->name('about.us');
+    
+    Route::get('/page/{slug}', [Frontend::class, 'pageDetail'])->name('custom.page');
+    Route::get('/notices', [Frontend::class, 'noticeIndex'])->name('notices.index');
+    Route::get('/calendar', [Frontend::class, 'calendar'])->name('calendar');
+    Route::get('/events', [Frontend::class, 'eventsIndex'])->name('events.index');
+    
+    Route::get('/course/{slug}', [Frontend::class, 'courseDetail']);
+    Route::get('/event/{slug}', [Frontend::class, 'eventDetail']);
+    Route::get('/notice/detail/{id}', [Frontend::class, 'noticeDetail']);
+    
+    Route::get('/results', [ResultController::class, 'index'])->name('results.index');
+    Route::post('/results/search', [ResultController::class, 'search'])->name('results.search');
+});
 
 Route::get('/close', function () {
     session()->put('popupClosed', 1);
     return back();
 })->name('popup.close');
 
-// Public Result Routes
-Route::get('/results', [ResultController::class, 'index'])->name('results.index');
-Route::post('/results/search', [ResultController::class, 'search'])->name('results.search');
-
-// Public Document QR Verification
-Route::get('/verify/doc/{token}', [\App\Http\Controllers\Frontend\VerificationController::class, 'show'])->name('verification.show');
-
-Route::middleware('webGuard')->group(function () {
+Route::middleware(['webGuard', 'tenant.active', 'tenant.module'])->group(function () {
     Route::prefix('admin/sms')->group(base_path('routes/sms.php'));
     Route::group([], base_path('routes/cms.php'));
 
@@ -182,9 +188,8 @@ Route::middleware('webGuard')->group(function () {
 });
 // Backend Routes login and register
 Route::get('/admin/dashboard/login', [Admin::class, 'login'])->name('admin.login');
-Route::get('/admin/dashboard/register', [Admin::class, 'register'])->name('admin.register');
-Route::post('/admin/dashboard/admin/register', [Admin::class, 'registerAdmin'])->name('admin.store');
-Route::post('/admin/dashboard/admin/check', [Admin::class, 'adminCheck'])->name('admin.check');
+// Registration routes removed as super admin is provisioned via Provider God Mode.
+Route::post('/admin/dashboard/admin/check', [Admin::class, 'adminCheck'])->middleware('throttle:school-login')->name('admin.check');
 Route::get('/admin/dashboard/forgot/password', [Admin::class, 'forgotPassword'])->name('forgot.password');
 Route::post('/admin/dashboard/email/check', [Admin::class, 'emailCheck'])->name('email.check');
 Route::get('/admin/dashboard/reset/password', function () {
@@ -192,9 +197,14 @@ Route::get('/admin/dashboard/reset/password', function () {
 });
 Route::post('/admin/dashboard/reset/password', [Admin::class, 'resetPassword'])->name('resetPassword');
 Route::get('/admin/dashboard/logout', function () {
-    $user = Auth::user()->password;
+    $user = Auth::user();
+    $slug = $user->school->slug ?? null;
     Auth::logout();
-    Auth::logoutOtherDevices($user);
-    return redirect()->route('home')->with('success', 'Logout');
+    Auth::logoutOtherDevices($user->password);
+    
+    if ($slug) {
+        return redirect()->route('home', ['school_slug' => $slug])->with('success', 'Logout');
+    }
+    return redirect()->route('saas.home')->with('success', 'Logout');
 })->name('admin.logout');
 require __DIR__ . '/inventory.php';

@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 use Carbon\Carbon;
 
 class Event extends Model
 {
+    use BelongsToTenant;
     use HasFactory;
 
     protected $fillable = [

@@ -68,7 +68,26 @@ class SchoolManagementController extends Controller
             $query->where('package_name', $request->package);
         }
 
-        $schools = $query->withCount(['students', 'staff', 'users'])->latest()->paginate(15)->withQueryString();
+        $schools = $query->latest()->paginate(15)->withQueryString();
+
+        $schoolIds = $schools->pluck('id')->toArray();
+        if (!empty($schoolIds)) {
+            $studentsCounts = \DB::table('students')->whereIn('school_id', $schoolIds)
+                ->select('school_id', \DB::raw('count(*) as aggregate'))
+                ->groupBy('school_id')->pluck('aggregate', 'school_id');
+            $staffCounts = \DB::table('staff')->whereIn('school_id', $schoolIds)
+                ->select('school_id', \DB::raw('count(*) as aggregate'))
+                ->groupBy('school_id')->pluck('aggregate', 'school_id');
+            $usersCounts = \DB::table('users')->whereIn('school_id', $schoolIds)
+                ->select('school_id', \DB::raw('count(*) as aggregate'))
+                ->groupBy('school_id')->pluck('aggregate', 'school_id');
+                
+            foreach ($schools as $school) {
+                $school->setAttribute('students_count', $studentsCounts->get($school->id, 0));
+                $school->setAttribute('staff_count', $staffCounts->get($school->id, 0));
+                $school->setAttribute('users_count', $usersCounts->get($school->id, 0));
+            }
+        }
 
         return view('provider.schools.index', compact('schools'));
     }
@@ -78,6 +97,8 @@ class SchoolManagementController extends Controller
      */
     public function create()
     {
+        abort_unless(auth('provider')->user()->can('provider_manage_schools'), 403, 'Unauthorized access.');
+
         $generatedCode = School::generateUniqueCode();
         $allModules = School::allModules();
         $nepalLocations = \App\Helpers\NepalLocations::getHierarchy();
@@ -90,6 +111,8 @@ class SchoolManagementController extends Controller
      */
     public function store(Request $request)
     {
+        abort_unless(auth('provider')->user()->can('provider_manage_schools'), 403, 'Unauthorized access.');
+
         // Assemble full admin email with @nsms.com suffix
         $prefix = strtolower(trim($request->admin_email_prefix ?? $request->admin_email));
         // Remove any @nsms.com if typed in prefix
@@ -104,7 +127,7 @@ class SchoolManagementController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'school_code' => 'required|string|max:32|unique:schools,school_code',
+            'school_code' => 'required|string|max:32|unique:provider.schools,school_code',
             'contact_email' => 'required|email|max:255',
             'contact_phone' => 'nullable|string|max:30',
             'province' => 'nullable|string|max:100',
@@ -167,6 +190,7 @@ class SchoolManagementController extends Controller
             'username' => $prefix,
             'password' => Hash::make($request->admin_password),
             'a_type' => 'A',
+            'image' => 'default.png',
         ]);
 
         ProviderAuditLog::log(
@@ -178,7 +202,8 @@ class SchoolManagementController extends Controller
         );
 
         return redirect()->route('provider.schools.show', $school->id)
-            ->with('success', "School '{$school->name}' onboarded successfully with School Code: {$school->school_code}!");
+            ->with('success', "School '{$school->name}' onboarded successfully with School Code: {$school->school_code}!")
+            ->with('new_password', $request->admin_password);
     }
 
     /**
@@ -186,15 +211,29 @@ class SchoolManagementController extends Controller
      */
     public function show($id)
     {
-        $school = School::with(['users' => function($q) {
-            $q->where('a_type', 'A')->orWhere('role', 'Super Admin');
-        }])->withCount(['students', 'staff', 'users'])->findOrFail($id);
+        $school = School::findOrFail($id);
 
-        $superAdmin = $school->users->first();
+        // Query super admin from tenant (default) DB — users table doesn't exist on provider connection
+        $superAdmin = \DB::table('users')
+            ->where('school_id', $school->id)
+            ->where(function($query) {
+                $query->where('a_type', 'A')->orWhere('role', 'Super Admin');
+            })
+            ->first();
+
         $allModules = School::allModules();
         $auditLogs = ProviderAuditLog::where('school_id', $school->id)->with('providerUser')->latest()->take(10)->get();
 
-        return view('provider.schools.show', compact('school', 'superAdmin', 'allModules', 'auditLogs'));
+        // Manual counts from tenant (default) DB — cross-DB withCount() doesn't work with SQLite
+        $studentsCount = \DB::table('students')->where('school_id', $school->id)->count();
+        $staffCount    = \DB::table('staff')->where('school_id', $school->id)->count();
+        $usersCount    = \DB::table('users')->where('school_id', $school->id)->count();
+        $classesCount  = \DB::table('academic_classes')->where('school_id', $school->id)->count();
+
+        return view('provider.schools.show', compact(
+            'school', 'superAdmin', 'allModules', 'auditLogs',
+            'studentsCount', 'staffCount', 'usersCount', 'classesCount'
+        ));
     }
 
     /**
@@ -202,6 +241,8 @@ class SchoolManagementController extends Controller
      */
     public function updateStatus(Request $request, $id)
     {
+        abort_unless(auth('provider')->user()->can('provider_support_tools') || auth('provider')->user()->can('provider_manage_billing'), 403, 'Unauthorized access.');
+
         $request->validate([
             'status' => 'required|in:pending,trial,active,suspended,disabled,expired,archived',
             'reason' => 'nullable|string|max:500',
@@ -228,6 +269,8 @@ class SchoolManagementController extends Controller
      */
     public function updateModules(Request $request, $id)
     {
+        abort_unless(auth('provider')->user()->can('provider_manage_modules'), 403, 'Unauthorized access.');
+
         $school = School::findOrFail($id);
         $oldModules = $school->enabled_modules;
         
@@ -250,6 +293,8 @@ class SchoolManagementController extends Controller
      */
     public function resetSchoolAdminPassword(Request $request, $id)
     {
+        abort_unless(auth('provider')->user()->can('provider_support_tools'), 403, 'Unauthorized access.');
+
         $request->validate([
             'new_password' => 'nullable|string|min:6',
             'auto_generate' => 'nullable|boolean',
@@ -331,6 +376,140 @@ class SchoolManagementController extends Controller
             $msg .= " Sent security notification email to {$targetEmail}.";
         }
 
-        return back()->with('success', $msg);
+        return back()->with('success', $msg)->with('new_password', $passwordToSet);
+    }
+
+    /**
+     * Edit School details
+     */
+    public function edit($id)
+    {
+        abort_unless(auth('provider')->user()->can('provider_manage_schools'), 403, 'Unauthorized access.');
+        $school = School::findOrFail($id);
+        $nepalLocations = \App\Helpers\NepalLocations::getHierarchy();
+        return view('provider.schools.edit', compact('school', 'nepalLocations'));
+    }
+
+    /**
+     * Update School details
+     */
+    public function update(Request $request, $id)
+    {
+        abort_unless(auth('provider')->user()->can('provider_manage_schools'), 403, 'Unauthorized access.');
+
+        $school = School::findOrFail($id);
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'contact_email' => 'required|email|max:255',
+            'contact_phone' => 'nullable|string|max:30',
+            'province' => 'nullable|string|max:100',
+            'district' => 'nullable|string|max:100',
+            'municipality' => 'nullable|string|max:150',
+            'ward_no' => 'nullable|string|max:10',
+            'street_address' => 'nullable|string|max:255',
+            'domain' => 'nullable|string|max:255',
+        ]);
+
+        $addressParts = array_filter([
+            $request->street_address ? trim($request->street_address) : null,
+            $request->ward_no ? 'Ward No. ' . trim($request->ward_no) : null,
+            $request->municipality,
+            $request->district,
+            $request->province,
+        ]);
+        $compiledAddress = !empty($addressParts) ? implode(', ', $addressParts) : ($request->address ?? $school->address);
+
+        $school->update([
+            'name' => $request->name,
+            'contact_email' => $request->contact_email,
+            'contact_phone' => $request->contact_phone,
+            'address' => $compiledAddress,
+            'domain' => $request->domain,
+        ]);
+
+        ProviderAuditLog::log(
+            'school.updated',
+            $school,
+            "Updated basic details for school '{$school->name}'.",
+            null,
+            $school->toArray()
+        );
+
+        return redirect()->route('provider.schools.show', $school->id)->with('success', 'School details updated successfully.');
+    }
+
+    /**
+     * Renew/Upgrade Package
+     */
+    public function renewPackage(Request $request, $id)
+    {
+        abort_unless(auth('provider')->user()->can('provider_manage_billing'), 403, 'Unauthorized access.');
+
+        $school = School::findOrFail($id);
+
+        $request->validate([
+            'package_name' => 'required|string|in:Basic,Professional,Enterprise,Custom',
+            'subscription_end' => 'required|date',
+            'billing_amount' => 'nullable|numeric|min:0',
+        ]);
+
+        $oldPackage = $school->package_name;
+        $oldEnd = $school->subscription_end;
+
+        $school->package_name = $request->package_name;
+        $school->subscription_end = $request->subscription_end;
+        
+        // If renewing an expired school, set status to active
+        if (in_array($school->status, ['expired', 'suspended']) && now()->lt(\Carbon\Carbon::parse($request->subscription_end))) {
+            $school->status = 'active';
+        }
+        $school->save();
+
+        // Calculate Tax
+        $baseAmount = $request->billing_amount ?: 0;
+        $taxType = \App\Models\ProviderSetting::get('tax_type', 'exclusive');
+        $taxRate = (float) \App\Models\ProviderSetting::get('tax_rate', 13);
+        
+        $subtotal = $baseAmount;
+        $taxAmount = 0;
+        $totalAmount = $baseAmount;
+
+        if ($baseAmount > 0 && $taxType !== 'none') {
+            if ($taxType === 'exclusive') {
+                $taxAmount = $subtotal * ($taxRate / 100);
+                $totalAmount = $subtotal + $taxAmount;
+            } elseif ($taxType === 'inclusive') {
+                $subtotal = $totalAmount / (1 + ($taxRate / 100));
+                $taxAmount = $totalAmount - $subtotal;
+            }
+        }
+
+        // Create an invoice
+        $invoiceNumber = 'INV-' . strtoupper(Str::random(6)) . '-' . date('Y');
+        
+        \App\Models\ProviderInvoice::create([
+            'school_id' => $school->id,
+            'invoice_number' => $invoiceNumber,
+            'package_name' => $school->package_name,
+            'subtotal' => $subtotal,
+            'tax_amount' => $taxAmount,
+            'discount' => 0,
+            'amount' => $totalAmount,
+            'billing_cycle' => 'yearly',
+            'subscription_start' => now(),
+            'subscription_end' => $school->subscription_end,
+            'status' => 'pending',
+        ]);
+
+        ProviderAuditLog::log(
+            'school.renewed',
+            $school,
+            "Renewed/Upgraded package for '{$school->name}' from {$oldPackage} to {$school->package_name}. Expiry extended to {$school->subscription_end}. Generated Invoice {$invoiceNumber}.",
+            ['package' => $oldPackage, 'end' => $oldEnd],
+            ['package' => $school->package_name, 'end' => $school->subscription_end]
+        );
+
+        return back()->with('success', "Subscription updated. The school is now on {$school->package_name} until " . \Carbon\Carbon::parse($school->subscription_end)->format('M d, Y') . ". Invoice generated.");
     }
 }

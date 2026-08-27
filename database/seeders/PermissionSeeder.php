@@ -42,9 +42,8 @@ class PermissionSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        // Create Super Admin role and assign all permissions
         $role = Role::firstOrCreate(['name' => 'Super Admin', 'guard_name' => 'web']);
-        $role->givePermissionTo(Permission::all());
+        $role->givePermissionTo(Permission::where('guard_name', 'web')->get());
         
         // Assign Super Admin to user ID 1 if exists
         $user = \App\Models\User::find(1);

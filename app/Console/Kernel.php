@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('birthday:autopost')->dailyAt('08:00');
+        $schedule->command('nsms:check-subscriptions')->daily();
     }
 
     /**

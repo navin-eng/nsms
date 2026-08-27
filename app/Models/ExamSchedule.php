@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\BelongsToTenant;
 
 class ExamSchedule extends Model
 {
+    use BelongsToTenant;
     protected $fillable = [
         'exam_id', 'academic_class_id', 'subject_id', 
         'exam_date', 'start_time', 'end_time', 

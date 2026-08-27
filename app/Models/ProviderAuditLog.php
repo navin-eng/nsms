@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ProviderAuditLog extends Model
 {
+    use HasFactory;
+
+    protected $connection = 'provider';
+
     protected $table = 'provider_audit_logs';
 
     protected $fillable = [

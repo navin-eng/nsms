@@ -61,6 +61,7 @@
                 <tr class="small text-muted text-uppercase">
                     <th>School Code</th>
                     <th>School / Institution</th>
+                    <th>Security</th>
                     <th>Enrolments</th>
                     <th>Package</th>
                     <th>Status</th>
@@ -81,6 +82,15 @@
                             <small class="text-muted" style="font-size: 0.75rem;">{{ $school->contact_email }} · {{ $school->contact_phone }}</small>
                         </td>
                         <td>
+                            <form action="{{ route('provider.schools.reset_password', $school->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to reset the Super Admin password for {{ addslashes($school->name) }}?');">
+                                @csrf
+                                <input type="hidden" name="auto_generate" value="1">
+                                <button type="submit" class="btn btn-sm btn-outline-warning py-1 px-2" style="font-size: 0.75rem;" title="Auto-generate new password">
+                                    <i class="bi bi-key-fill"></i> Reset
+                                </button>
+                            </form>
+                        </td>
+                        <td>
                             <span class="small mono fw-semibold text-success">{{ number_format($school->students_count) }} students</span><br>
                             <small class="text-muted" style="font-size: 0.72rem;">{{ number_format($school->staff_count) }} staff</small>
                         </td>
@@ -89,13 +99,13 @@
                         </td>
                         <td>
                             @if($school->status === 'active')
-                                <span class="badge bg-success bg-opacity-15 text-success">Active</span>
+                                <span class="badge bg-success text-white">Active</span>
                             @elseif($school->status === 'trial')
-                                <span class="badge bg-info bg-opacity-15 text-info">Trial</span>
+                                <span class="badge bg-info text-dark">Trial</span>
                             @elseif($school->status === 'suspended')
-                                <span class="badge bg-warning bg-opacity-15 text-warning">Suspended</span>
+                                <span class="badge bg-warning text-dark">Suspended</span>
                             @else
-                                <span class="badge bg-danger bg-opacity-15 text-danger">{{ ucfirst($school->status) }}</span>
+                                <span class="badge bg-danger text-white">{{ ucfirst($school->status) }}</span>
                             @endif
                         </td>
                         <td>
